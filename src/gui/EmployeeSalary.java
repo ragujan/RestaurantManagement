@@ -573,7 +573,7 @@ public class EmployeeSalary extends javax.swing.JFrame {
                 jLabel7 = new javax.swing.JLabel();
                 textF11 = new frameutil.TextF();
                 jDateChooser2 = new com.toedter.calendar.JDateChooser();
-                comboBox1 = new frameutil.ComboBox();
+                comboBox1 = new frameutil.ComboBox<>();
                 jPanel11 = new javax.swing.JPanel();
                 customButton3 = new frameutil.CustomButton();
                 customButton5 = new frameutil.CustomButton();
@@ -1362,7 +1362,7 @@ public class EmployeeSalary extends javax.swing.JFrame {
         // Variables declaration - do not modify//GEN-BEGIN:variables
         private javax.swing.JLabel boxLabel;
         private javax.swing.JLabel closeLabel;
-        private frameutil.ComboBox comboBox1;
+        private frameutil.ComboBox<String> comboBox1;
         private frameutil.ComboBox<String> comboBox2;
         private frameutil.CustomButton customButton1;
         private frameutil.CustomButton customButton2;
@@ -1386,7 +1386,6 @@ public class EmployeeSalary extends javax.swing.JFrame {
         private javax.swing.JLabel jLabel7;
         public javax.swing.JLabel jLabel8;
         private javax.swing.JPanel jPanel1;
-        private javax.swing.JPanel jPanel10;
         private javax.swing.JPanel jPanel11;
         private javax.swing.JPanel jPanel2;
         private javax.swing.JPanel jPanel3;

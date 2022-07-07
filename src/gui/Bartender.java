@@ -287,7 +287,7 @@ public class Bartender extends javax.swing.JFrame {
                 customButton2 = new frameutil.CustomButton();
                 customButton6 = new frameutil.CustomButton();
                 jLabel5 = new javax.swing.JLabel();
-                comboBox1 = new frameutil.ComboBox();
+                comboBox1 = new frameutil.ComboBox<>();
                 jPanel6 = new javax.swing.JPanel();
                 customButton4 = new frameutil.CustomButton();
                 customButton5 = new frameutil.CustomButton();
@@ -1008,7 +1008,7 @@ public class Bartender extends javax.swing.JFrame {
         // Variables declaration - do not modify//GEN-BEGIN:variables
         private javax.swing.JLabel boxLabel;
         private javax.swing.JLabel closeLabel;
-        private frameutil.ComboBox comboBox1;
+        private frameutil.ComboBox<String> comboBox1;
         private frameutil.CustomButton customButton1;
         private frameutil.CustomButton customButton2;
         private frameutil.CustomButton customButton3;

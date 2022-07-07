@@ -60,78 +60,83 @@ public class EmployeeT extends javax.swing.JFrame {
 		this();
 		this.chef = c;
 		this.isUpdateStatus = true;
-		this.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
+		otherFramesInvolved = true;
 		comboBox1.setSelectedItem("Chef");
 		comboBox1.setEnabled(false);
 		isChefInvolved = true;
+		otherFrame = c;
 	}
 
 	public EmployeeT(Manager c) {
 		this();
 		this.manager = c;
 		this.isUpdateStatus = true;
-		this.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
+		otherFramesInvolved = true;
 		comboBox1.setSelectedItem("Manager");
 		comboBox1.setEnabled(false);
 		isMangerInvolved = true;
+		otherFrame = c;
 	}
 
 	public EmployeeT(Server c) {
 		this();
 		this.server = c;
 		this.isUpdateStatus = true;
-		this.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
+		otherFramesInvolved = true;
 		comboBox1.setSelectedItem("Server");
 		comboBox1.setEnabled(false);
 		isServerInvolved = true;
+		otherFrame = c;
 	}
 
 	public EmployeeT(Cleaner c) {
 		this();
 		this.cleaner = c;
 		this.isUpdateStatus = true;
-		this.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
+		otherFramesInvolved = true;
 		comboBox1.setSelectedItem("Cleaner");
 		comboBox1.setEnabled(false);
 		isCleanerInvolved = true;
+		otherFrame = c;
 	}
 
 	public EmployeeT(Bartender c) {
 		this();
 		this.bartender = c;
 		this.isUpdateStatus = true;
-		this.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
+		otherFramesInvolved = true;
 		comboBox1.setSelectedItem("Bartender");
 		comboBox1.setEnabled(false);
 		isBartenderInvolved = true;
+		otherFrame = c;
 	}
 
 	public EmployeeT(Cashier c) {
 		this();
 		this.cashier = c;
 		this.isUpdateStatus = true;
-		this.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
+		otherFramesInvolved = true;
 		comboBox1.setSelectedItem("Cashier");
 		comboBox1.setEnabled(false);
 		isCashierInvolved = true;
+		otherFrame = c;
 	}
 
 	public EmployeeT(EmployeeSalary c) {
 		this();
 		this.es = c;
 		this.isUpdateStatus = true;
-		this.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
-		
-		
+		otherFramesInvolved = true;
+		otherFrame = c;
 		isEmpSalaryInvolved = true;
 	}
+
 	public EmployeeT(EmployeeWorkingHours c) {
 		this();
 		this.ewh = c;
 		this.isUpdateStatus = true;
-		this.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
-		
-		
+		otherFramesInvolved = true;
+		otherFrame = c;
 		isEmpWokringHoursInvolved = true;
 	}
 	String loadTableQuery;
@@ -145,6 +150,8 @@ public class EmployeeT extends javax.swing.JFrame {
 	boolean isCashierInvolved = false;
 	boolean isEmpSalaryInvolved = false;
 	boolean isEmpWokringHoursInvolved = false;
+	boolean otherFramesInvolved = false;
+	JFrame otherFrame;
 	EmployeeT thiset;
 	Chef chef;
 	Manager manager;
@@ -428,19 +435,19 @@ public class EmployeeT extends javax.swing.JFrame {
 							cashier.setEnabled(true);
 							cashier.empId = id;
 							thiset.dispose();
-						}else if (isEmpSalaryInvolved) {
+						} else if (isEmpSalaryInvolved) {
 							es.textF8.setText(id);
 							es.textF6.setText(name);
 							es.textF9.setText(emptype);
 							es.textF7.setText(email);
 							thiset.dispose();
-						}else if (isEmpWokringHoursInvolved) {
+						} else if (isEmpWokringHoursInvolved) {
 							ewh.textF8.setText(id);
 							ewh.textF6.setText(name);
 							ewh.textF9.setText(emptype);
 							ewh.textF7.setText(email);
 							thiset.dispose();
-						}else {
+						} else {
 							Employee emp = new Employee(thiset, hm);
 							isUpdateStatus = false;
 							thiset.dispose();
@@ -828,7 +835,14 @@ public class EmployeeT extends javax.swing.JFrame {
 
     private void closeLabelMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_closeLabelMouseClicked
 	    // TODO add your handling code here:
-	    System.exit(0);
+	    //  thiset.dispose();
+	    if (otherFramesInvolved) {
+		    otherFrame.setEnabled(true);
+		    thiset.dispose();
+	    } else {
+		    this.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+		    System.exit(0);
+	    }
     }//GEN-LAST:event_closeLabelMouseClicked
 
     private void closeLabelMouseEntered(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_closeLabelMouseEntered

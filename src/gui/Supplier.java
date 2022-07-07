@@ -7,6 +7,7 @@ import Util.LoadSubTypes;
 import Util.LoadTables;
 import Util.SearchTable;
 import Util.SetEmptyItems;
+import Util.TypeIds;
 import frameutil.ComboBox;
 import frameutil.RoundedPanel;
 import frameutil.ImageSizer;
@@ -68,10 +69,10 @@ public class Supplier extends javax.swing.JFrame {
 		textF4.setForeground(MainTheme.fourthColor);
 		textF5.setForeground(MainTheme.fourthColor);
 		jPanel7.setBackground(MainTheme.secondColor);
-		jDateChooser1.setVisible(false);
-		jDateChooser2.setVisible(false);
-		jDateChooser1.setBackground(MainTheme.secondColor);
-		jDateChooser2.setBackground(MainTheme.secondColor);
+		textF8.setEditable(false);
+		textF7.setEditable(false);
+		textF6.setEditable(false);
+
 	}
 
 	public Supplier(Chef c) {
@@ -133,8 +134,35 @@ public class Supplier extends javax.swing.JFrame {
 		comboBox1.setEnabled(false);
 		isCashierInvolved = true;
 	}
-	String loadTableQuery;
-	String[] colnames = {"employee_id", "employee_name", "employee_type_name", "employee_email", "paid_amount", "bonus", "paid_date"};
+
+	public Supplier(FRN frn) {
+		this();
+		this.frn = frn;
+		this.isUpdateStatus = true;
+		this.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
+		ArrayList<String> al = new ArrayList<String>();
+		al.add("supplier");
+		al.add("dealer,supplier");
+		al.add("dealer_type,dealer");
+
+		SearchTable st = new SearchTable(al);
+		this.loadTableQuery = st.getTableQuery();
+
+		String sort = "ORDER BY `supplier_name` ASC";
+
+		StringBuilder stringquerybuild = new StringBuilder();
+		stringquerybuild.append(this.loadTableQuery).toString();
+		stringquerybuild.append(" INNER JOIN `food_item_category`\n"
+			+ "ON  `food_item_category`.`dealer_type_id` =`dealer_type`.`dealer_type_id` ").toString();
+		stringquerybuild.append(sort).toString();
+		String query = stringquerybuild.toString();
+
+		LoadTables lt = new LoadTables(customTable2, query, this.colnames);
+		//comboBox1.setEnabled(false);
+		isFRNInvolved = true;
+		otherFramesInvolved = true;
+	}
+
 	boolean isUpdateStatus = false;
 	boolean isChefInvolved = false;
 	boolean isMangerInvolved = false;
@@ -142,6 +170,8 @@ public class Supplier extends javax.swing.JFrame {
 	boolean isCleanerInvolved = false;
 	boolean isBartenderInvolved = false;
 	boolean isCashierInvolved = false;
+	boolean isFRNInvolved = false;
+	boolean otherFramesInvolved = false;
 	Supplier thiset;
 	Chef chef;
 	Manager manager;
@@ -149,28 +179,27 @@ public class Supplier extends javax.swing.JFrame {
 	Cleaner cleaner;
 	Bartender bartender;
 	Cashier cashier;
+	FRN frn;
+	
+
+	String loadTableQuery;
+	String[] colnames = {"supplier_id", "supplier_name", "supplier_contact", "dealer_email", "dealer_name", "dealer_contact", "dealer_type_name"};
 
 	private void loadQuery() {
 		ArrayList<String> al = new ArrayList<String>();
-		al.add("employee_salary");
-		al.add("employee,employee_salary");
+		al.add("supplier");
+		al.add("dealer,supplier");
+		al.add("dealer_type,dealer");
 
-		al.add("employee_type,employee");
-		al.add("gender,employee");
 		SearchTable st = new SearchTable(al);
 		this.loadTableQuery = st.getTableQuery();
 		//System.out.println(this.loadTableQuery);
 
 	}
 
-	private void loadCombos() {
-
-		LoadSubTypes.loadType(comboBox1, "employee_type");
-	}
-
 	private void loadTable() {
 		loadQuery();
-		String sort = "ORDER BY `employee_name` ASC";
+		String sort = "ORDER BY `supplier_name` ASC";
 
 		StringBuilder stringquerybuild = new StringBuilder();
 		stringquerybuild.append(this.loadTableQuery).toString();
@@ -179,12 +208,17 @@ public class Supplier extends javax.swing.JFrame {
 
 		LoadTables lt = new LoadTables(customTable2, query, this.colnames);
 	}
+
+	private void loadCombos() {
+
+		LoadSubTypes.loadType(comboBox1, "dealer_type");
+	}
 	String searchText;
 	String seachcontact;
 	String searchemail;
 
 	private void clearFields() {
-		JComponent[] jp = {textF1, textF2, textF3, textF10, textF11, textF4, textF5, textF6, textF7, textF8, comboBox1};
+		JComponent[] jp = {textF1, textF2, textF4, textF5, textF6, textF7, textF8, comboBox1};
 		SetEmptyItems.emptyItems(jp);
 	}
 
@@ -193,12 +227,9 @@ public class Supplier extends javax.swing.JFrame {
 		boolean isNameInvolved = false;
 		String contact = textF2.getText();
 		boolean isContactIvolved = false;
-		String email = textF3.getText();
-		boolean isEmailInvolved = false;
+		String dealerType = comboBox1.getSelectedItem().toString();
 		String sort = comboBox2.getSelectedItem().toString();
-		String emptype = comboBox1.getSelectedItem().toString();
-		String fromDate = textF10.getText();
-		String toDate = textF11.getText();
+
 		StringBuilder stringquerybuild = new StringBuilder();
 		StringBuilder whereQueryBuilder = new StringBuilder();
 		Vector<String> v = new Vector<String>();
@@ -207,39 +238,20 @@ public class Supplier extends javax.swing.JFrame {
 		String sortQuery = "";
 		String whereQuery = "";
 		if (sort.equals("NAME A-Z")) {
-			sortQuery = "ORDER BY `employee`.`employee_name` ASC";
+			sortQuery = "ORDER BY `supplier`.`supplier_name` ASC";
 		} else if (sort.equals("NAME Z-A")) {
-			sortQuery = "ORDER BY `employee`.`employee_name` DESC";
-		} else if (sort.equals("EMAIL A-Z")) {
-			sortQuery = "ORDER BY `employee`.`employee_email` ASC";
-		} else if (sort.equals("EMAIL Z-A")) {
-			sortQuery = "ORDER BY `employee`.`employee_email` DESC";
-		} else if (sort.equals("GENDER M")) {
-			sortQuery = "AND `gender_name`='Male'";
-		} else if (sort.equals("GENDER F")) {
-			sortQuery = "AND `gender_name`='Female'";
+			sortQuery = "ORDER BY `supplier`.`supplier_name` DESC";
 		}
 		if (!name.isEmpty()) {
-			v.add("`employee_name` LIKE '%" + name + "%' ");
+			v.add("`supplier_name` LIKE '%" + name + "%' ");
 			queriesInvolved = true;
 		}
 		if (!contact.isEmpty()) {
 			v.add("`employee_contact` LIKE '%" + contact + "%' ");
 			queriesInvolved = true;
 		}
-
-		if (!email.isEmpty()) {
-			v.add("`employee_email` LIKE '%" + email + "%' ");
-			queriesInvolved = true;
-		}
-		if (!emptype.equals("Select employee_type")) {
-			v.add("`employee_type_name` = '" + emptype + "' ");
-			queriesInvolved = true;
-		}
-		if (!fromDate.isEmpty() && !toDate.isEmpty()) {
-			String fromTime = fromDate + " 00:00:00";
-			String toTime = toDate + " 00:00:00";
-			v.add("`employee_salary`.`paid_date` BETWEEN '" + fromTime + "' AND '" + toTime + "' ");
+		if (!dealerType.equals("Select dealer_type")) {
+			v.add("`dealer_type_name` LIKE '%" + dealerType + "%' ");
 			queriesInvolved = true;
 		}
 		if (queriesInvolved) {
@@ -264,7 +276,7 @@ public class Supplier extends javax.swing.JFrame {
 		LoadTables lt = new LoadTables(customTable2, query, this.colnames);
 	}
 
-	public void advancedSearch(String name, String contact, String email) {
+	public void advancedSearch(String name, String contact) {
 
 		boolean isNameInvolved = false;
 
@@ -272,7 +284,7 @@ public class Supplier extends javax.swing.JFrame {
 
 		boolean isEmailInvolved = false;
 		String sort = comboBox2.getSelectedItem().toString();
-		String emptype = comboBox1.getSelectedItem().toString();
+		String dealerType = comboBox1.getSelectedItem().toString();
 
 		StringBuilder stringquerybuild = new StringBuilder();
 		StringBuilder whereQueryBuilder = new StringBuilder();
@@ -282,33 +294,20 @@ public class Supplier extends javax.swing.JFrame {
 		String sortQuery = "";
 		String whereQuery = "";
 		if (sort.equals("NAME A-Z")) {
-			sortQuery = "ORDER BY `employee`.`employee_name` ASC";
+			sortQuery = "ORDER BY `supplier`.`supplier_name` ASC";
 		} else if (sort.equals("NAME Z-A")) {
-			sortQuery = "ORDER BY `employee`.`employee_name` DESC";
-		} else if (sort.equals("EMAIL A-Z")) {
-			sortQuery = "ORDER BY `employee`.`employee_email` ASC";
-		} else if (sort.equals("EMAIL Z-A")) {
-			sortQuery = "ORDER BY `employee`.`employee_email` DESC";
-		} else if (sort.equals("GENDER M")) {
-			sortQuery = "AND `gender_name`='Male'";
-		} else if (sort.equals("GENDER F")) {
-			sortQuery = "AND `gender_name`='Female'";
+			sortQuery = "ORDER BY `supplier`.`supplier_name` DESC";
 		}
 		if (!name.isEmpty()) {
-			v.add("`employee_name` LIKE '%" + name + "%' ");
+			v.add("`supplier_name` LIKE '%" + name + "%' ");
 			queriesInvolved = true;
 		}
 		if (!contact.isEmpty()) {
-			v.add("`employee_contact` LIKE '%" + contact + "%' ");
+			v.add("`supplier_contact` LIKE '%" + contact + "%' ");
 			queriesInvolved = true;
 		}
-
-		if (!email.isEmpty()) {
-			v.add("`employee_email` LIKE '%" + email + "%' ");
-			queriesInvolved = true;
-		}
-		if (!emptype.equals("Select employee_type")) {
-			v.add("`employee_type_name` = '" + emptype + "' ");
+		if (!dealerType.equals("Select dealer_type")) {
+			v.add("`dealer_type_name` LIKE '%" + dealerType + "%' ");
 			queriesInvolved = true;
 		}
 		if (queriesInvolved) {
@@ -335,12 +334,10 @@ public class Supplier extends javax.swing.JFrame {
 	}
 
 	private void setValidadions() {
-		String priceregex = "^\\d*([,]\\d*)*([.]\\d*)?";
-		FilterDocRagRegex bonus = new FilterDocRagRegex(textF5, priceregex);
 
-		FilterDocRagRegex amount = new FilterDocRagRegex(textF4, priceregex);
 		String contactregex = "((([0][7][24-8][0-9]{7})|([0][7][24-8][0-9]*))|([0][7][24-8])|[0][7]|[0])";
-		FilterDocRagRegex contact = new FilterDocRagRegex(textF2, contactregex, 10);
+		new FilterDocRagRegex(textF5, contactregex, 10);
+		new FilterDocRagRegex(textF2, contactregex, 10);
 	}
 
 	private void jframeCustmize() {
@@ -371,28 +368,23 @@ public class Supplier extends javax.swing.JFrame {
 		comboBox1.addItemListener(it);
 	}
 
-	private void enterSalary() {
-		String name = textF5.getText();
-		String amount = textF4.getText();
-		String bonus = textF5.getText();
-		String empId = textF8.getText();
-
-		if (name.equals("none")) {
-			Message m = new Message(this, "Please a Select an Employee", "Warning");
-		} else if (amount.isEmpty()) {
-			Message m = new Message(this, "Please a enter amount", "Warning");
-		} else if (bonus.isEmpty()) {
-			Message m = new Message(this, "Please a enter bonus", "Warning");
+	private void enterDealer() {
+		String name = textF4.getText();
+		String contact = textF5.getText();
+		String dealerId = textF8.getText();
+		if (dealerId.isEmpty()) {
+			Message m = new Message(this, "Please a enter a supplier name", "Warning");
+		} else if (name.equals("")) {
+			Message m = new Message(this, "Please a enter a supplier name", "Warning");
+		} else if (contact.isEmpty()) {
+			Message m = new Message(this, "Please a enter contact number ", "Warning");
 		} else {
-			SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
-			String date = sdf.format(new Date());
-			ArrayList<String> info = new ArrayList<>();
-			info.add(bonus);
-			info.add(empId);
-			info.add(amount);
-			info.add(date);
 
-			InsertTable it = new InsertTable("employee_salary", info);
+			ArrayList<String> info = new ArrayList<>();
+			info.add(dealerId);
+			info.add(contact);
+			info.add(name);
+			InsertTable it = new InsertTable("supplier", info);
 			clearFields();
 			loadTable();
 		}
@@ -429,89 +421,91 @@ public class Supplier extends javax.swing.JFrame {
 					String id = customTable2.getValueAt(row, 0).toString();
 					String name = customTable2.getValueAt(row, 1).toString();
 					String emptype = customTable2.getValueAt(row, 2).toString();
-					String contact = customTable2.getValueAt(row, 3).toString();
+					String contact = customTable2.getValueAt(row, 2).toString();
 					String email = customTable2.getValueAt(row, 4).toString();
-					String gender = customTable2.getValueAt(row, 7).toString();
-					String dob = customTable2.getValueAt(row, 9).toString();
-					String city = customTable2.getValueAt(row, 6).toString();
-					ArrayList<String> al = new ArrayList<String>();
-					al.add("employee");
-					al.add("address,employee");
-					al.add("city,address");
+					String gender = customTable2.getValueAt(row, 5).toString();
+					String dealertype = customTable2.getValueAt(row, 6).toString();
+					String dealerName = customTable2.getValueAt(row, 4).toString();
+					//	String dob = customTable2.getValueAt(row, 9).toString();
+					//	String city = customTable2.getValueAt(row, 6).toString();
 
-					SearchTable st = new SearchTable(al);
+					if (isChefInvolved) {
+						chef.textF1.setText(name);
 
-					String whereQuery = st.getTableQuery() + " WHERE `employee_id`='" + id + "'";
-					try {
-						System.out.println(whereQuery);
-						ResultSet rs = MySql.sq(whereQuery);
-						rs.next();
-						String add1 = rs.getString("street_1");
-						String add2 = rs.getString("street_2");
-						HashMap<String, String> hm = new HashMap<String, String>();
-						hm.put("id", id);
-						hm.put("name", name);
-						hm.put("type", emptype);
-						hm.put("contact", contact);
-						hm.put("email", email);
-						hm.put("add1", add1);
-						hm.put("add2", add2);
-						hm.put("city", city);
-						hm.put("gender", gender);
-						hm.put("dob", dob);
-						if (isChefInvolved) {
-							chef.textF1.setText(name);
+						chef.textF3.setText(email);
+						chef.setEnabled(true);
+						chef.empId = id;
+						thiset.dispose();
+					} else if (isMangerInvolved) {
+						manager.textF1.setText(name);
 
-							chef.textF3.setText(email);
-							chef.setEnabled(true);
-							chef.empId = id;
-							thiset.dispose();
-						} else if (isMangerInvolved) {
-							manager.textF1.setText(name);
+						manager.textF3.setText(email);
+						manager.setEnabled(true);
+						manager.empId = id;
+						thiset.dispose();
+					} else if (isServerInvolved) {
+						server.textF1.setText(name);
 
-							manager.textF3.setText(email);
-							manager.setEnabled(true);
-							manager.empId = id;
-							thiset.dispose();
-						} else if (isServerInvolved) {
-							server.textF1.setText(name);
+						server.textF3.setText(email);
+						server.setEnabled(true);
+						server.empId = id;
+						thiset.dispose();
+					} else if (isCleanerInvolved) {
+						cleaner.textF1.setText(name);
 
-							server.textF3.setText(email);
-							server.setEnabled(true);
-							server.empId = id;
-							thiset.dispose();
-						} else if (isCleanerInvolved) {
-							cleaner.textF1.setText(name);
+						cleaner.textF3.setText(email);
+						cleaner.setEnabled(true);
+						cleaner.empId = id;
+						thiset.dispose();
+					} else if (isBartenderInvolved) {
+						bartender.textF1.setText(name);
 
-							cleaner.textF3.setText(email);
-							cleaner.setEnabled(true);
-							cleaner.empId = id;
-							thiset.dispose();
-						} else if (isBartenderInvolved) {
-							bartender.textF1.setText(name);
+						bartender.textF3.setText(email);
+						bartender.setEnabled(true);
+						bartender.empId = id;
+						thiset.dispose();
+					} else if (isCashierInvolved) {
+						cashier.textF1.setText(name);
 
-							bartender.textF3.setText(email);
-							bartender.setEnabled(true);
-							bartender.empId = id;
-							thiset.dispose();
-						} else if (isCashierInvolved) {
-							cashier.textF1.setText(name);
+						cashier.textF3.setText(email);
+						cashier.setEnabled(true);
+						cashier.empId = id;
+						thiset.dispose();
+					} else if (isFRNInvolved) {
+						try {
+							frn.textF4.setText(id);
+							frn.textF5.setText(name);
+							frn.textF6.setText(dealerName);
+							frn.textF1.setText("");
+							frn.textF2.setText("");
+							
+							frn.textF7.setText(dealertype);
+							frn.customButton2.setEnabled(true);
+							frn.jPanel4.setEnabled(true);
+							String dId = TypeIds.getId("dealer_type", dealertype);
+							String fId = TypeIds.getId("food_item_category", "dealer_type_id", dId);
+							ResultSet rs;
+							try {
+								rs = MySql.sq("SELECT * FROM `food_item_category` WHERE `food_item_category_id`='" + fId + "'");
+								rs.next();
+								String fooItemTypeName = rs.getString("food_item_category_name");
+								frn.textF3.setText(fooItemTypeName);
+								frn.foodItemType = fooItemTypeName;
+								thiset.dispose();
 
-							cashier.textF3.setText(email);
-							cashier.setEnabled(true);
-							cashier.empId = id;
-							thiset.dispose();
-						} else {
+							} catch (ClassNotFoundException ex) {
+								Logger.getLogger(Supplier.class.getName()).log(Level.SEVERE, null, ex);
+							}
 
-							isUpdateStatus = false;
-							thiset.dispose();
+						} catch (SQLException ex) {
+							Logger.getLogger(Supplier.class.getName()).log(Level.SEVERE, null, ex);
 						}
+					} else {
 
-					} catch (ClassNotFoundException ex) {
-						Logger.getLogger(Supplier.class.getName()).log(Level.SEVERE, null, ex);
-					} catch (SQLException ex) {
-						Logger.getLogger(Supplier.class.getName()).log(Level.SEVERE, null, ex);
+						isUpdateStatus = false;
+						thiset.dispose();
 					}
+
 				}
 			}
 
@@ -557,21 +551,13 @@ public class Supplier extends javax.swing.JFrame {
                 jPanel9 = new javax.swing.JPanel();
                 textF1 = new frameutil.TextF();
                 textF2 = new frameutil.TextF();
-                textF3 = new frameutil.TextF();
-                jLabel4 = new javax.swing.JLabel();
                 jLabel3 = new javax.swing.JLabel();
                 jLabel2 = new javax.swing.JLabel();
                 jPanel4 = new javax.swing.JPanel();
                 customButton4 = new frameutil.CustomButton();
                 comboBox2 = new frameutil.ComboBox<>();
                 jLabel5 = new javax.swing.JLabel();
-                textF10 = new frameutil.TextF();
-                jDateChooser1 = new com.toedter.calendar.JDateChooser();
-                jLabel6 = new javax.swing.JLabel();
-                jLabel7 = new javax.swing.JLabel();
-                textF11 = new frameutil.TextF();
-                jDateChooser2 = new com.toedter.calendar.JDateChooser();
-                comboBox1 = new frameutil.ComboBox();
+                comboBox1 = new frameutil.ComboBox<>();
                 jPanel11 = new javax.swing.JPanel();
                 customButton3 = new frameutil.CustomButton();
                 customButton5 = new frameutil.CustomButton();
@@ -666,7 +652,7 @@ public class Supplier extends javax.swing.JFrame {
                                 {null, null, null, null, null, null, null}
                         },
                         new String [] {
-                                "E_Id", "Name", "E_Type", "Email", "Amount", "Bonus", "Date"
+                                "Sup_ID", "Sup_Name", "Sup_Contact", "Dea_Email", "Dea_Name", "Dea_Contact", "Dea_Type"
                         }
                 ));
                 customTable2.getTableHeader().setReorderingAllowed(false);
@@ -688,7 +674,7 @@ public class Supplier extends javax.swing.JFrame {
                         jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                         .addGroup(jPanel2Layout.createSequentialGroup()
                                 .addContainerGap()
-                                .addComponent(jScrollPane2, javax.swing.GroupLayout.PREFERRED_SIZE, 173, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                .addComponent(jScrollPane2, javax.swing.GroupLayout.PREFERRED_SIZE, 206, javax.swing.GroupLayout.PREFERRED_SIZE)
                                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
                 );
 
@@ -777,16 +763,11 @@ public class Supplier extends javax.swing.JFrame {
                                                                 .addComponent(jLabel14)
                                                                 .addGap(0, 0, Short.MAX_VALUE)))))
                                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                                .addGroup(jPanel8Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                                        .addGroup(jPanel8Layout.createSequentialGroup()
-                                                .addGap(0, 366, Short.MAX_VALUE)
-                                                .addComponent(customButton2, javax.swing.GroupLayout.PREFERRED_SIZE, 96, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                                .addGap(91, 91, 91))
-                                        .addGroup(jPanel8Layout.createSequentialGroup()
-                                                .addGroup(jPanel8Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                                                        .addComponent(textF6, javax.swing.GroupLayout.DEFAULT_SIZE, 137, Short.MAX_VALUE)
-                                                        .addComponent(jLabel8, javax.swing.GroupLayout.PREFERRED_SIZE, 103, javax.swing.GroupLayout.PREFERRED_SIZE))
-                                                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))))
+                                .addGroup(jPanel8Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                                        .addComponent(textF6, javax.swing.GroupLayout.DEFAULT_SIZE, 137, Short.MAX_VALUE)
+                                        .addComponent(jLabel8, javax.swing.GroupLayout.PREFERRED_SIZE, 103, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                        .addComponent(customButton2, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                                .addContainerGap(416, Short.MAX_VALUE))
                 );
                 jPanel8Layout.setVerticalGroup(
                         jPanel8Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -807,17 +788,13 @@ public class Supplier extends javax.swing.JFrame {
                                                 .addComponent(textF6, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)))
                                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                                 .addGroup(jPanel8Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                                        .addGroup(jPanel8Layout.createSequentialGroup()
-                                                .addGap(23, 23, 23)
-                                                .addComponent(customButton2, javax.swing.GroupLayout.PREFERRED_SIZE, 24, javax.swing.GroupLayout.PREFERRED_SIZE))
-                                        .addGroup(jPanel8Layout.createSequentialGroup()
-                                                .addGroup(jPanel8Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                                                        .addComponent(jLabel16)
-                                                        .addComponent(jLabel15))
-                                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                                                .addGroup(jPanel8Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                                                        .addComponent(textF4, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                                        .addComponent(textF5, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))))
+                                        .addComponent(jLabel16)
+                                        .addComponent(jLabel15))
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                .addGroup(jPanel8Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                                        .addComponent(textF4, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                        .addComponent(textF5, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                        .addComponent(customButton2, javax.swing.GroupLayout.PREFERRED_SIZE, 24, javax.swing.GroupLayout.PREFERRED_SIZE))
                                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
                 );
 
@@ -836,16 +813,6 @@ public class Supplier extends javax.swing.JFrame {
                                 textF2KeyTyped(evt);
                         }
                 });
-
-                textF3.addKeyListener(new java.awt.event.KeyAdapter() {
-                        public void keyTyped(java.awt.event.KeyEvent evt) {
-                                textF3KeyTyped(evt);
-                        }
-                });
-
-                jLabel4.setFont(new java.awt.Font("Segoe UI", 1, 12)); // NOI18N
-                jLabel4.setForeground(new java.awt.Color(255, 255, 255));
-                jLabel4.setText("Email");
 
                 jLabel3.setFont(new java.awt.Font("Segoe UI", 1, 12)); // NOI18N
                 jLabel3.setForeground(new java.awt.Color(255, 255, 255));
@@ -867,7 +834,7 @@ public class Supplier extends javax.swing.JFrame {
                 });
                 jPanel4.add(customButton4, "card2");
 
-                comboBox2.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "NAME A-Z", "NAME Z-A", "EMAIL A-Z", "EMAIL Z-A", "GENDER M", "GENDER F" }));
+                comboBox2.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "NAME A-Z", "NAME Z-A" }));
                 comboBox2.addItemListener(new java.awt.event.ItemListener() {
                         public void itemStateChanged(java.awt.event.ItemEvent evt) {
                                 comboBox2ItemStateChanged(evt);
@@ -877,60 +844,6 @@ public class Supplier extends javax.swing.JFrame {
                 jLabel5.setFont(new java.awt.Font("Segoe UI", 1, 12)); // NOI18N
                 jLabel5.setForeground(new java.awt.Color(255, 255, 255));
                 jLabel5.setText("Employee");
-
-                textF10.addFocusListener(new java.awt.event.FocusAdapter() {
-                        public void focusGained(java.awt.event.FocusEvent evt) {
-                                textF10FocusGained(evt);
-                        }
-                        public void focusLost(java.awt.event.FocusEvent evt) {
-                                textF10FocusLost(evt);
-                        }
-                });
-                textF10.addMouseListener(new java.awt.event.MouseAdapter() {
-                        public void mouseClicked(java.awt.event.MouseEvent evt) {
-                                textF10MouseClicked(evt);
-                        }
-                });
-
-                jDateChooser1.setBackground(new java.awt.Color(0, 102, 255));
-                jDateChooser1.setForeground(new java.awt.Color(255, 255, 255));
-                jDateChooser1.setIcon(null);
-                jDateChooser1.addPropertyChangeListener(new java.beans.PropertyChangeListener() {
-                        public void propertyChange(java.beans.PropertyChangeEvent evt) {
-                                jDateChooser1PropertyChange(evt);
-                        }
-                });
-
-                jLabel6.setFont(new java.awt.Font("Segoe UI", 1, 12)); // NOI18N
-                jLabel6.setForeground(new java.awt.Color(255, 255, 255));
-                jLabel6.setText("From");
-
-                jLabel7.setFont(new java.awt.Font("Segoe UI", 1, 12)); // NOI18N
-                jLabel7.setForeground(new java.awt.Color(255, 255, 255));
-                jLabel7.setText("To");
-
-                textF11.addFocusListener(new java.awt.event.FocusAdapter() {
-                        public void focusGained(java.awt.event.FocusEvent evt) {
-                                textF11FocusGained(evt);
-                        }
-                        public void focusLost(java.awt.event.FocusEvent evt) {
-                                textF11FocusLost(evt);
-                        }
-                });
-                textF11.addMouseListener(new java.awt.event.MouseAdapter() {
-                        public void mouseClicked(java.awt.event.MouseEvent evt) {
-                                textF11MouseClicked(evt);
-                        }
-                });
-
-                jDateChooser2.setBackground(new java.awt.Color(0, 102, 255));
-                jDateChooser2.setForeground(new java.awt.Color(255, 255, 255));
-                jDateChooser2.setIcon(null);
-                jDateChooser2.addPropertyChangeListener(new java.beans.PropertyChangeListener() {
-                        public void propertyChange(java.beans.PropertyChangeEvent evt) {
-                                jDateChooser2PropertyChange(evt);
-                        }
-                });
 
                 comboBox1.addItemListener(new java.awt.event.ItemListener() {
                         public void itemStateChanged(java.awt.event.ItemEvent evt) {
@@ -945,81 +858,42 @@ public class Supplier extends javax.swing.JFrame {
                         .addGroup(jPanel9Layout.createSequentialGroup()
                                 .addContainerGap()
                                 .addGroup(jPanel9Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                                        .addGroup(jPanel9Layout.createSequentialGroup()
-                                                .addGroup(jPanel9Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                                                        .addGroup(jPanel9Layout.createSequentialGroup()
-                                                                .addComponent(textF1, javax.swing.GroupLayout.PREFERRED_SIZE, 152, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                                                .addGap(18, 18, 18)
-                                                                .addComponent(textF2, javax.swing.GroupLayout.PREFERRED_SIZE, 153, javax.swing.GroupLayout.PREFERRED_SIZE))
-                                                        .addGroup(jPanel9Layout.createSequentialGroup()
-                                                                .addComponent(jLabel2, javax.swing.GroupLayout.PREFERRED_SIZE, 60, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                                                .addGap(112, 112, 112)
-                                                                .addComponent(jLabel3, javax.swing.GroupLayout.PREFERRED_SIZE, 60, javax.swing.GroupLayout.PREFERRED_SIZE)))
-                                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                                                .addGroup(jPanel9Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                                                        .addComponent(textF3, javax.swing.GroupLayout.PREFERRED_SIZE, 153, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                                        .addComponent(jLabel4, javax.swing.GroupLayout.PREFERRED_SIZE, 60, javax.swing.GroupLayout.PREFERRED_SIZE)))
                                         .addComponent(jLabel5, javax.swing.GroupLayout.PREFERRED_SIZE, 60, javax.swing.GroupLayout.PREFERRED_SIZE)
                                         .addGroup(jPanel9Layout.createSequentialGroup()
                                                 .addComponent(comboBox1, javax.swing.GroupLayout.PREFERRED_SIZE, 152, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                                .addGap(17, 17, 17)
+                                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                                                 .addComponent(comboBox2, javax.swing.GroupLayout.PREFERRED_SIZE, 124, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                                                .addComponent(jPanel4, javax.swing.GroupLayout.PREFERRED_SIZE, 89, javax.swing.GroupLayout.PREFERRED_SIZE)))
-                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                                .addGroup(jPanel9Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                                                .addGap(11, 11, 11)
+                                                .addComponent(jPanel4, javax.swing.GroupLayout.PREFERRED_SIZE, 89, javax.swing.GroupLayout.PREFERRED_SIZE))
                                         .addGroup(jPanel9Layout.createSequentialGroup()
                                                 .addGroup(jPanel9Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                                                        .addComponent(jLabel6)
-                                                        .addGroup(jPanel9Layout.createSequentialGroup()
-                                                                .addComponent(textF10, javax.swing.GroupLayout.PREFERRED_SIZE, 157, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 12, Short.MAX_VALUE)
-                                                                .addComponent(jDateChooser1, javax.swing.GroupLayout.PREFERRED_SIZE, 26, javax.swing.GroupLayout.PREFERRED_SIZE)))
-                                                .addGap(185, 185, 185))
-                                        .addGroup(jPanel9Layout.createSequentialGroup()
+                                                        .addComponent(textF1, javax.swing.GroupLayout.PREFERRED_SIZE, 152, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                                        .addComponent(jLabel2, javax.swing.GroupLayout.PREFERRED_SIZE, 60, javax.swing.GroupLayout.PREFERRED_SIZE))
+                                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                                                 .addGroup(jPanel9Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                                                        .addComponent(jLabel7)
-                                                        .addGroup(jPanel9Layout.createSequentialGroup()
-                                                                .addComponent(textF11, javax.swing.GroupLayout.PREFERRED_SIZE, 157, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                                                                .addComponent(jDateChooser2, javax.swing.GroupLayout.PREFERRED_SIZE, 26, javax.swing.GroupLayout.PREFERRED_SIZE)))
-                                                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))))
+                                                        .addComponent(jLabel3, javax.swing.GroupLayout.PREFERRED_SIZE, 60, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                                        .addComponent(textF2, javax.swing.GroupLayout.PREFERRED_SIZE, 153, javax.swing.GroupLayout.PREFERRED_SIZE))))
+                                .addContainerGap(486, Short.MAX_VALUE))
                 );
                 jPanel9Layout.setVerticalGroup(
                         jPanel9Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                         .addGroup(jPanel9Layout.createSequentialGroup()
                                 .addContainerGap()
-                                .addGroup(jPanel9Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                                        .addGroup(jPanel9Layout.createSequentialGroup()
-                                                .addGroup(jPanel9Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                                                        .addComponent(jLabel2)
-                                                        .addComponent(jLabel3)
-                                                        .addComponent(jLabel4))
-                                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                                                .addGroup(jPanel9Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                                                        .addComponent(textF1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                                        .addComponent(textF2, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                                        .addComponent(textF3, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                                                .addGap(6, 6, 6)
-                                                .addComponent(jLabel5)
-                                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                                                .addGroup(jPanel9Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                                                        .addGroup(jPanel9Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                                                                .addComponent(comboBox2, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                                                .addComponent(comboBox1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                                                        .addComponent(jPanel4, javax.swing.GroupLayout.PREFERRED_SIZE, 0, Short.MAX_VALUE)))
-                                        .addGroup(jPanel9Layout.createSequentialGroup()
-                                                .addComponent(jLabel6)
-                                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                                                .addGroup(jPanel9Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                                                        .addComponent(jDateChooser1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                                                        .addComponent(textF10, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
-                                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                                                .addComponent(jLabel7)
-                                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                                                .addGroup(jPanel9Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                                                        .addComponent(jDateChooser2, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                                                        .addComponent(textF11, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))))
+                                .addGroup(jPanel9Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                                        .addComponent(jLabel2)
+                                        .addComponent(jLabel3))
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                .addGroup(jPanel9Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                                        .addComponent(textF1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                        .addComponent(textF2, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                                .addGap(6, 6, 6)
+                                .addComponent(jLabel5)
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                .addGroup(jPanel9Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                                        .addGroup(jPanel9Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                                                .addComponent(comboBox2, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                                .addComponent(comboBox1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                                        .addComponent(jPanel4, javax.swing.GroupLayout.PREFERRED_SIZE, 0, Short.MAX_VALUE))
                                 .addContainerGap(7, Short.MAX_VALUE))
                 );
 
@@ -1112,7 +986,12 @@ public class Supplier extends javax.swing.JFrame {
 
     private void closeLabelMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_closeLabelMouseClicked
 	    // TODO add your handling code here:
-	    System.exit(0);
+	    if(otherFramesInvolved){
+		thiset.dispose();
+	    }else{
+		  System.exit(0);   
+	    }
+	    
     }//GEN-LAST:event_closeLabelMouseClicked
 
     private void closeLabelMouseEntered(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_closeLabelMouseEntered
@@ -1156,25 +1035,17 @@ public class Supplier extends javax.swing.JFrame {
 		// TODO add your handling code here:
 		String name = textF1.getText() + evt.getKeyChar();
 		String contact = textF2.getText();
-		String email = textF3.getText();
-		advancedSearch(name, contact, email);
+
+		advancedSearch(name, contact);
         }//GEN-LAST:event_textF1KeyTyped
 
         private void textF2KeyTyped(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_textF2KeyTyped
 		// TODO add your handling code here:
 		String name = textF1.getText();
 		String contact = textF2.getText() + evt.getKeyChar();
-		String email = textF3.getText();
-		advancedSearch(name, contact, email);
-        }//GEN-LAST:event_textF2KeyTyped
 
-        private void textF3KeyTyped(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_textF3KeyTyped
-		// TODO add your handling code here:
-		String name = textF1.getText();
-		String contact = textF2.getText();
-		String email = textF3.getText() + evt.getKeyChar();
-		advancedSearch(name, contact, email);
-        }//GEN-LAST:event_textF3KeyTyped
+		advancedSearch(name, contact);
+        }//GEN-LAST:event_textF2KeyTyped
 
         private void comboBox2ItemStateChanged(java.awt.event.ItemEvent evt) {//GEN-FIRST:event_comboBox2ItemStateChanged
 		// TODO add your handling code here:
@@ -1191,7 +1062,7 @@ public class Supplier extends javax.swing.JFrame {
 
         private void customButton2ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_customButton2ActionPerformed
 		// TODO add your handling code here:
-		enterSalary();
+		enterDealer();
 
         }//GEN-LAST:event_customButton2ActionPerformed
 
@@ -1209,58 +1080,6 @@ public class Supplier extends javax.swing.JFrame {
 		enterMode();
 
         }//GEN-LAST:event_customButton5ActionPerformed
-
-        private void textF10FocusGained(java.awt.event.FocusEvent evt) {//GEN-FIRST:event_textF10FocusGained
-		// TODO add your handling code here:
-		jDateChooser1.setVisible(true);
-        }//GEN-LAST:event_textF10FocusGained
-
-        private void textF10FocusLost(java.awt.event.FocusEvent evt) {//GEN-FIRST:event_textF10FocusLost
-		// TODO add your handling code here:
-		jDateChooser1.setVisible(false);
-        }//GEN-LAST:event_textF10FocusLost
-
-        private void textF10MouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_textF10MouseClicked
-		// TODO add your handling code here:
-        }//GEN-LAST:event_textF10MouseClicked
-
-        private void jDateChooser1PropertyChange(java.beans.PropertyChangeEvent evt) {//GEN-FIRST:event_jDateChooser1PropertyChange
-		// TODO add your handling code here:
-		SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
-		String d = sdf.format(new Date());
-		if (jDateChooser1.getDate() != null) {
-
-			textF10.setText(sdf.format(jDateChooser1.getDate()).toString());
-			advancedSearch();
-
-		}
-        }//GEN-LAST:event_jDateChooser1PropertyChange
-
-        private void textF11FocusGained(java.awt.event.FocusEvent evt) {//GEN-FIRST:event_textF11FocusGained
-		// TODO add your handling code here:
-		jDateChooser2.setVisible(true);
-        }//GEN-LAST:event_textF11FocusGained
-
-        private void textF11FocusLost(java.awt.event.FocusEvent evt) {//GEN-FIRST:event_textF11FocusLost
-		// TODO add your handling code here:
-		jDateChooser2.setVisible(false);
-        }//GEN-LAST:event_textF11FocusLost
-
-        private void textF11MouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_textF11MouseClicked
-		// TODO add your handling code here:
-        }//GEN-LAST:event_textF11MouseClicked
-
-        private void jDateChooser2PropertyChange(java.beans.PropertyChangeEvent evt) {//GEN-FIRST:event_jDateChooser2PropertyChange
-		// TODO add your handling code here:
-		SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
-		String d = sdf.format(new Date());
-		if (jDateChooser2.getDate() != null) {
-
-			textF11.setText(sdf.format(jDateChooser2.getDate()).toString());
-			advancedSearch();
-
-		}
-        }//GEN-LAST:event_jDateChooser2PropertyChange
 
         private void comboBox1ItemStateChanged(java.awt.event.ItemEvent evt) {//GEN-FIRST:event_comboBox1ItemStateChanged
 		// TODO add your handling code here:
@@ -1436,7 +1255,7 @@ public class Supplier extends javax.swing.JFrame {
         // Variables declaration - do not modify//GEN-BEGIN:variables
         private javax.swing.JLabel boxLabel;
         private javax.swing.JLabel closeLabel;
-        private frameutil.ComboBox comboBox1;
+        private frameutil.ComboBox<String> comboBox1;
         private frameutil.ComboBox<String> comboBox2;
         private frameutil.CustomButton customButton1;
         private frameutil.CustomButton customButton2;
@@ -1444,8 +1263,6 @@ public class Supplier extends javax.swing.JFrame {
         private frameutil.CustomButton customButton4;
         private frameutil.CustomButton customButton5;
         private frameutil.CustomTable customTable2;
-        private com.toedter.calendar.JDateChooser jDateChooser1;
-        private com.toedter.calendar.JDateChooser jDateChooser2;
         private javax.swing.JLabel jLabel1;
         public javax.swing.JLabel jLabel10;
         public javax.swing.JLabel jLabel14;
@@ -1453,10 +1270,7 @@ public class Supplier extends javax.swing.JFrame {
         public javax.swing.JLabel jLabel16;
         private javax.swing.JLabel jLabel2;
         private javax.swing.JLabel jLabel3;
-        private javax.swing.JLabel jLabel4;
         private javax.swing.JLabel jLabel5;
-        private javax.swing.JLabel jLabel6;
-        private javax.swing.JLabel jLabel7;
         public javax.swing.JLabel jLabel8;
         private javax.swing.JPanel jPanel1;
         private javax.swing.JPanel jPanel11;
@@ -1472,10 +1286,7 @@ public class Supplier extends javax.swing.JFrame {
         private RoundedPanel roundedPanel1;
         private RoundedPanel roundedPanel2;
         private frameutil.TextF textF1;
-        private frameutil.TextF textF10;
-        private frameutil.TextF textF11;
         private frameutil.TextF textF2;
-        private frameutil.TextF textF3;
         private frameutil.TextF textF4;
         private frameutil.TextF textF5;
         public frameutil.TextF textF6;

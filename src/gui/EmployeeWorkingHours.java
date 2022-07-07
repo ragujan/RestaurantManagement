@@ -373,6 +373,10 @@ public class EmployeeWorkingHours extends javax.swing.JFrame {
 //		FilterDocRagRegex amount = new FilterDocRagRegex(textF4, priceregex);
 		String contactregex = "((([0][7][24-8][0-9]{7})|([0][7][24-8][0-9]*))|([0][7][24-8])|[0][7]|[0])";
 		FilterDocRagRegex contact = new FilterDocRagRegex(textF2, contactregex, 10);
+		
+		String dobRegex = "[0-9][0-9][0-9][0-9]-[0-9][0-9]-[0-9][0-9]";
+		FilterDocRagRegex dob = new FilterDocRagRegex(textF4, dobRegex);
+		dob = new FilterDocRagRegex(textF5, dobRegex);
 	}
 
 	private void jframeCustmize() {
@@ -626,14 +630,14 @@ public class EmployeeWorkingHours extends javax.swing.JFrame {
                 jLabel16 = new javax.swing.JLabel();
                 textF4 = new frameutil.TextF();
                 jLabel15 = new javax.swing.JLabel();
-                textF5 = new frameutil.TextF();
                 jLabel8 = new javax.swing.JLabel();
-                onHours = new frameutil.ComboBox();
-                onMins = new frameutil.ComboBox();
-                offHours = new frameutil.ComboBox();
-                offMins = new frameutil.ComboBox();
+                onHours = new frameutil.ComboBox<>();
+                onMins = new frameutil.ComboBox<>();
+                offHours = new frameutil.ComboBox<>();
+                offMins = new frameutil.ComboBox<>();
                 jDateChooser3 = new com.toedter.calendar.JDateChooser();
                 jDateChooser4 = new com.toedter.calendar.JDateChooser();
+                textF5 = new frameutil.TextF();
                 jPanel9 = new javax.swing.JPanel();
                 textF1 = new frameutil.TextF();
                 textF2 = new frameutil.TextF();
@@ -651,7 +655,7 @@ public class EmployeeWorkingHours extends javax.swing.JFrame {
                 jLabel7 = new javax.swing.JLabel();
                 textF11 = new frameutil.TextF();
                 jDateChooser2 = new com.toedter.calendar.JDateChooser();
-                comboBox1 = new frameutil.ComboBox();
+                comboBox1 = new frameutil.ComboBox<>();
                 jPanel11 = new javax.swing.JPanel();
                 customButton3 = new frameutil.CustomButton();
                 customButton5 = new frameutil.CustomButton();
@@ -840,15 +844,6 @@ public class EmployeeWorkingHours extends javax.swing.JFrame {
                 jLabel15.setForeground(new java.awt.Color(255, 255, 255));
                 jLabel15.setText("Off");
 
-                textF5.addFocusListener(new java.awt.event.FocusAdapter() {
-                        public void focusGained(java.awt.event.FocusEvent evt) {
-                                textF5FocusGained(evt);
-                        }
-                        public void focusLost(java.awt.event.FocusEvent evt) {
-                                textF5FocusLost(evt);
-                        }
-                });
-
                 jLabel8.setFont(new java.awt.Font("Segoe UI", 1, 12)); // NOI18N
                 jLabel8.setForeground(new java.awt.Color(255, 255, 255));
                 jLabel8.setText("Name");
@@ -871,6 +866,15 @@ public class EmployeeWorkingHours extends javax.swing.JFrame {
                         }
                 });
 
+                textF5.addFocusListener(new java.awt.event.FocusAdapter() {
+                        public void focusGained(java.awt.event.FocusEvent evt) {
+                                textF5FocusGained(evt);
+                        }
+                        public void focusLost(java.awt.event.FocusEvent evt) {
+                                textF5FocusLost(evt);
+                        }
+                });
+
                 javax.swing.GroupLayout jPanel8Layout = new javax.swing.GroupLayout(jPanel8);
                 jPanel8.setLayout(jPanel8Layout);
                 jPanel8Layout.setHorizontalGroup(
@@ -889,11 +893,11 @@ public class EmployeeWorkingHours extends javax.swing.JFrame {
                                         .addComponent(textF7, javax.swing.GroupLayout.DEFAULT_SIZE, 172, Short.MAX_VALUE)
                                         .addComponent(textF9, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
                                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                                .addGroup(jPanel8Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                                        .addComponent(textF5, javax.swing.GroupLayout.DEFAULT_SIZE, 172, Short.MAX_VALUE)
+                                .addGroup(jPanel8Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                                         .addComponent(jLabel15)
-                                        .addComponent(textF4, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                                        .addComponent(jLabel16))
+                                        .addComponent(textF4, javax.swing.GroupLayout.PREFERRED_SIZE, 172, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                        .addComponent(jLabel16)
+                                        .addComponent(textF5, javax.swing.GroupLayout.PREFERRED_SIZE, 172, javax.swing.GroupLayout.PREFERRED_SIZE))
                                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                                 .addGroup(jPanel8Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                                         .addComponent(jDateChooser3, javax.swing.GroupLayout.PREFERRED_SIZE, 26, javax.swing.GroupLayout.PREFERRED_SIZE)
@@ -904,7 +908,7 @@ public class EmployeeWorkingHours extends javax.swing.JFrame {
                                         .addComponent(offHours, javax.swing.GroupLayout.PREFERRED_SIZE, 80, javax.swing.GroupLayout.PREFERRED_SIZE))
                                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                                 .addGroup(jPanel8Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                                        .addComponent(offMins, javax.swing.GroupLayout.DEFAULT_SIZE, 110, Short.MAX_VALUE)
+                                        .addComponent(offMins, javax.swing.GroupLayout.DEFAULT_SIZE, 116, Short.MAX_VALUE)
                                         .addComponent(onMins, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
                                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                                 .addComponent(customButton2, javax.swing.GroupLayout.PREFERRED_SIZE, 96, javax.swing.GroupLayout.PREFERRED_SIZE)
@@ -941,9 +945,9 @@ public class EmployeeWorkingHours extends javax.swing.JFrame {
                                                         .addComponent(jLabel15))
                                                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                                                 .addGroup(jPanel8Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                                                        .addComponent(textF5, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                                                         .addComponent(textF9, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                                        .addComponent(textF6, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                                                        .addComponent(textF6, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                                        .addComponent(textF5, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)))
                                         .addGroup(jPanel8Layout.createSequentialGroup()
                                                 .addComponent(jDateChooser3, javax.swing.GroupLayout.PREFERRED_SIZE, 24, javax.swing.GroupLayout.PREFERRED_SIZE)
                                                 .addGap(28, 28, 28)
@@ -1101,14 +1105,14 @@ public class EmployeeWorkingHours extends javax.swing.JFrame {
                                         .addComponent(jLabel6)
                                         .addGroup(jPanel9Layout.createSequentialGroup()
                                                 .addComponent(textF10, javax.swing.GroupLayout.PREFERRED_SIZE, 157, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 14, Short.MAX_VALUE)
+                                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 17, Short.MAX_VALUE)
                                                 .addComponent(jDateChooser1, javax.swing.GroupLayout.PREFERRED_SIZE, 26, javax.swing.GroupLayout.PREFERRED_SIZE))
                                         .addComponent(jLabel7)
                                         .addGroup(jPanel9Layout.createSequentialGroup()
                                                 .addComponent(textF11, javax.swing.GroupLayout.PREFERRED_SIZE, 157, javax.swing.GroupLayout.PREFERRED_SIZE)
                                                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                                                 .addComponent(jDateChooser2, javax.swing.GroupLayout.PREFERRED_SIZE, 26, javax.swing.GroupLayout.PREFERRED_SIZE)))
-                                .addContainerGap(209, Short.MAX_VALUE))
+                                .addContainerGap(212, Short.MAX_VALUE))
                 );
                 jPanel9Layout.setVerticalGroup(
                         jPanel9Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -1184,7 +1188,7 @@ public class EmployeeWorkingHours extends javax.swing.JFrame {
                                                 .addComponent(jPanel3, javax.swing.GroupLayout.PREFERRED_SIZE, 117, javax.swing.GroupLayout.PREFERRED_SIZE)
                                                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                                                 .addComponent(jPanel11, javax.swing.GroupLayout.PREFERRED_SIZE, 117, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                                .addGap(0, 0, Short.MAX_VALUE))
+                                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
                                         .addComponent(jPanel7, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
                                 .addContainerGap())
                 );
@@ -1426,14 +1430,11 @@ public class EmployeeWorkingHours extends javax.swing.JFrame {
         }//GEN-LAST:event_textF4FocusLost
 
         private void textF5FocusGained(java.awt.event.FocusEvent evt) {//GEN-FIRST:event_textF5FocusGained
-		// TODO add your handling code here:
-		jDateChooser4.setVisible(true);
-		
+                // TODO add your handling code here:
         }//GEN-LAST:event_textF5FocusGained
 
         private void textF5FocusLost(java.awt.event.FocusEvent evt) {//GEN-FIRST:event_textF5FocusLost
-		// TODO add your handling code here:
-		jDateChooser4.setVisible(false);
+                // TODO add your handling code here:
         }//GEN-LAST:event_textF5FocusLost
 	boolean emailFieldEntred = false;
 
@@ -1605,7 +1606,7 @@ public class EmployeeWorkingHours extends javax.swing.JFrame {
         // Variables declaration - do not modify//GEN-BEGIN:variables
         private javax.swing.JLabel boxLabel;
         private javax.swing.JLabel closeLabel;
-        private frameutil.ComboBox comboBox1;
+        private frameutil.ComboBox<String> comboBox1;
         private frameutil.ComboBox<String> comboBox2;
         private frameutil.CustomButton customButton1;
         private frameutil.CustomButton customButton2;
@@ -1641,10 +1642,10 @@ public class EmployeeWorkingHours extends javax.swing.JFrame {
         private javax.swing.JPanel jPanel9;
         private javax.swing.JScrollPane jScrollPane2;
         private javax.swing.JLabel miniLabel;
-        private frameutil.ComboBox offHours;
-        private frameutil.ComboBox offMins;
-        private frameutil.ComboBox onHours;
-        private frameutil.ComboBox onMins;
+        private frameutil.ComboBox<String> offHours;
+        private frameutil.ComboBox<String> offMins;
+        private frameutil.ComboBox<String> onHours;
+        private frameutil.ComboBox<String> onMins;
         private RoundedPanel roundedPanel1;
         private RoundedPanel roundedPanel2;
         private frameutil.TextF textF1;
