@@ -29,6 +29,7 @@ import javax.swing.JComponent;
 import javax.swing.JFrame;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
+import javax.swing.table.DefaultTableModel;
 import model.MySql;
 
 /*
@@ -180,7 +181,6 @@ public class Supplier extends javax.swing.JFrame {
 	Bartender bartender;
 	Cashier cashier;
 	FRN frn;
-	
 
 	String loadTableQuery;
 	String[] colnames = {"supplier_id", "supplier_name", "supplier_contact", "dealer_email", "dealer_name", "dealer_contact", "dealer_type_name"};
@@ -473,13 +473,14 @@ public class Supplier extends javax.swing.JFrame {
 						thiset.dispose();
 					} else if (isFRNInvolved) {
 						try {
+							//	frn.textF4.setText(id);
 							frn.textF4.setText(id);
 							frn.textF5.setText(name);
 							frn.textF6.setText(dealerName);
+							frn.textF7.setText(dealertype);
 							frn.textF1.setText("");
 							frn.textF2.setText("");
-							
-							frn.textF7.setText(dealertype);
+
 							frn.customButton2.setEnabled(true);
 							frn.jPanel4.setEnabled(true);
 							String dId = TypeIds.getId("dealer_type", dealertype);
@@ -491,6 +492,25 @@ public class Supplier extends javax.swing.JFrame {
 								String fooItemTypeName = rs.getString("food_item_category_name");
 								frn.textF3.setText(fooItemTypeName);
 								frn.foodItemType = fooItemTypeName;
+								DefaultTableModel dftm = (DefaultTableModel) frn.customTable1.getModel();
+								System.out.println(frn.customTable1.getRowCount());
+								if (frn.customTable1.getRowCount() > 0) {
+									frn.textF4.setText(id);
+									frn.textF5.setText(name);
+									frn.textF6.setText(dealerName);
+									frn.textF7.setText(dealertype);
+									frn.textF3.setText(fooItemTypeName);
+									frn.foodItemType = fooItemTypeName;
+									frn.textF1.setText("");
+									frn.textF2.setText("");
+
+									frn.textF8.setText("");
+									frn.textF9.setText("");
+									frn.textF10.setText("");
+									frn.textF11.setText("");
+									dftm.setRowCount(0);
+								}
+
 								thiset.dispose();
 
 							} catch (ClassNotFoundException ex) {
@@ -534,6 +554,7 @@ public class Supplier extends javax.swing.JFrame {
                 customTable2 = new frameutil.CustomTable();
                 jPanel3 = new javax.swing.JPanel();
                 customButton1 = new frameutil.CustomButton();
+                customButton6 = new frameutil.CustomButton();
                 jPanel5 = new javax.swing.JPanel();
                 jPanel7 = new javax.swing.JPanel();
                 jPanel8 = new javax.swing.JPanel();
@@ -548,6 +569,7 @@ public class Supplier extends javax.swing.JFrame {
                 jLabel15 = new javax.swing.JLabel();
                 textF5 = new frameutil.TextF();
                 jLabel8 = new javax.swing.JLabel();
+                jLabel4 = new javax.swing.JLabel();
                 jPanel9 = new javax.swing.JPanel();
                 textF1 = new frameutil.TextF();
                 textF2 = new frameutil.TextF();
@@ -689,6 +711,9 @@ public class Supplier extends javax.swing.JFrame {
                 });
                 jPanel3.add(customButton1, "card2");
 
+                customButton6.setText("Change");
+                jPanel3.add(customButton6, "card3");
+
                 javax.swing.GroupLayout jPanel5Layout = new javax.swing.GroupLayout(jPanel5);
                 jPanel5.setLayout(jPanel5Layout);
                 jPanel5Layout.setHorizontalGroup(
@@ -737,6 +762,8 @@ public class Supplier extends javax.swing.JFrame {
                 jLabel8.setForeground(new java.awt.Color(255, 255, 255));
                 jLabel8.setText("Dealer Name");
 
+                jLabel4.setText("jLabel4");
+
                 javax.swing.GroupLayout jPanel8Layout = new javax.swing.GroupLayout(jPanel8);
                 jPanel8.setLayout(jPanel8Layout);
                 jPanel8Layout.setHorizontalGroup(
@@ -767,7 +794,9 @@ public class Supplier extends javax.swing.JFrame {
                                         .addComponent(textF6, javax.swing.GroupLayout.DEFAULT_SIZE, 137, Short.MAX_VALUE)
                                         .addComponent(jLabel8, javax.swing.GroupLayout.PREFERRED_SIZE, 103, javax.swing.GroupLayout.PREFERRED_SIZE)
                                         .addComponent(customButton2, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
-                                .addContainerGap(416, Short.MAX_VALUE))
+                                .addGap(57, 57, 57)
+                                .addComponent(jLabel4)
+                                .addContainerGap(322, Short.MAX_VALUE))
                 );
                 jPanel8Layout.setVerticalGroup(
                         jPanel8Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -785,7 +814,9 @@ public class Supplier extends javax.swing.JFrame {
                                         .addGroup(jPanel8Layout.createSequentialGroup()
                                                 .addComponent(jLabel8)
                                                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                                                .addComponent(textF6, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                                                .addGroup(jPanel8Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                                                        .addComponent(textF6, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                                        .addComponent(jLabel4))))
                                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                                 .addGroup(jPanel8Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                                         .addComponent(jLabel16)
@@ -986,12 +1017,12 @@ public class Supplier extends javax.swing.JFrame {
 
     private void closeLabelMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_closeLabelMouseClicked
 	    // TODO add your handling code here:
-	    if(otherFramesInvolved){
-		thiset.dispose();
-	    }else{
-		  System.exit(0);   
+	    if (otherFramesInvolved) {
+		    thiset.dispose();
+	    } else {
+		    System.exit(0);
 	    }
-	    
+
     }//GEN-LAST:event_closeLabelMouseClicked
 
     private void closeLabelMouseEntered(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_closeLabelMouseEntered
@@ -1262,6 +1293,7 @@ public class Supplier extends javax.swing.JFrame {
         private frameutil.CustomButton customButton3;
         private frameutil.CustomButton customButton4;
         private frameutil.CustomButton customButton5;
+        private frameutil.CustomButton customButton6;
         private frameutil.CustomTable customTable2;
         private javax.swing.JLabel jLabel1;
         public javax.swing.JLabel jLabel10;
@@ -1270,6 +1302,7 @@ public class Supplier extends javax.swing.JFrame {
         public javax.swing.JLabel jLabel16;
         private javax.swing.JLabel jLabel2;
         private javax.swing.JLabel jLabel3;
+        private javax.swing.JLabel jLabel4;
         private javax.swing.JLabel jLabel5;
         public javax.swing.JLabel jLabel8;
         private javax.swing.JPanel jPanel1;

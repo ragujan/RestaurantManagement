@@ -1010,7 +1010,7 @@ public class EmployeeSalary extends javax.swing.JFrame {
                                                 .addGroup(jPanel9Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
                                                         .addComponent(jDateChooser2, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                                                         .addComponent(textF11, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))))
-                                .addContainerGap(7, Short.MAX_VALUE))
+                                .addContainerGap(19, Short.MAX_VALUE))
                 );
 
                 jPanel7.add(jPanel9, "card3");

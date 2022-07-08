@@ -212,7 +212,7 @@ public class FoodItem extends javax.swing.JFrame {
 			}
 		}
 	}
-
+ 
 	public void tableListernRag() {
 		customTable1.getSelectionModel().addListSelectionListener(new ListSelectionListener() {
 			@Override
@@ -261,11 +261,11 @@ public class FoodItem extends javax.swing.JFrame {
 		String name = textF2.getText();
 		if (comboBox4.getSelectedItem() != null && comboBox3.getSelectedItem() != null) {
 			isSelected = true;
-			System.out.println("Came here so far");
+			
 			containMethod = comboBox4.getSelectedItem().toString();
 			type = comboBox3.getSelectedItem().toString();
 		}
-
+                       
 		StringBuilder stringquerybuild = new StringBuilder();
 		StringBuilder whereQueryBuilder = new StringBuilder();
 		Vector<String> v = new Vector<String>();
@@ -911,7 +911,7 @@ public class FoodItem extends javax.swing.JFrame {
         private void comboBox4PropertyChange(java.beans.PropertyChangeEvent evt) {//GEN-FIRST:event_comboBox4PropertyChange
 		// TODO add your handling code here:
 		//System.out.println(comboBox4.getSelectedItem().toString());
-		System.out.println("HEY ITEM CHANGED1111");
+		
         }//GEN-LAST:event_comboBox4PropertyChange
 
         private void comboBox4ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_comboBox4ActionPerformed
