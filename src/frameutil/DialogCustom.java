@@ -4,52 +4,63 @@
  */
 package frameutil;
 
+import gui.*;
+import frameutil.*;
 import frame.*;
 import frameutil.MainTheme;
 import frameutil.RoundedPanel;
 import java.awt.Color;
 import java.awt.geom.RoundRectangle2D;
+import javax.swing.ImageIcon;
+import javax.swing.JFrame;
 
 /**
  *
  * @author Acer
  */
-public abstract class OptionMessageLegit extends javax.swing.JDialog {
+public class DialogCustom extends javax.swing.JDialog {
 
 	/**
 	 * Creates new form NewJDialog
 	 */
-	public OptionMessageLegit(java.awt.Frame parent, boolean modal) {
+	public DialogCustom(java.awt.Frame parent, boolean modal) {
 		super(parent, modal);
 		initComponents();
 		//this.setUndecorated(true);
 		this.setLocationRelativeTo(null);
 		this.setResizable(true);
 		//this.setVisible(true);
-		setShape(new RoundRectangle2D.Double(0, 0, getWidth(), getHeight(), 25, 25));
+		setShape(new RoundRectangle2D.Double(0, 0, getWidth(), getHeight(), 7, 7));
 
 		//	jLabel2.setText(message);
 		//jLabel2.setForeground(Color.WHITE);
 		//jLabel1.setText(title);
 		roundedPanel1.setBackground(MainTheme.thirdColor);
-		roundedPanel2.setBackground(MainTheme.fourthColor);
-		jLabel1.setForeground(MainTheme.secondColor);
-		jPanel2.setBackground(MainTheme.secondColor);
-		customButton1.setBackground(MainTheme.secondColor);
-		//	this.setVisible(true);
+		roundedPanel2.setBackground(MainTheme.secondColor);
 
+		jLabel1.setForeground(Color.WHITE);
+		closeLabel.setSize(38, 33);
+		jPanel2.setBackground(MainTheme.fourthColor);
+
+		jLabel2.setBackground(Color.WHITE);
+		jframeCustmize();
+
+		//	this.setVisible(true);
 	}
 
-	public OptionMessageLegit(java.awt.Frame parent, String message) {
+	public DialogCustom(java.awt.Frame parent, String message) {
 		this(parent, true);
 		jLabel2.setText(message);
 	}
 
-	public abstract void actionConfirmed();
+	public DialogCustom(java.awt.Frame parent) {
+		this(parent, true);
+		otherFramesInvolved = true;
 
-	public abstract void actionCancelled();
+	}
 	int x = 0;
 	int y = 0;
+	boolean otherFramesInvolved;
 
 	/**
 	 * This method is called from within the constructor to initialize the
@@ -63,9 +74,8 @@ public abstract class OptionMessageLegit extends javax.swing.JDialog {
                 roundedPanel1 = new RoundedPanel();
                 roundedPanel2 = new RoundedPanel();
                 jLabel1 = new javax.swing.JLabel();
+                closeLabel = new javax.swing.JLabel();
                 jPanel2 = new javax.swing.JPanel();
-                customButton1 = new frameutil.CustomButton();
-                customButton2 = new frameutil.CustomButton();
                 jLabel2 = new javax.swing.JLabel();
 
                 setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
@@ -96,6 +106,9 @@ public abstract class OptionMessageLegit extends javax.swing.JDialog {
                 jLabel1.setText("RAG");
                 jLabel1.setToolTipText("");
 
+                closeLabel.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
+                closeLabel.setPreferredSize(new java.awt.Dimension(30, 20));
+
                 javax.swing.GroupLayout roundedPanel2Layout = new javax.swing.GroupLayout(roundedPanel2);
                 roundedPanel2.setLayout(roundedPanel2Layout);
                 roundedPanel2Layout.setHorizontalGroup(
@@ -103,29 +116,21 @@ public abstract class OptionMessageLegit extends javax.swing.JDialog {
                         .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, roundedPanel2Layout.createSequentialGroup()
                                 .addContainerGap()
                                 .addComponent(jLabel1)
-                                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                                .addComponent(closeLabel, javax.swing.GroupLayout.PREFERRED_SIZE, 30, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                .addContainerGap())
                 );
                 roundedPanel2Layout.setVerticalGroup(
                         roundedPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                         .addGroup(roundedPanel2Layout.createSequentialGroup()
                                 .addContainerGap()
-                                .addComponent(jLabel1)
-                                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                                .addGroup(roundedPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                                        .addComponent(closeLabel, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                                        .addGroup(roundedPanel2Layout.createSequentialGroup()
+                                                .addComponent(jLabel1)
+                                                .addGap(0, 0, Short.MAX_VALUE)))
+                                .addContainerGap())
                 );
-
-                customButton1.setText("No");
-                customButton1.addActionListener(new java.awt.event.ActionListener() {
-                        public void actionPerformed(java.awt.event.ActionEvent evt) {
-                                customButton1ActionPerformed(evt);
-                        }
-                });
-
-                customButton2.setText("Yes");
-                customButton2.addActionListener(new java.awt.event.ActionListener() {
-                        public void actionPerformed(java.awt.event.ActionEvent evt) {
-                                customButton2ActionPerformed(evt);
-                        }
-                });
 
                 jLabel2.setFont(new java.awt.Font("Segoe UI", 1, 12)); // NOI18N
                 jLabel2.setForeground(new java.awt.Color(255, 255, 255));
@@ -135,27 +140,16 @@ public abstract class OptionMessageLegit extends javax.swing.JDialog {
                 jPanel2Layout.setHorizontalGroup(
                         jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                         .addGroup(jPanel2Layout.createSequentialGroup()
-                                .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                                        .addGroup(jPanel2Layout.createSequentialGroup()
-                                                .addGap(142, 142, 142)
-                                                .addComponent(customButton2, javax.swing.GroupLayout.PREFERRED_SIZE, 94, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                                .addGap(18, 18, 18)
-                                                .addComponent(customButton1, javax.swing.GroupLayout.PREFERRED_SIZE, 99, javax.swing.GroupLayout.PREFERRED_SIZE))
-                                        .addGroup(jPanel2Layout.createSequentialGroup()
-                                                .addGap(16, 16, 16)
-                                                .addComponent(jLabel2, javax.swing.GroupLayout.PREFERRED_SIZE, 500, javax.swing.GroupLayout.PREFERRED_SIZE)))
-                                .addContainerGap(16, Short.MAX_VALUE))
+                                .addGap(16, 16, 16)
+                                .addComponent(jLabel2, javax.swing.GroupLayout.PREFERRED_SIZE, 500, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                .addContainerGap(304, Short.MAX_VALUE))
                 );
                 jPanel2Layout.setVerticalGroup(
                         jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                         .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel2Layout.createSequentialGroup()
                                 .addGap(25, 25, 25)
-                                .addComponent(jLabel2, javax.swing.GroupLayout.DEFAULT_SIZE, 31, Short.MAX_VALUE)
-                                .addGap(18, 18, 18)
-                                .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                                        .addComponent(customButton1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                        .addComponent(customButton2, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                                .addGap(34, 34, 34))
+                                .addComponent(jLabel2, javax.swing.GroupLayout.DEFAULT_SIZE, 296, Short.MAX_VALUE)
+                                .addGap(84, 84, 84))
                 );
 
                 javax.swing.GroupLayout roundedPanel1Layout = new javax.swing.GroupLayout(roundedPanel1);
@@ -181,11 +175,15 @@ public abstract class OptionMessageLegit extends javax.swing.JDialog {
                 getContentPane().setLayout(layout);
                 layout.setHorizontalGroup(
                         layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                        .addComponent(roundedPanel1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                        .addGroup(layout.createSequentialGroup()
+                                .addComponent(roundedPanel1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                .addGap(0, 0, Short.MAX_VALUE))
                 );
                 layout.setVerticalGroup(
                         layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                        .addComponent(roundedPanel1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                        .addGroup(layout.createSequentialGroup()
+                                .addComponent(roundedPanel1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                .addGap(0, 0, Short.MAX_VALUE))
                 );
 
                 pack();
@@ -203,18 +201,38 @@ public abstract class OptionMessageLegit extends javax.swing.JDialog {
 		x = evt.getX();
 		y = evt.getY();
         }//GEN-LAST:event_roundedPanel2MousePressed
+	private void jframeCustmize() {
 
-        private void customButton1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_customButton1ActionPerformed
-		// TODO add your handling code here:
-		actionCancelled();
-		this.dispose();
-        }//GEN-LAST:event_customButton1ActionPerformed
+		closeLabel.setIcon(labelSetIcon("/Icons/close.png", closeLabel.getWidth() - 22, closeLabel.getHeight() - 14));
 
-        private void customButton2ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_customButton2ActionPerformed
-		// TODO add your handling code here:
-		actionConfirmed();
-		this.dispose();
-        }//GEN-LAST:event_customButton2ActionPerformed
+		closeLabel.addMouseListener(new java.awt.event.MouseAdapter() {
+			@Override
+			public void mouseClicked(java.awt.event.MouseEvent evt) {
+				if (otherFramesInvolved) {
+					dispose();
+				} else {
+					System.exit(0);
+				}
+			}
+
+			public void mouseEntered(java.awt.event.MouseEvent evt) {
+				closeLabel.setOpaque(true);
+				closeLabel.setBackground(MainTheme.mainColor);
+			}
+
+			public void mouseExited(java.awt.event.MouseEvent evt) {
+
+				closeLabel.setBackground(MainTheme.secondColor);
+				closeLabel.setOpaque(false);
+			}
+		});
+	}
+
+	public ImageIcon labelSetIcon(String src, int w, int h) {
+		ImageSizer imgSizer = new ImageSizer();
+		ImageIcon i = imgSizer.overaallResizer(src, w, h);
+		return i;
+	}
 
 	/**
 	 * @param args the command line arguments
@@ -233,34 +251,28 @@ public abstract class OptionMessageLegit extends javax.swing.JDialog {
 				}
 			}
 		} catch (ClassNotFoundException ex) {
-			java.util.logging.Logger.getLogger(OptionMessageLegit.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
+			java.util.logging.Logger.getLogger(DialogCustom.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
 		} catch (InstantiationException ex) {
-			java.util.logging.Logger.getLogger(OptionMessageLegit.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
+			java.util.logging.Logger.getLogger(DialogCustom.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
 		} catch (IllegalAccessException ex) {
-			java.util.logging.Logger.getLogger(OptionMessageLegit.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
+			java.util.logging.Logger.getLogger(DialogCustom.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
 		} catch (javax.swing.UnsupportedLookAndFeelException ex) {
-			java.util.logging.Logger.getLogger(OptionMessageLegit.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
+			java.util.logging.Logger.getLogger(DialogCustom.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
 		}
+		//</editor-fold>
+		//</editor-fold>
+		//</editor-fold>
+		//</editor-fold>
+		//</editor-fold>
+		//</editor-fold>
 		//</editor-fold>
 		//</editor-fold>
 
 		/* Create and display the dialog */
 		java.awt.EventQueue.invokeLater(new Runnable() {
 			public void run() {
-				OptionMessageLegit dialog = new OptionMessageLegit(new javax.swing.JFrame(), true) {
-					@Override
-					public void actionConfirmed() {
-					}
-
-					@Override
-					public void actionCancelled() {
-					}
-				};
+				DialogCustom dialog = new DialogCustom(new javax.swing.JFrame(), true);
 				dialog.addWindowListener(new java.awt.event.WindowAdapter() {
-					@Override
-					public void windowClosing(java.awt.event.WindowEvent e) {
-						System.exit(0);
-					}
 				});
 				dialog.setVisible(true);
 			}
@@ -268,8 +280,7 @@ public abstract class OptionMessageLegit extends javax.swing.JDialog {
 	}
 
         // Variables declaration - do not modify//GEN-BEGIN:variables
-        private frameutil.CustomButton customButton1;
-        private frameutil.CustomButton customButton2;
+        private javax.swing.JLabel closeLabel;
         private javax.swing.JLabel jLabel1;
         private javax.swing.JLabel jLabel2;
         private javax.swing.JPanel jPanel2;

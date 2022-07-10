@@ -22,12 +22,12 @@ import model.MySql;
  *
  * @author acer
  */
-public class Template extends javax.swing.JFrame {
+public class AddMenu extends javax.swing.JFrame {
 
 	/**
 	 * Creates new form NewJFrame
 	 */
-	public Template() {
+	public AddMenu() {
 		initComponents();
 		this.setLocationRelativeTo(null);
 		this.setResizable(true);
@@ -48,14 +48,14 @@ public class Template extends javax.swing.JFrame {
 
 	}
 
-	public Template(DealerT et, HashMap<String, String> hm) {
+	public AddMenu(DealerT et, HashMap<String, String> hm) {
 		this();
 		this.updateId = hm.get("id");
 
 
 	}
 
-	public Template(Chef c) {
+	public AddMenu(Chef c) {
 		this();
 
 	}
@@ -102,9 +102,9 @@ public class Template extends javax.swing.JFrame {
 				
 			}
 		} catch (ClassNotFoundException ex) {
-			Logger.getLogger(Template.class.getName()).log(Level.SEVERE, null, ex);
+			Logger.getLogger(AddMenu.class.getName()).log(Level.SEVERE, null, ex);
 		} catch (SQLException ex) {
-			Logger.getLogger(Template.class.getName()).log(Level.SEVERE, null, ex);
+			Logger.getLogger(AddMenu.class.getName()).log(Level.SEVERE, null, ex);
 		}
 
 	}
@@ -119,9 +119,9 @@ public class Template extends javax.swing.JFrame {
 				
 			}
 		} catch (ClassNotFoundException ex) {
-			Logger.getLogger(Template.class.getName()).log(Level.SEVERE, null, ex);
+			Logger.getLogger(AddMenu.class.getName()).log(Level.SEVERE, null, ex);
 		} catch (SQLException ex) {
-			Logger.getLogger(Template.class.getName()).log(Level.SEVERE, null, ex);
+			Logger.getLogger(AddMenu.class.getName()).log(Level.SEVERE, null, ex);
 		}
 
 	}
@@ -338,21 +338,53 @@ public class Template extends javax.swing.JFrame {
 				}
 			}
 		} catch (ClassNotFoundException ex) {
-			java.util.logging.Logger.getLogger(Template.class
+			java.util.logging.Logger.getLogger(AddMenu.class
 				.getName()).log(java.util.logging.Level.SEVERE, null, ex);
 
 		} catch (InstantiationException ex) {
-			java.util.logging.Logger.getLogger(Template.class
+			java.util.logging.Logger.getLogger(AddMenu.class
 				.getName()).log(java.util.logging.Level.SEVERE, null, ex);
 
 		} catch (IllegalAccessException ex) {
-			java.util.logging.Logger.getLogger(Template.class
+			java.util.logging.Logger.getLogger(AddMenu.class
 				.getName()).log(java.util.logging.Level.SEVERE, null, ex);
 
 		} catch (javax.swing.UnsupportedLookAndFeelException ex) {
-			java.util.logging.Logger.getLogger(Template.class
+			java.util.logging.Logger.getLogger(AddMenu.class
 				.getName()).log(java.util.logging.Level.SEVERE, null, ex);
 		}
+		//</editor-fold>
+		//</editor-fold>
+		//</editor-fold>
+		//</editor-fold>
+		//</editor-fold>
+		//</editor-fold>
+		//</editor-fold>
+		//</editor-fold>
+		//</editor-fold>
+		//</editor-fold>
+		//</editor-fold>
+		//</editor-fold>
+		//</editor-fold>
+		//</editor-fold>
+		//</editor-fold>
+		//</editor-fold>
+		//</editor-fold>
+		//</editor-fold>
+		//</editor-fold>
+		//</editor-fold>
+		//</editor-fold>
+		//</editor-fold>
+		//</editor-fold>
+		//</editor-fold>
+		//</editor-fold>
+		//</editor-fold>
+		//</editor-fold>
+		//</editor-fold>
+		//</editor-fold>
+		//</editor-fold>
+		//</editor-fold>
+		//</editor-fold>
 		//</editor-fold>
 		//</editor-fold>
 		//</editor-fold>
@@ -390,7 +422,7 @@ public class Template extends javax.swing.JFrame {
 		java.awt.EventQueue.invokeLater(new Runnable() {
 			public void run() {
 
-				JFrame jf = new Template();
+				JFrame jf = new AddMenu();
 				jf.setVisible(true);
 
 			}

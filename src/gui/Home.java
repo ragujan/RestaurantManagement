@@ -1,5 +1,6 @@
 package gui;
 
+import Util.CreateObject;
 import frameutil.RoundedPanel;
 import frameutil.ImageSizer;
 import frameutil.MainTheme;
@@ -22,12 +23,12 @@ import model.MySql;
  *
  * @author acer
  */
-public class Template extends javax.swing.JFrame {
+public class Home extends javax.swing.JFrame {
 
 	/**
 	 * Creates new form NewJFrame
 	 */
-	public Template() {
+	public Home() {
 		initComponents();
 		this.setLocationRelativeTo(null);
 		this.setResizable(true);
@@ -48,14 +49,14 @@ public class Template extends javax.swing.JFrame {
 
 	}
 
-	public Template(DealerT et, HashMap<String, String> hm) {
+	public Home(DealerT et, HashMap<String, String> hm) {
 		this();
 		this.updateId = hm.get("id");
 
 
 	}
 
-	public Template(Chef c) {
+	public Home(Chef c) {
 		this();
 
 	}
@@ -102,9 +103,9 @@ public class Template extends javax.swing.JFrame {
 				
 			}
 		} catch (ClassNotFoundException ex) {
-			Logger.getLogger(Template.class.getName()).log(Level.SEVERE, null, ex);
+			Logger.getLogger(Home.class.getName()).log(Level.SEVERE, null, ex);
 		} catch (SQLException ex) {
-			Logger.getLogger(Template.class.getName()).log(Level.SEVERE, null, ex);
+			Logger.getLogger(Home.class.getName()).log(Level.SEVERE, null, ex);
 		}
 
 	}
@@ -119,9 +120,9 @@ public class Template extends javax.swing.JFrame {
 				
 			}
 		} catch (ClassNotFoundException ex) {
-			Logger.getLogger(Template.class.getName()).log(Level.SEVERE, null, ex);
+			Logger.getLogger(Home.class.getName()).log(Level.SEVERE, null, ex);
 		} catch (SQLException ex) {
-			Logger.getLogger(Template.class.getName()).log(Level.SEVERE, null, ex);
+			Logger.getLogger(Home.class.getName()).log(Level.SEVERE, null, ex);
 		}
 
 	}
@@ -147,8 +148,12 @@ public class Template extends javax.swing.JFrame {
                 miniLabel = new javax.swing.JLabel();
                 boxLabel = new javax.swing.JLabel();
                 jLabel1 = new javax.swing.JLabel();
-                comboBox1 = new frameutil.ComboBox();
-                jLabel2 = new javax.swing.JLabel();
+                jPanel2 = new javax.swing.JPanel();
+                customButton1 = new frameutil.CustomButton();
+                jPanel3 = new javax.swing.JPanel();
+                customButton2 = new frameutil.CustomButton();
+                jPanel4 = new javax.swing.JPanel();
+                customButton3 = new frameutil.CustomButton();
 
                 jToggleButton1.setText("jToggleButton1");
 
@@ -234,9 +239,67 @@ public class Template extends javax.swing.JFrame {
                                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
                 );
 
-                jLabel2.setFont(new java.awt.Font("Segoe UI", 1, 12)); // NOI18N
-                jLabel2.setForeground(new java.awt.Color(255, 255, 255));
-                jLabel2.setText("Select Supplier");
+                customButton1.setText("Admin");
+
+                javax.swing.GroupLayout jPanel2Layout = new javax.swing.GroupLayout(jPanel2);
+                jPanel2.setLayout(jPanel2Layout);
+                jPanel2Layout.setHorizontalGroup(
+                        jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                        .addGroup(jPanel2Layout.createSequentialGroup()
+                                .addContainerGap()
+                                .addComponent(customButton1, javax.swing.GroupLayout.PREFERRED_SIZE, 95, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                );
+                jPanel2Layout.setVerticalGroup(
+                        jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                        .addGroup(jPanel2Layout.createSequentialGroup()
+                                .addContainerGap()
+                                .addComponent(customButton1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                .addContainerGap(43, Short.MAX_VALUE))
+                );
+
+                customButton2.setText("Employees");
+
+                javax.swing.GroupLayout jPanel3Layout = new javax.swing.GroupLayout(jPanel3);
+                jPanel3.setLayout(jPanel3Layout);
+                jPanel3Layout.setHorizontalGroup(
+                        jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                        .addGroup(jPanel3Layout.createSequentialGroup()
+                                .addContainerGap()
+                                .addComponent(customButton2, javax.swing.GroupLayout.PREFERRED_SIZE, 95, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                .addContainerGap(784, Short.MAX_VALUE))
+                );
+                jPanel3Layout.setVerticalGroup(
+                        jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                        .addGroup(jPanel3Layout.createSequentialGroup()
+                                .addContainerGap()
+                                .addComponent(customButton2, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                .addContainerGap(53, Short.MAX_VALUE))
+                );
+
+                customButton3.setText("Food ");
+                customButton3.addActionListener(new java.awt.event.ActionListener() {
+                        public void actionPerformed(java.awt.event.ActionEvent evt) {
+                                customButton3ActionPerformed(evt);
+                        }
+                });
+
+                javax.swing.GroupLayout jPanel4Layout = new javax.swing.GroupLayout(jPanel4);
+                jPanel4.setLayout(jPanel4Layout);
+                jPanel4Layout.setHorizontalGroup(
+                        jPanel4Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                        .addGroup(jPanel4Layout.createSequentialGroup()
+                                .addContainerGap()
+                                .addComponent(customButton3, javax.swing.GroupLayout.PREFERRED_SIZE, 95, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                );
+                jPanel4Layout.setVerticalGroup(
+                        jPanel4Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                        .addGroup(jPanel4Layout.createSequentialGroup()
+                                .addContainerGap()
+                                .addComponent(customButton3, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                .addContainerGap(47, Short.MAX_VALUE))
+                );
 
                 javax.swing.GroupLayout roundedPanel1Layout = new javax.swing.GroupLayout(roundedPanel1);
                 roundedPanel1.setLayout(roundedPanel1Layout);
@@ -246,19 +309,22 @@ public class Template extends javax.swing.JFrame {
                         .addGroup(roundedPanel1Layout.createSequentialGroup()
                                 .addContainerGap()
                                 .addGroup(roundedPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                                        .addComponent(comboBox1, javax.swing.GroupLayout.PREFERRED_SIZE, 239, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                        .addComponent(jLabel2, javax.swing.GroupLayout.PREFERRED_SIZE, 85, javax.swing.GroupLayout.PREFERRED_SIZE))
-                                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                                        .addComponent(jPanel2, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                                        .addComponent(jPanel3, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                                        .addComponent(jPanel4, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                                .addContainerGap())
                 );
                 roundedPanel1Layout.setVerticalGroup(
                         roundedPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                         .addGroup(roundedPanel1Layout.createSequentialGroup()
                                 .addComponent(roundedPanel2, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                .addComponent(jPanel2, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                                .addComponent(jLabel2)
-                                .addGap(18, 18, 18)
-                                .addComponent(comboBox1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                .addContainerGap(371, Short.MAX_VALUE))
+                                .addComponent(jPanel3, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                                .addComponent(jPanel4, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                .addContainerGap(154, Short.MAX_VALUE))
                 );
 
                 javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
@@ -319,6 +385,11 @@ public class Template extends javax.swing.JFrame {
 	    miniLabel.setBackground(MainTheme.secondColor);
 	    miniLabel.setOpaque(false);
     }//GEN-LAST:event_miniLabelMouseExited
+
+        private void customButton3ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_customButton3ActionPerformed
+                // TODO add your handling code here:
+		CreateObject.make(new FoodNavi(this));
+        }//GEN-LAST:event_customButton3ActionPerformed
 	boolean emailFieldEntred = false;
 	/**
 	 * @param args the command line arguments
@@ -338,21 +409,53 @@ public class Template extends javax.swing.JFrame {
 				}
 			}
 		} catch (ClassNotFoundException ex) {
-			java.util.logging.Logger.getLogger(Template.class
+			java.util.logging.Logger.getLogger(Home.class
 				.getName()).log(java.util.logging.Level.SEVERE, null, ex);
 
 		} catch (InstantiationException ex) {
-			java.util.logging.Logger.getLogger(Template.class
+			java.util.logging.Logger.getLogger(Home.class
 				.getName()).log(java.util.logging.Level.SEVERE, null, ex);
 
 		} catch (IllegalAccessException ex) {
-			java.util.logging.Logger.getLogger(Template.class
+			java.util.logging.Logger.getLogger(Home.class
 				.getName()).log(java.util.logging.Level.SEVERE, null, ex);
 
 		} catch (javax.swing.UnsupportedLookAndFeelException ex) {
-			java.util.logging.Logger.getLogger(Template.class
+			java.util.logging.Logger.getLogger(Home.class
 				.getName()).log(java.util.logging.Level.SEVERE, null, ex);
 		}
+		//</editor-fold>
+		//</editor-fold>
+		//</editor-fold>
+		//</editor-fold>
+		//</editor-fold>
+		//</editor-fold>
+		//</editor-fold>
+		//</editor-fold>
+		//</editor-fold>
+		//</editor-fold>
+		//</editor-fold>
+		//</editor-fold>
+		//</editor-fold>
+		//</editor-fold>
+		//</editor-fold>
+		//</editor-fold>
+		//</editor-fold>
+		//</editor-fold>
+		//</editor-fold>
+		//</editor-fold>
+		//</editor-fold>
+		//</editor-fold>
+		//</editor-fold>
+		//</editor-fold>
+		//</editor-fold>
+		//</editor-fold>
+		//</editor-fold>
+		//</editor-fold>
+		//</editor-fold>
+		//</editor-fold>
+		//</editor-fold>
+		//</editor-fold>
 		//</editor-fold>
 		//</editor-fold>
 		//</editor-fold>
@@ -390,7 +493,7 @@ public class Template extends javax.swing.JFrame {
 		java.awt.EventQueue.invokeLater(new Runnable() {
 			public void run() {
 
-				JFrame jf = new Template();
+				JFrame jf = new Home();
 				jf.setVisible(true);
 
 			}
@@ -400,10 +503,14 @@ public class Template extends javax.swing.JFrame {
         // Variables declaration - do not modify//GEN-BEGIN:variables
         private javax.swing.JLabel boxLabel;
         private javax.swing.JLabel closeLabel;
-        private frameutil.ComboBox comboBox1;
+        private frameutil.CustomButton customButton1;
+        private frameutil.CustomButton customButton2;
+        private frameutil.CustomButton customButton3;
         private javax.swing.JLabel jLabel1;
-        private javax.swing.JLabel jLabel2;
         private javax.swing.JPanel jPanel1;
+        private javax.swing.JPanel jPanel2;
+        private javax.swing.JPanel jPanel3;
+        private javax.swing.JPanel jPanel4;
         private javax.swing.JToggleButton jToggleButton1;
         private javax.swing.JLabel miniLabel;
         private RoundedPanel roundedPanel1;
