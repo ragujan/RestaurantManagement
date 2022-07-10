@@ -26,9 +26,9 @@ public class RagFrame extends javax.swing.JFrame {
      */
     public RagFrame() {
         initComponents();
-        Dimension jFrameDivSize = new Dimension(1000, 600);
-        Dimension topBarDivSize = new Dimension(1000, 40);
-        this.setSize(jFrameDivSize);
+//        Dimension jFrameDivSize = new Dimension(1000, 600);
+//        Dimension topBarDivSize = new Dimension(1000, 40);
+//        this.setSize(jFrameDivSize);
         this.setLocationRelativeTo(null);
         this.setResizable(true);
         this.setVisible(true);

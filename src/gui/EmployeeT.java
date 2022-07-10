@@ -139,8 +139,6 @@ public class EmployeeT extends javax.swing.JFrame {
 		otherFrame = c;
 		isEmpWokringHoursInvolved = true;
 	}
-	String loadTableQuery;
-	String[] colnames = {"employee_id", "employee_name", "employee_type_name", "employee_contact", "employee_email", "street_1", "city_name", "gender_name", "joined_date", "DOB"};
 	boolean isUpdateStatus = false;
 	boolean isChefInvolved = false;
 	boolean isMangerInvolved = false;
@@ -161,6 +159,8 @@ public class EmployeeT extends javax.swing.JFrame {
 	Cashier cashier;
 	EmployeeSalary es;
 	EmployeeWorkingHours ewh;
+	String loadTableQuery;
+	String[] colnames = {"employee_id", "employee_name", "employee_type_name", "employee_contact", "employee_email", "street_1", "city_name", "gender_name", "joined_date", "DOB"};
 
 	private void loadQuery() {
 		ArrayList<String> al = new ArrayList<String>();

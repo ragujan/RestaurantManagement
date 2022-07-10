@@ -12,15 +12,11 @@ import frameutil.ComboBox;
 import frameutil.RoundedPanel;
 import frameutil.ImageSizer;
 import frameutil.MainTheme;
-import java.awt.Color;
 import java.awt.event.ItemListener;
 import java.awt.geom.RoundRectangle2D;
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
-import java.util.Date;
-import java.util.HashMap;
 import java.util.Vector;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -164,6 +160,17 @@ public class Supplier extends javax.swing.JFrame {
 		otherFramesInvolved = true;
 	}
 
+	public Supplier(FRNView frnView) {
+		this();
+		frnView.setEnabled(false);
+		this.frnView = frnView;
+		this.isUpdateStatus = true;
+		
+                
+		isFRNViewInvolved = true;
+		otherFramesInvolved = true;
+		otherFrame = frnView;
+	}
 	boolean isUpdateStatus = false;
 	boolean isChefInvolved = false;
 	boolean isMangerInvolved = false;
@@ -172,7 +179,9 @@ public class Supplier extends javax.swing.JFrame {
 	boolean isBartenderInvolved = false;
 	boolean isCashierInvolved = false;
 	boolean isFRNInvolved = false;
+	boolean isFRNViewInvolved = false;
 	boolean otherFramesInvolved = false;
+	JFrame otherFrame;
 	Supplier thiset;
 	Chef chef;
 	Manager manager;
@@ -181,7 +190,7 @@ public class Supplier extends javax.swing.JFrame {
 	Bartender bartender;
 	Cashier cashier;
 	FRN frn;
-
+	FRNView frnView;
 	String loadTableQuery;
 	String[] colnames = {"supplier_id", "supplier_name", "supplier_contact", "dealer_email", "dealer_name", "dealer_contact", "dealer_type_name"};
 
@@ -471,6 +480,15 @@ public class Supplier extends javax.swing.JFrame {
 						cashier.setEnabled(true);
 						cashier.empId = id;
 						thiset.dispose();
+					} else if (isFRNViewInvolved) {
+						frnView.textF1.setText(name);
+						frnView.textF2.setText(dealerName);
+						frnView.supplierID = id;
+						frnView.setSupplierId(id);
+						frnView.loadBySupplier();
+						frnView.setEnabled(true);
+						
+						thiset.dispose();
 					} else if (isFRNInvolved) {
 						try {
 							//	frn.textF4.setText(id);
@@ -569,7 +587,6 @@ public class Supplier extends javax.swing.JFrame {
                 jLabel15 = new javax.swing.JLabel();
                 textF5 = new frameutil.TextF();
                 jLabel8 = new javax.swing.JLabel();
-                jLabel4 = new javax.swing.JLabel();
                 jPanel9 = new javax.swing.JPanel();
                 textF1 = new frameutil.TextF();
                 textF2 = new frameutil.TextF();
@@ -762,8 +779,6 @@ public class Supplier extends javax.swing.JFrame {
                 jLabel8.setForeground(new java.awt.Color(255, 255, 255));
                 jLabel8.setText("Dealer Name");
 
-                jLabel4.setText("jLabel4");
-
                 javax.swing.GroupLayout jPanel8Layout = new javax.swing.GroupLayout(jPanel8);
                 jPanel8.setLayout(jPanel8Layout);
                 jPanel8Layout.setHorizontalGroup(
@@ -794,9 +809,7 @@ public class Supplier extends javax.swing.JFrame {
                                         .addComponent(textF6, javax.swing.GroupLayout.DEFAULT_SIZE, 137, Short.MAX_VALUE)
                                         .addComponent(jLabel8, javax.swing.GroupLayout.PREFERRED_SIZE, 103, javax.swing.GroupLayout.PREFERRED_SIZE)
                                         .addComponent(customButton2, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
-                                .addGap(57, 57, 57)
-                                .addComponent(jLabel4)
-                                .addContainerGap(322, Short.MAX_VALUE))
+                                .addContainerGap(416, Short.MAX_VALUE))
                 );
                 jPanel8Layout.setVerticalGroup(
                         jPanel8Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -814,9 +827,7 @@ public class Supplier extends javax.swing.JFrame {
                                         .addGroup(jPanel8Layout.createSequentialGroup()
                                                 .addComponent(jLabel8)
                                                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                                                .addGroup(jPanel8Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                                                        .addComponent(textF6, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                                        .addComponent(jLabel4))))
+                                                .addComponent(textF6, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)))
                                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                                 .addGroup(jPanel8Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                                         .addComponent(jLabel16)
@@ -1018,6 +1029,7 @@ public class Supplier extends javax.swing.JFrame {
     private void closeLabelMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_closeLabelMouseClicked
 	    // TODO add your handling code here:
 	    if (otherFramesInvolved) {
+		    otherFrame.setEnabled(true);
 		    thiset.dispose();
 	    } else {
 		    System.exit(0);
@@ -1302,7 +1314,6 @@ public class Supplier extends javax.swing.JFrame {
         public javax.swing.JLabel jLabel16;
         private javax.swing.JLabel jLabel2;
         private javax.swing.JLabel jLabel3;
-        private javax.swing.JLabel jLabel4;
         private javax.swing.JLabel jLabel5;
         public javax.swing.JLabel jLabel8;
         private javax.swing.JPanel jPanel1;

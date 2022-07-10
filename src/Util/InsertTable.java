@@ -72,7 +72,8 @@ public class InsertTable {
 			columnNameRs = MySql.sq(columnQuery);
 
 			while (columnNameRs.next()) {
-				columnNameStringArray.add(columnNameRs.getString("COLUMN_NAME"));
+				String colname = columnNameRs.getString("COLUMN_NAME");
+				columnNameStringArray.add("`"+colname+"`");
 			}
 		} catch (ClassNotFoundException ex) {
 			Logger.getLogger(InsertTable.class.getName()).log(Level.SEVERE, null, ex);

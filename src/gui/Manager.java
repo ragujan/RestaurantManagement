@@ -1,28 +1,18 @@
 package gui;
 
-import Util.BasicValidator;
 import Util.CreateObject;
-import Util.FilterDocRagRegex;
 import Util.InsertTable;
-import Util.JOP;
 import Util.LoadSubTypes;
 import Util.LoadTables;
 import Util.SearchTable;
-import com.toedter.calendar.JDateChooser;
-import frame.*;
 import frameutil.RoundedPanel;
 import frameutil.ImageSizer;
 import frameutil.MainTheme;
-import java.awt.Dimension;
-import java.awt.Graphics;
-import java.awt.Graphics2D;
-import java.awt.RenderingHints;
 import java.awt.geom.RoundRectangle2D;
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
-import java.util.HashMap;
+
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.swing.ImageIcon;
@@ -67,6 +57,15 @@ public class Manager extends javax.swing.JFrame {
 		tableListernRag();
 
 	}
+
+	public Manager(FRN frn) {
+		this();
+		this.frn = frn;
+		frn.setEnabled(false);
+		isFRNInvolved = true;
+		isOtherFramesInvolved = true;
+		manager = this;
+	}
 	public String empId;
 
 	String loadTableQuery;
@@ -75,6 +74,9 @@ public class Manager extends javax.swing.JFrame {
 	EmployeeT thiset;
 	Manager manager;
 	boolean isEditmode;
+	boolean isOtherFramesInvolved;
+	FRN frn;
+	boolean isFRNInvolved;
 
 	private void loadQuery() {
 		ArrayList<String> al = new ArrayList<String>();
@@ -137,7 +139,7 @@ public class Manager extends javax.swing.JFrame {
 
 						StringBuilder whereQuery = new StringBuilder(loadTableQuery);
 						whereQuery.append("WHERE `employee`.`employee_id`='" + id + "'");
-						System.out.println(whereQuery);
+						//System.out.println(whereQuery);
 						ResultSet rs = MySql.sq(whereQuery.toString());
 						rs.next();
 
@@ -155,6 +157,39 @@ public class Manager extends javax.swing.JFrame {
 					}
 
 				}
+				if (row != -1 && isOtherFramesInvolved) {
+
+					try {
+						String managerid = customTable1.getValueAt(row, 1).toString();
+						String id = customTable1.getValueAt(row, 0).toString();
+						String name = customTable1.getValueAt(row, 2).toString();
+						String managertype = customTable1.getValueAt(row, 3).toString();
+						String managerName = customTable1.getValueAt(row, 2).toString();
+						StringBuilder whereQuery = new StringBuilder(loadTableQuery);
+						whereQuery.append("WHERE `employee`.`employee_id`='" + id + "'");
+
+						ResultSet rs = MySql.sq(whereQuery.toString());
+						rs.next();
+
+						String email = rs.getString("employee_email");
+						textF1.setText(name);
+						if (isFRNInvolved) {
+							frn.mangerId = managerid;
+							frn.managerName = managerName;
+							frn.setEnabled(true);
+							//frn.addFRN();
+							manager.dispose();
+						}
+
+						//isEditmode = false;
+					} catch (ClassNotFoundException ex) {
+						Logger.getLogger(Manager.class.getName()).log(Level.SEVERE, null, ex);
+					} catch (SQLException ex) {
+						Logger.getLogger(Manager.class.getName()).log(Level.SEVERE, null, ex);
+					}
+
+				}
+
 			}
 
 		});
@@ -216,7 +251,7 @@ public class Manager extends javax.swing.JFrame {
 
 				ResultSet rs;
 				try {
-					System.out.println(empId);
+
 					rs = MySql.sq("SELECT * FROM `manager_type` WHERE `manager_type_name`='" + managerType + "'");
 					rs.next();
 					String managerTypeId = rs.getString("manager_type_id");
@@ -618,7 +653,12 @@ public class Manager extends javax.swing.JFrame {
 
     private void closeLabelMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_closeLabelMouseClicked
 	    // TODO add your handling code here:
-	    System.exit(0);
+
+	    if (isOtherFramesInvolved) {
+		    this.dispose();
+	    } else {
+		    System.exit(0);
+	    }
     }//GEN-LAST:event_closeLabelMouseClicked
 
     private void closeLabelMouseEntered(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_closeLabelMouseEntered

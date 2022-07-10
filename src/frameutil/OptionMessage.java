@@ -251,18 +251,23 @@ public abstract class OptionMessage extends javax.swing.JFrame {
 	
         private void customButton1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_customButton1ActionPerformed
 		// TODO add your handling code here:
+		//no button
 		setChoosevalue(1);
 		jf.setEnabled(true);
+		handleCancel();
 		this.dispose();
+		
         }//GEN-LAST:event_customButton1ActionPerformed
 
 
         private void customButton2ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_customButton2ActionPerformed
 		// TODO add your handling code here:
-
+                //yess button
 		setChoosevalue(2);
 		jf.setEnabled(true);
+		handleConfirm();
 		this.dispose();
+		
 
 
         }//GEN-LAST:event_customButton2ActionPerformed

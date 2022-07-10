@@ -16,61 +16,65 @@ import model.MySql;
  */
 public class LoadTables {
 
-    public String query;
-    public String[] colnames;
-    public JTable jt;
-    int jtableColCount;
+	public String query;
+	public String[] colnames;
+	public JTable jt;
+	int jtableColCount;
 
-    public LoadTables() {
-    }
+	public LoadTables() {
+	}
 
-    public LoadTables(JTable jt, String query,String[] colnames) {
+	public LoadTables(JTable jt, String query, String[] colnames) {
 
-        loadTable(jt, query,colnames);
-    }
+		loadTable(jt, query, colnames);
+	}
 
-    public void loadTable(JTable jt, String query, String[] colnames) {
+	public void loadTable(JTable jt, String query, String[] colnames) {
 
-        jtableColCount = jt.getColumnCount();
+		jtableColCount = jt.getColumnCount();
 
-        DefaultTableModel dftm = (DefaultTableModel) jt.getModel();
-        dftm.setRowCount(0);
-        try {
-            ResultSet rs = MySql.sq(query);
-            while (rs.next()) {
-                Vector<String> v = new Vector<String>();
-                for (int i = 0; i < jtableColCount; i++) {
-                    v.add(rs.getString(colnames[i]));
-                }
-                dftm.addRow(v);
-            }
-            jt.setModel(dftm);
+		DefaultTableModel dftm = (DefaultTableModel) jt.getModel();
+		dftm.setRowCount(0);
+		try {
+			ResultSet rs = MySql.sq(query);
+			ResultSet checkRs = MySql.sq(query);
+			if (checkRs.next()) {
 
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-    }
+				while (rs.next()) {
+					Vector<String> v = new Vector<String>();
+					for (int i = 0; i < jtableColCount; i++) {
+						v.add(rs.getString(colnames[i]));
+					}
+					dftm.addRow(v);
+				}
+				jt.setModel(dftm);
+			}
 
-    public void loadTable(JTable jt) {
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+	}
 
-        jtableColCount = jt.getColumnCount();
+	public void loadTable(JTable jt) {
 
-        DefaultTableModel dftm = (DefaultTableModel) jt.getModel();
-        dftm.setRowCount(0);
-        try {
-            ResultSet rs = MySql.sq(this.query);
-            while (rs.next()) {
-                Vector<String> v = new Vector<String>();
-                for (int i = 0; i < jtableColCount; i++) {
-                    v.add(rs.getString(colnames[i]));
-                }
-                dftm.addRow(v);
-            }
-            jt.setModel(dftm);
+		jtableColCount = jt.getColumnCount();
 
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-    }
+		DefaultTableModel dftm = (DefaultTableModel) jt.getModel();
+		dftm.setRowCount(0);
+		try {
+			ResultSet rs = MySql.sq(this.query);
+			while (rs.next()) {
+				Vector<String> v = new Vector<String>();
+				for (int i = 0; i < jtableColCount; i++) {
+					v.add(rs.getString(colnames[i]));
+				}
+				dftm.addRow(v);
+			}
+			jt.setModel(dftm);
+
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+	}
 
 }

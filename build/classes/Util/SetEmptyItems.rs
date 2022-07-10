@@ -1,2 +1,0 @@
-Util.EmptyDocumentFilter
-Util.SetEmptyItems

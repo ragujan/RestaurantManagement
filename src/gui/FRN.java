@@ -3,15 +3,20 @@ package gui;
 import Util.BasicValidator;
 import Util.CreateObject;
 import Util.FilterDocRagRegex;
+import Util.GetIdSingle;
+import Util.InsertTable;
 import Util.JOP;
 import Util.LoadSubTypes;
 import Util.PanelRemover;
+import Util.RemoveTRows;
+import Util.SetEmptyItems;
 import com.toedter.calendar.JDateChooser;
 import frame.*;
 import frameutil.RoundedPanel;
 import frameutil.ImageSizer;
 import frameutil.MainTheme;
 import frameutil.OptionMessage;
+import frameutil.OptionMessageLegit;
 import java.awt.Dimension;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
@@ -19,15 +24,31 @@ import java.awt.RenderingHints;
 import java.awt.event.WindowEvent;
 import java.awt.event.WindowListener;
 import java.awt.geom.RoundRectangle2D;
+import java.sql.ResultSet;
+import java.sql.SQLException;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.Vector;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.swing.ImageIcon;
+import javax.swing.JComponent;
 import javax.swing.JFrame;
 import javax.swing.JOptionPane;
+import javax.swing.JTable;
 import javax.swing.table.DefaultTableModel;
+import javax.swing.table.TableModel;
+import model.MySql;
+import net.sf.jasperreports.engine.JREmptyDataSource;
+import net.sf.jasperreports.engine.JRException;
+import net.sf.jasperreports.engine.JasperCompileManager;
+import net.sf.jasperreports.engine.JasperFillManager;
+import net.sf.jasperreports.engine.JasperPrint;
+import net.sf.jasperreports.engine.JasperReport;
+import net.sf.jasperreports.engine.data.JRTableModelDataSource;
+import net.sf.jasperreports.view.JasperViewer;
 
 /*
  * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
@@ -63,12 +84,21 @@ public class FRN extends javax.swing.JFrame {
 		textF5.setEditable(false);
 		textF6.setEditable(false);
 		textF7.setEditable(false);
+		textF2.setEditable(false);
 		customButton2.setEnabled(false);
 		textF1.setForeground(MainTheme.secondColor);
 		textF2.setForeground(MainTheme.secondColor);
 		textF3.setForeground(MainTheme.secondColor);
 		jPanel4.setBackground(MainTheme.secondColor);
 		jPanel2.setBackground(MainTheme.secondColor);
+		jPanel11.setBackground(MainTheme.secondColor);
+		textF23.setEditable(false);
+		textF25.setEditable(false);
+		textF26.setEditable(false);
+		textF23.setForeground(MainTheme.secondColor);
+		textF25.setForeground(MainTheme.secondColor);
+		textF24.setForeground(MainTheme.secondColor);
+		customButton8.setEnabled(false);
 		jPanel4.setEnabled(false);
 
 		this.setForeground(MainTheme.secondColor);
@@ -76,8 +106,20 @@ public class FRN extends javax.swing.JFrame {
 		jDateChooser3.setVisible(false);
 		jDateChooser4.setVisible(false);
 		setValidadions();
+		updateTotal();
+		loadCombos();
+		ragfrn = this;
 
 	}
+	public String foodItemType;
+	public String managerName;
+	public int optionYesNo = 0;
+	public int idExitsRow = 0;
+	int tableclickCount = 0;
+	int tableSelectedRow = 0;
+	int row = 0;
+	public String mangerId;
+	FRN ragfrn;
 
 	private void jframeCustmize() {
 		closeLabel.setIcon(labelSetIcon("/Icons/close.png", closeLabel.getWidth() - 25, closeLabel.getHeight() - 17));
@@ -91,7 +133,24 @@ public class FRN extends javax.swing.JFrame {
 			}
 		});
 	}
-	public String foodItemType;
+
+	private void updateTotal() {
+		double rowTotal = 0;
+		if (customTable1.getRowCount() > 0) {
+			for (int i = 0; i < customTable1.getRowCount(); i++) {
+				String total = customTable1.getValueAt(i, 7).toString();
+				rowTotal += Double.parseDouble(total);
+			}
+		} else {
+			rowTotal = 0;
+		}
+		textF23.setText(Double.toString(rowTotal));
+	}
+
+	private void loadCombos() {
+		LoadSubTypes.loadType(comboBox1, "payment_method");
+
+	}
 
 	public ImageIcon labelSetIcon(String src, int w, int h) {
 		ImageSizer imgSizer = new ImageSizer();
@@ -99,7 +158,87 @@ public class FRN extends javax.swing.JFrame {
 		return i;
 	}
 
-	private void addtoFRN() {
+	public void clearFields() {
+		JComponent[] jc = {textF1, textF2, textF8, textF9, textF10, textF11};
+		SetEmptyItems.emptyItems(jc);
+	}
+
+	private void removeRow() {
+		tableclickCount++;
+		int previousSelectedRow = row;
+		int currentlySelectedRow = 0;
+		currentlySelectedRow = customTable1.getSelectedRow();
+
+		if (previousSelectedRow == currentlySelectedRow && tableclickCount == 2) {
+			row = currentlySelectedRow;
+			int modelRow = customTable1.convertRowIndexToModel(row);
+			DefaultTableModel model = (DefaultTableModel) customTable1.getModel();
+			model.removeRow(modelRow);
+			customTable1.clearSelection();
+			if (!(customTable1.getRowCount() > 1)) {
+				customButton8.setEnabled(false);
+			}
+			tableclickCount = 0;
+
+		} else if (previousSelectedRow == currentlySelectedRow && tableclickCount == 1) {
+
+			row = currentlySelectedRow;
+			tableclickCount = 1;
+
+		} else if (previousSelectedRow != currentlySelectedRow && tableclickCount == 1) {
+			row = currentlySelectedRow;
+			tableclickCount = 1;
+
+		} else if (tableclickCount >= 2) {
+
+			tableclickCount = 0;
+		}
+	}
+
+	public void thatBeautiful() {
+		Message m = new Message(this, "hey", "HEY");
+	}
+
+	private boolean checkPaymentMethod() {
+		String paymentMethod = comboBox1.getSelectedItem().toString();
+		boolean state = false;
+		if (paymentMethod.equals("Select payment_method")) {
+			state = true;
+		}
+		return state;
+	}
+
+	private void printGRN(JTable jt, Vector<String> v) {
+
+		try {
+			TableModel tm1 = jt.getModel();
+			String jasperPath = "src//reportXML//Blank_A4.jrxml";
+
+			JasperReport jr = JasperCompileManager.compileReport(jasperPath);
+			HashMap<String, Object> hm = new HashMap<String, Object>();
+			hm.put("Dealer", v.get(0).toString());
+			hm.put("Supplier", v.get(1).toString());
+
+			hm.put("DnT", v.get(2).toString());
+			hm.put("UniqueID", v.get(3).toString());
+			hm.put("SubTotal", v.get(4).toString());
+			hm.put("Paid", v.get(5).toString());
+			hm.put("Balance", v.get(6).toString());
+			hm.put("Manager", v.get(7).toString());
+			TableModel tm = jt.getModel();
+			JRTableModelDataSource jrtmds = new JRTableModelDataSource(tm);
+			//   JasperPrint jp = JasperFillManager.fillReport(jr, hm,jrtmds);
+			JREmptyDataSource jreds = new JREmptyDataSource();
+			JasperPrint jp = JasperFillManager.fillReport(jr, hm, jrtmds);
+			JasperViewer.viewReport(jp, false);
+		} catch (JRException ex) {
+			Logger.getLogger(FRN.class.getName()).log(Level.SEVERE, null, ex);
+		}
+
+	}
+
+	private void addtoTable() {
+		JComponent[] jc = {textF1, textF2, textF8, textF9, textF10, textF11, jDateChooser3, jDateChooser4};
 		SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
 		boolean isDatesChosen = false;
 		boolean invalidDateChosen = false;
@@ -119,6 +258,8 @@ public class FRN extends javax.swing.JFrame {
 		String foodType = textF3.getText();
 		String supName = textF5.getText();
 		String dealerName = textF6.getText();
+		String mfd = textF11.getText();
+		String exp = textF10.getText();
 
 		if (supId.isEmpty()) {
 			Message m = new Message(this, "supplier id is not choosen", "Warning");
@@ -135,85 +276,240 @@ public class FRN extends javax.swing.JFrame {
 		} else {
 
 			boolean isIdExits = false;
+
 			for (int i = 0; i < customTable1.getRowCount(); i++) {
 				if (foodItemId.equals(customTable1.getValueAt(i, 0).toString())) {
+					idExitsRow = i;
 					isIdExits = true;
 					break;
 				}
 			}
 			if (isIdExits) {
 
-//				OptionMessage om = new OptionMessage(this, "Do you want to update", "Info");
-//				int getValue = om.choosevalue;
-//				om.addWindowListener(new WindowListener() {
-//					@Override
-//					public void windowOpened(WindowEvent e) {
-//					}
-//
-//					@Override
-//					public void windowClosing(WindowEvent e) {
-//						
-//					}
-//
-//					@Override
-//					public void windowClosed(WindowEvent e) {
-//
-//					       System.out.println("Iclosed you");
-//					}
-//
-//					@Override
-//					public void windowIconified(WindowEvent e) {
-//					
-//					}
-//
-//					@Override
-//					public void windowDeiconified(WindowEvent e) {
-//						
-//					}
-//
-//					@Override
-//					public void windowActivated(WindowEvent e) {
-//
-//					}
-//
-//					@Override
-//					public void windowDeactivated(WindowEvent e) {
-//					}
-//				});
-//				if (getValue == 1) {
-//					//do something
-//				} else {
-//					//blah blah
-//				}
-                                OptionMessage om = new OptionMessage(this, "what do you wanna do bro", "peace") {
+				OptionMessageLegit opml = new OptionMessageLegit(ragfrn, "Do you want to update the row") {
 					@Override
-					public void handleConfirm() {
-						System.out.println(getChoosevalue());
-				//		throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
+					public void actionConfirmed() {
+
+						DefaultTableModel dftm = (DefaultTableModel) ragfrn.customTable1.getModel();
+						String id = dftm.getValueAt(idExitsRow, 0).toString();
+						String name = dftm.getValueAt(idExitsRow, 1).toString();
+						String category = dftm.getValueAt(idExitsRow, 2).toString();
+						String qty = dftm.getValueAt(idExitsRow, 3).toString();
+						String price = dftm.getValueAt(idExitsRow, 4).toString();
+						textF1.setText(id);
+						textF2.setText(name);
+						textF3.setText(category);
+						textF8.setText(id);
+						textF9.setText(name);
+
+						dftm.removeRow(idExitsRow);
+
 					}
-					
+
 					@Override
-					public void handleCancel() {
-				//		throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
+					public void actionCancelled() {
+						textF1.setText("");
+						textF2.setText("");
+						textF3.setText("");
+						textF8.setText("");
+						textF9.setText("");
+						textF10.setText("");
+						textF11.setText("");
 					}
 				};
-				
-				System.out.println("I came to this line without waiting");
+				opml.setVisible(true);
+
 			} else {
 				Vector<String> v = new Vector<String>();
+				//this is like a columns of a table
 				v.add(foodItemId);
 				v.add(foodName);
 				v.add(foodType);
 				v.add(qty);
 				v.add(price);
+				v.add(mfd);
+				v.add(exp);
 				v.add(Double.toString(Double.parseDouble(qty) * Double.parseDouble(price)));
 				DefaultTableModel dftm = (DefaultTableModel) customTable1.getModel();
+				// add the row to the table 
+
+				SetEmptyItems.emptyItems(jc);
 				dftm.addRow(v);
 			}
 
 		}
+		updateTotal();
+		if (customTable1.getRowCount() > 0) {
+			customButton8.setEnabled(true);
+		}
 		//Date onDTDiff = sdf.parse(jDateChooser3.getDate());
 		//Date offDTDiff = sdf.parse(offTime);
+
+	}
+
+	private void updateManager() {
+		if (this.mangerId == null) {
+
+			OptionMessageLegit opml = new OptionMessageLegit(ragfrn, "You have to Select the Manager") {
+				@Override
+				public void actionConfirmed() {
+					CreateObject.make(new Manager(ragfrn));
+					proceedToAddFRN = true;
+					textF26.setText(managerName);
+				}
+
+				@Override
+				public void actionCancelled() {
+
+				}
+			};
+			opml.setVisible(true);
+
+		} else {
+			OptionMessageLegit opml = new OptionMessageLegit(ragfrn, "Do you want to change the manager ") {
+				@Override
+				public void actionConfirmed() {
+					proceedToAddFRN = false;
+					CreateObject.make(new Manager(ragfrn));
+
+				}
+
+				@Override
+				public void actionCancelled() {
+					proceedToAddFRN = true;
+
+				}
+			};
+			opml.setVisible(true);
+		}
+	}
+	boolean proceedToAddFRN = false;
+
+	public void addFRN() {
+		if (isPaidAmountEmpty()) {
+
+			Message m = new Message(this, "Please Enter the paid Amount", "Warning");
+			textF24.requestFocus();
+		} else if (checkPaymentMethod()) {
+			Message m = new Message(this, "Please select the payment method ", "Warning");
+			comboBox1.requestFocus();
+		} else {
+			updateManager();
+			
+		}
+
+		if (proceedToAddFRN && this.mangerId != null) {
+			addFRNfurtherMore();
+		}
+
+	}
+
+	private boolean isPaidAmountEmpty() {
+		boolean state = false;
+		String amount = textF24.getText();
+		if (amount.isEmpty()) {
+			state = true;
+
+		}
+		return state;
+
+	}
+
+	public void addFRNfurtherMore() {
+		String paidAmount = textF24.getText();
+		String supplier = textF4.getText();
+		String supplierName = textF5.getText();
+		String dealerName = textF6.getText();
+		String subTotal = textF23.getText();
+		String balance = textF25.getText();
+		String paymentMethod = comboBox1.getSelectedItem().toString();
+		SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+		String today = sdf.format(new Date());
+		String foodReceiveNoteId = null;
+		String foodStorageId = null;
+		if (paidAmount.isEmpty()) {
+			Message m = new Message(this, "Please enter the paid amount ", "Warning");
+		} else if (checkPaymentMethod()) {
+			Message m = new Message(this, "Please select the payment method ", "Warning");
+		} else {
+
+			String uniqueId = Long.toString(System.currentTimeMillis());
+			ArrayList<String> info = new ArrayList<>();
+
+			info.add(this.mangerId);
+			info.add(today);
+			info.add(supplier);
+			info.add(uniqueId);
+			InsertTable it = new InsertTable("food_receive_note", info);
+			foodReceiveNoteId = GetIdSingle.getId("food_receive_note", "unique_id", uniqueId);
+			for (int i = 0; i < customTable1.getRowCount(); i++) {
+				System.out.println("IM working here");
+				String fid = customTable1.getValueAt(i, 0).toString();
+				String qty = customTable1.getValueAt(i, 3).toString();
+				String mfd = customTable1.getValueAt(i, 5).toString();
+				String exp = customTable1.getValueAt(i, 6).toString();
+				String buyingPrice = customTable1.getValueAt(i, 4).toString();
+				System.out.println("fid is " + fid);
+				try {
+					ResultSet rs = MySql.sq("SELECT * FROM `food_storage` WHERE `food_item_id`='" + fid + "' AND `mfd`='" + mfd + "' AND `exp`='" + exp + "' ");
+					if (rs.next()) {
+						foodStorageId = rs.getString("food_storage_id");
+						MySql.iud("UPDATE `food_storage` SET `qty`='" + qty + "' WHERE `food_storage_id`='" + foodStorageId + "'");
+						System.out.println("updated storage");
+					} else {
+						info.clear();
+						System.out.println("Newly added storage");
+						info.add(exp);
+						info.add(fid);
+						info.add(mfd);
+						info.add(qty);
+						it = new InsertTable("food_storage", info);
+						it = new InsertTable("food_storage_manage", info);
+						rs = MySql.sq("SELECT * FROM `food_storage` WHERE `food_item_id`='" + fid + "' AND `mfd`='" + mfd + "' AND `exp`='" + exp + "' ");
+						rs.next();
+						foodStorageId = rs.getString("food_storage_id");
+					}
+					info.clear();
+					info.add(buyingPrice);
+					info.add(foodReceiveNoteId);
+					info.add(foodStorageId);
+					info.add(qty);
+					it = new InsertTable("food_receive_item", info);
+				} catch (ClassNotFoundException ex) {
+					Logger.getLogger(FRN.class.getName()).log(Level.SEVERE, null, ex);
+				} catch (SQLException ex) {
+					Logger.getLogger(FRN.class.getName()).log(Level.SEVERE, null, ex);
+				}
+
+			}
+			Vector<String> v = new Vector<String>();
+			v.add(dealerName);
+			v.add(supplierName);
+
+			v.add(today);
+			v.add(uniqueId);
+			v.add(subTotal);
+			v.add(paidAmount);
+			v.add(balance);
+			v.add(managerName);
+			printGRN(customTable1, v);
+			RemoveTRows.remove(customTable1);
+			
+			
+			String paymentMethodId = GetIdSingle.getId("payment_method", paymentMethod);
+			info.clear();
+			info.add(paidAmount);
+			info.add(balance);
+			info.add(foodReceiveNoteId);
+			info.add(paymentMethodId);
+			it = new InsertTable("food_receive_payment", info);
+			customButton8.setEnabled(false);
+
+		}
+	}
+
+	public void selectManager() {
+		CreateObject.make(new Manager(this));
 
 	}
 
@@ -223,12 +519,12 @@ public class FRN extends javax.swing.JFrame {
 		String qtyRegex = "([1-9][0-9]+|[1-9])";
 		new FilterDocRagRegex(textF8, qtyRegex, 10);
 		new FilterDocRagRegex(textF9, priceRegex, 10);
-
+		new FilterDocRagRegex(textF24, priceRegex, 10);
 		String dobRegex = "[0-9][0-9][0-9][0-9]-[0-9][0-9]-[0-9][0-9]";
 		FilterDocRagRegex dob = new FilterDocRagRegex(textF10, dobRegex);
 		//dob = new FilterDocRagRegex(textF5, dobRegex);
 	}
-              
+
 	/**
 	 * This method is called from within the constructor to initialize the
 	 * form. WARNING: Do NOT modify this code. The content of this method is
@@ -322,6 +618,10 @@ public class FRN extends javax.swing.JFrame {
                 textF25 = new frameutil.TextF();
                 textF23 = new frameutil.TextF();
                 textF24 = new frameutil.TextF();
+                jLabel27 = new javax.swing.JLabel();
+                textF26 = new frameutil.TextF();
+                comboBox1 = new frameutil.ComboBox<>();
+                jLabel28 = new javax.swing.JLabel();
 
                 jToggleButton1.setText("jToggleButton1");
 
@@ -977,65 +1277,107 @@ public class FRN extends javax.swing.JFrame {
 
                         },
                         new String [] {
-                                "Food_ID", "Name", "Category", "Qty", "Buying Price", "Total"
+                                "id", "name", "category", "qty", "price", "mfd", "exp", "total"
                         }
                 ));
+                customTable1.getTableHeader().setReorderingAllowed(false);
+                customTable1.addMouseListener(new java.awt.event.MouseAdapter() {
+                        public void mouseClicked(java.awt.event.MouseEvent evt) {
+                                customTable1MouseClicked(evt);
+                        }
+                });
                 jScrollPane1.setViewportView(customTable1);
 
                 customButton8.setText("Print");
+                customButton8.addActionListener(new java.awt.event.ActionListener() {
+                        public void actionPerformed(java.awt.event.ActionEvent evt) {
+                                customButton8ActionPerformed(evt);
+                        }
+                });
 
                 jLabel26.setBackground(new java.awt.Color(255, 255, 255));
                 jLabel26.setFont(new java.awt.Font("Segoe UI", 1, 12)); // NOI18N
                 jLabel26.setForeground(new java.awt.Color(255, 255, 255));
-                jLabel26.setText("Type");
+                jLabel26.setText("Balance");
 
                 jLabel25.setBackground(new java.awt.Color(255, 255, 255));
                 jLabel25.setFont(new java.awt.Font("Segoe UI", 1, 12)); // NOI18N
                 jLabel25.setForeground(new java.awt.Color(255, 255, 255));
-                jLabel25.setText("Name");
+                jLabel25.setText("Paid");
 
                 jLabel24.setBackground(new java.awt.Color(255, 255, 255));
                 jLabel24.setFont(new java.awt.Font("Segoe UI", 1, 12)); // NOI18N
                 jLabel24.setForeground(new java.awt.Color(255, 255, 255));
-                jLabel24.setText("Id");
+                jLabel24.setText("Total");
+
+                textF24.addKeyListener(new java.awt.event.KeyAdapter() {
+                        public void keyTyped(java.awt.event.KeyEvent evt) {
+                                textF24KeyTyped(evt);
+                        }
+                });
+
+                jLabel27.setBackground(new java.awt.Color(255, 255, 255));
+                jLabel27.setFont(new java.awt.Font("Segoe UI", 1, 12)); // NOI18N
+                jLabel27.setForeground(new java.awt.Color(255, 255, 255));
+                jLabel27.setText("Manager");
+
+                jLabel28.setBackground(new java.awt.Color(255, 255, 255));
+                jLabel28.setFont(new java.awt.Font("Segoe UI", 1, 12)); // NOI18N
+                jLabel28.setForeground(new java.awt.Color(255, 255, 255));
+                jLabel28.setText("Payment Method");
 
                 javax.swing.GroupLayout jPanel11Layout = new javax.swing.GroupLayout(jPanel11);
                 jPanel11.setLayout(jPanel11Layout);
                 jPanel11Layout.setHorizontalGroup(
-                        jPanel11Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                        .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel11Layout.createSequentialGroup()
-                                .addGap(0, 0, Short.MAX_VALUE)
-                                .addComponent(customButton8, javax.swing.GroupLayout.PREFERRED_SIZE, 127, javax.swing.GroupLayout.PREFERRED_SIZE))
-                        .addGroup(jPanel11Layout.createSequentialGroup()
-                                .addGroup(jPanel11Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                                        .addGroup(jPanel11Layout.createSequentialGroup()
-                                                .addGap(43, 43, 43)
-                                                .addComponent(textF23, javax.swing.GroupLayout.PREFERRED_SIZE, 83, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                                                .addComponent(jLabel25))
-                                        .addComponent(jLabel24, javax.swing.GroupLayout.PREFERRED_SIZE, 25, javax.swing.GroupLayout.PREFERRED_SIZE))
-                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                                .addComponent(textF24, javax.swing.GroupLayout.PREFERRED_SIZE, 141, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        jPanel11Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
+                        .addGroup(javax.swing.GroupLayout.Alignment.LEADING, jPanel11Layout.createSequentialGroup()
+                                .addContainerGap()
+                                .addComponent(jLabel24, javax.swing.GroupLayout.PREFERRED_SIZE, 62, javax.swing.GroupLayout.PREFERRED_SIZE)
                                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                                .addComponent(jLabel26, javax.swing.GroupLayout.PREFERRED_SIZE, 37, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                .addComponent(textF23, javax.swing.GroupLayout.PREFERRED_SIZE, 83, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                .addComponent(jLabel25, javax.swing.GroupLayout.PREFERRED_SIZE, 41, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                .addComponent(textF24, javax.swing.GroupLayout.PREFERRED_SIZE, 105, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                .addGap(18, 18, 18)
+                                .addComponent(jLabel26, javax.swing.GroupLayout.PREFERRED_SIZE, 65, javax.swing.GroupLayout.PREFERRED_SIZE)
                                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                                 .addComponent(textF25, javax.swing.GroupLayout.PREFERRED_SIZE, 133, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                .addGap(0, 0, Short.MAX_VALUE))
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                .addGroup(jPanel11Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                                        .addGroup(jPanel11Layout.createSequentialGroup()
+                                                .addGap(0, 0, Short.MAX_VALUE)
+                                                .addComponent(jLabel27, javax.swing.GroupLayout.PREFERRED_SIZE, 65, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                                .addComponent(textF26, javax.swing.GroupLayout.PREFERRED_SIZE, 133, javax.swing.GroupLayout.PREFERRED_SIZE))
+                                        .addGroup(jPanel11Layout.createSequentialGroup()
+                                                .addComponent(jLabel28, javax.swing.GroupLayout.PREFERRED_SIZE, 114, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                                .addComponent(comboBox1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)))
+                                .addGap(18, 18, 18)
+                                .addComponent(customButton8, javax.swing.GroupLayout.PREFERRED_SIZE, 127, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                .addGap(17, 17, 17))
                 );
                 jPanel11Layout.setVerticalGroup(
                         jPanel11Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                         .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel11Layout.createSequentialGroup()
-                                .addContainerGap()
+                                .addGap(12, 12, 12)
                                 .addGroup(jPanel11Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                                         .addComponent(textF23, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                                         .addComponent(jLabel25, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                                         .addComponent(textF24, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                                         .addComponent(jLabel26)
                                         .addComponent(textF25, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                                        .addComponent(jLabel24, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
-                                .addGap(26, 26, 26)
-                                .addComponent(customButton8, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                .addContainerGap())
+                                        .addComponent(jLabel24, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                                        .addGroup(jPanel11Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                                                .addComponent(comboBox1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                                .addComponent(jLabel28)))
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                                .addGroup(jPanel11Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                                        .addComponent(customButton8, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                        .addComponent(jLabel27)
+                                        .addComponent(textF26, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                                .addGap(14, 14, 14))
                 );
 
                 javax.swing.GroupLayout jPanel5Layout = new javax.swing.GroupLayout(jPanel5);
@@ -1044,10 +1386,9 @@ public class FRN extends javax.swing.JFrame {
                         jPanel5Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                         .addGroup(jPanel5Layout.createSequentialGroup()
                                 .addContainerGap()
-                                .addGroup(jPanel5Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                                        .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 1016, Short.MAX_VALUE)
-                                        .addComponent(jPanel11, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                                .addComponent(jPanel11, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                                 .addContainerGap())
+                        .addComponent(jScrollPane1, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, 1028, Short.MAX_VALUE)
                 );
                 jPanel5Layout.setVerticalGroup(
                         jPanel5Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -1188,7 +1529,7 @@ public class FRN extends javax.swing.JFrame {
 
         private void customButton3ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_customButton3ActionPerformed
 		// TODO add your handling code here:
-		addtoFRN();
+		addtoTable();
         }//GEN-LAST:event_customButton3ActionPerformed
 
         private void jDateChooser4PropertyChange(java.beans.PropertyChangeEvent evt) {//GEN-FIRST:event_jDateChooser4PropertyChange
@@ -1249,6 +1590,30 @@ public class FRN extends javax.swing.JFrame {
 		// TODO add your handling code here:
 		PanelRemover.removeP(jPanel10, customButton1);
         }//GEN-LAST:event_customButton7ActionPerformed
+
+        private void customButton8ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_customButton8ActionPerformed
+		// TODO add your handling code here:
+		addFRN();
+        }//GEN-LAST:event_customButton8ActionPerformed
+
+        private void customTable1MouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_customTable1MouseClicked
+		// TODO add your handling code here:
+		removeRow();
+        }//GEN-LAST:event_customTable1MouseClicked
+
+        private void textF24KeyTyped(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_textF24KeyTyped
+		// TODO add your handling code here:
+
+		String paidAmountString = textF24.getText() + evt.getKeyChar();
+		if (!paidAmountString.isEmpty()) {
+			Double paidAmount = Double.parseDouble(textF24.getText() + evt.getKeyChar());
+			Double total = Double.parseDouble(textF23.getText() + evt.getKeyChar());
+			textF25.setText(Double.toString(total - paidAmount));
+		} else {
+
+		}
+
+        }//GEN-LAST:event_textF24KeyTyped
 	boolean emailFieldEntred = false;
 
 	/**
@@ -1323,6 +1688,7 @@ public class FRN extends javax.swing.JFrame {
         // Variables declaration - do not modify//GEN-BEGIN:variables
         private javax.swing.JLabel boxLabel;
         private javax.swing.JLabel closeLabel;
+        private frameutil.ComboBox<String> comboBox1;
         private frameutil.CustomButton customButton1;
         public frameutil.CustomButton customButton2;
         private frameutil.CustomButton customButton3;
@@ -1356,6 +1722,8 @@ public class FRN extends javax.swing.JFrame {
         private javax.swing.JLabel jLabel24;
         private javax.swing.JLabel jLabel25;
         private javax.swing.JLabel jLabel26;
+        private javax.swing.JLabel jLabel27;
+        private javax.swing.JLabel jLabel28;
         private javax.swing.JLabel jLabel3;
         private javax.swing.JLabel jLabel4;
         private javax.swing.JLabel jLabel5;
@@ -1398,6 +1766,7 @@ public class FRN extends javax.swing.JFrame {
         public frameutil.TextF textF23;
         public frameutil.TextF textF24;
         public frameutil.TextF textF25;
+        public frameutil.TextF textF26;
         public frameutil.TextF textF3;
         public frameutil.TextF textF4;
         public frameutil.TextF textF5;

@@ -4,6 +4,7 @@
  */
 package Util;
 
+import javax.swing.JDialog;
 import javax.swing.JFrame;
 
 /**
@@ -11,10 +12,13 @@ import javax.swing.JFrame;
  * @author acer
  */
 public class CreateObject {
-	
 
 	public static void make(JFrame jf) {
 		jf.setVisible(true);
+	}
+
+	public static void make(JDialog jd) {
+		jd.setVisible(true);
 	}
 
 	public static void make(JFrame closing, JFrame jf, boolean isDispose) {

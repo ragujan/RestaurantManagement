@@ -1,23 +1,18 @@
 package gui;
 
-import Util.BasicValidator;
-import Util.FilterDocRagRegex;
-import Util.JOP;
-import Util.LoadSubTypes;
-import com.toedter.calendar.JDateChooser;
-import frame.*;
 import frameutil.RoundedPanel;
 import frameutil.ImageSizer;
 import frameutil.MainTheme;
-import java.awt.Color;
-import java.awt.Dimension;
-import java.awt.Graphics;
-import java.awt.Graphics2D;
-import java.awt.RenderingHints;
 import java.awt.geom.RoundRectangle2D;
+import java.sql.ResultSet;
+import java.sql.SQLException;
 import java.text.SimpleDateFormat;
+import java.util.HashMap;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import javax.swing.ImageIcon;
 import javax.swing.JFrame;
+import model.MySql;
 
 /*
  * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
@@ -27,12 +22,12 @@ import javax.swing.JFrame;
  *
  * @author acer
  */
-public class Mw extends javax.swing.JFrame {
+public class Template extends javax.swing.JFrame {
 
 	/**
 	 * Creates new form NewJFrame
 	 */
-	public Mw() {
+	public Template() {
 		initComponents();
 		this.setLocationRelativeTo(null);
 		this.setResizable(true);
@@ -41,30 +36,45 @@ public class Mw extends javax.swing.JFrame {
 
 		jframeCustmize();
 		this.setBackground(MainTheme.mainColor);
+		roundedPanel1.setBackground(MainTheme.mainColor);
+		roundedPanel2.setBackground(MainTheme.secondColor);
+
+
 
 		this.setForeground(MainTheme.secondColor);
-
-		setDefaultCloseOperation(DISPOSE_ON_CLOSE);
+		
+		setDocFilters();
+		loadCombos();
 
 	}
-        JFrame jf = null;
-	public Mw(JFrame jf, String message, String title) {
+
+	public Template(DealerT et, HashMap<String, String> hm) {
 		this();
-		this.jf = jf;
-		jf.setEnabled(false);
-		jLabel2.setText(message);
-		jLabel2.setForeground(Color.WHITE);
-		jLabel1.setText(title);
-		roundedPanel1.setBackground(MainTheme.thirdColor);
-		roundedPanel2.setBackground(MainTheme.fourthColor);
-		jLabel1.setForeground(MainTheme.secondColor);
-		jPanel2.setBackground(MainTheme.secondColor);
-		customButton1.setBackground(MainTheme.secondColor);
+		this.updateId = hm.get("id");
+
+
 	}
+
+	public Template(Chef c) {
+		this();
+
+	}
+
+
+	SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
+	String updateId;
 
 	private void jframeCustmize() {
-		//closeLabel.setIcon(labelSetIcon("/Icons/close.png", closeLabel.getWidth() - 25, closeLabel.getHeight() - 17));
+		closeLabel.setIcon(labelSetIcon("/Icons/close.png", closeLabel.getWidth() - 25, closeLabel.getHeight() - 17));
+		boxLabel.setIcon(labelSetIcon("/Icons/square.png", boxLabel.getWidth() - 23, boxLabel.getHeight() - 17));
+		miniLabel.setIcon(labelSetIcon("/Icons/minus.png", miniLabel.getWidth() - 20, miniLabel.getHeight() - 13));
 
+		miniLabel.addMouseListener(new java.awt.event.MouseAdapter() {
+			@Override
+			public void mouseClicked(java.awt.event.MouseEvent evt) {
+				setState(JFrame.ICONIFIED);
+			}
+		});
 	}
 
 	public ImageIcon labelSetIcon(String src, int w, int h) {
@@ -72,6 +82,53 @@ public class Mw extends javax.swing.JFrame {
 		ImageIcon i = imgSizer.overaallResizer(src, w, h);
 		return i;
 	}
+
+	private void loadCombos() {
+
+	
+	}
+
+	private void setDocFilters() {
+	
+	}
+
+	private void contactCheck(String contact) {
+
+		ResultSet rs;
+		try {
+			rs = MySql.sq("SELECT * FROM `dealer` WHERE `dealer_contact`='" + contact + "' ");
+			if (rs.next()) {
+				Message m = new Message(this, "this contact is already exits ", "warning");
+				
+			}
+		} catch (ClassNotFoundException ex) {
+			Logger.getLogger(Template.class.getName()).log(Level.SEVERE, null, ex);
+		} catch (SQLException ex) {
+			Logger.getLogger(Template.class.getName()).log(Level.SEVERE, null, ex);
+		}
+
+	}
+
+	private void emailCheck(String email) {
+
+		ResultSet rs;
+		try {
+			rs = MySql.sq("SELECT * FROM `dealer` WHERE `dealer_email`='" + email + "' ");
+			if (rs.next()) {
+				Message m = new Message(this, "this email is already exits ", "warning");
+				
+			}
+		} catch (ClassNotFoundException ex) {
+			Logger.getLogger(Template.class.getName()).log(Level.SEVERE, null, ex);
+		} catch (SQLException ex) {
+			Logger.getLogger(Template.class.getName()).log(Level.SEVERE, null, ex);
+		}
+
+	}
+
+
+
+	
 
 	/**
 	 * This method is called from within the constructor to initialize the
@@ -86,10 +143,12 @@ public class Mw extends javax.swing.JFrame {
                 roundedPanel1 = new RoundedPanel();
                 roundedPanel2 = new RoundedPanel();
                 jPanel1 = new javax.swing.JPanel();
+                closeLabel = new javax.swing.JLabel();
+                miniLabel = new javax.swing.JLabel();
+                boxLabel = new javax.swing.JLabel();
                 jLabel1 = new javax.swing.JLabel();
-                jPanel2 = new javax.swing.JPanel();
+                comboBox1 = new frameutil.ComboBox();
                 jLabel2 = new javax.swing.JLabel();
-                customButton1 = new frameutil.CustomButton();
 
                 jToggleButton1.setText("jToggleButton1");
 
@@ -120,6 +179,37 @@ public class Mw extends javax.swing.JFrame {
                 jPanel1.setPreferredSize(new java.awt.Dimension(120, 25));
                 jPanel1.setLayout(new java.awt.BorderLayout());
 
+                closeLabel.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
+                closeLabel.setPreferredSize(new java.awt.Dimension(40, 25));
+                closeLabel.addMouseListener(new java.awt.event.MouseAdapter() {
+                        public void mouseClicked(java.awt.event.MouseEvent evt) {
+                                closeLabelMouseClicked(evt);
+                        }
+                        public void mouseEntered(java.awt.event.MouseEvent evt) {
+                                closeLabelMouseEntered(evt);
+                        }
+                        public void mouseExited(java.awt.event.MouseEvent evt) {
+                                closeLabelMouseExited(evt);
+                        }
+                });
+                jPanel1.add(closeLabel, java.awt.BorderLayout.LINE_END);
+
+                miniLabel.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
+                miniLabel.setPreferredSize(new java.awt.Dimension(40, 25));
+                miniLabel.addMouseListener(new java.awt.event.MouseAdapter() {
+                        public void mouseEntered(java.awt.event.MouseEvent evt) {
+                                miniLabelMouseEntered(evt);
+                        }
+                        public void mouseExited(java.awt.event.MouseEvent evt) {
+                                miniLabelMouseExited(evt);
+                        }
+                });
+                jPanel1.add(miniLabel, java.awt.BorderLayout.WEST);
+
+                boxLabel.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
+                boxLabel.setPreferredSize(new java.awt.Dimension(40, 25));
+                jPanel1.add(boxLabel, java.awt.BorderLayout.CENTER);
+
                 jLabel1.setFont(new java.awt.Font("Yu Gothic", 1, 12)); // NOI18N
                 jLabel1.setForeground(new java.awt.Color(255, 255, 255));
                 jLabel1.setText("RAG");
@@ -132,7 +222,7 @@ public class Mw extends javax.swing.JFrame {
                         .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, roundedPanel2Layout.createSequentialGroup()
                                 .addContainerGap()
                                 .addComponent(jLabel1)
-                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 746, Short.MAX_VALUE)
                                 .addComponent(jPanel1, javax.swing.GroupLayout.PREFERRED_SIZE, 120, javax.swing.GroupLayout.PREFERRED_SIZE))
                 );
                 roundedPanel2Layout.setVerticalGroup(
@@ -144,36 +234,9 @@ public class Mw extends javax.swing.JFrame {
                                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
                 );
 
-                customButton1.setText("OK");
-                customButton1.addActionListener(new java.awt.event.ActionListener() {
-                        public void actionPerformed(java.awt.event.ActionEvent evt) {
-                                customButton1ActionPerformed(evt);
-                        }
-                });
-
-                javax.swing.GroupLayout jPanel2Layout = new javax.swing.GroupLayout(jPanel2);
-                jPanel2.setLayout(jPanel2Layout);
-                jPanel2Layout.setHorizontalGroup(
-                        jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                        .addGroup(jPanel2Layout.createSequentialGroup()
-                                .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                                        .addGroup(jPanel2Layout.createSequentialGroup()
-                                                .addGap(171, 171, 171)
-                                                .addComponent(customButton1, javax.swing.GroupLayout.PREFERRED_SIZE, 111, javax.swing.GroupLayout.PREFERRED_SIZE))
-                                        .addGroup(jPanel2Layout.createSequentialGroup()
-                                                .addGap(18, 18, 18)
-                                                .addComponent(jLabel2, javax.swing.GroupLayout.PREFERRED_SIZE, 428, javax.swing.GroupLayout.PREFERRED_SIZE)))
-                                .addContainerGap(17, Short.MAX_VALUE))
-                );
-                jPanel2Layout.setVerticalGroup(
-                        jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                        .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel2Layout.createSequentialGroup()
-                                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                                .addComponent(jLabel2, javax.swing.GroupLayout.PREFERRED_SIZE, 44, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                                .addComponent(customButton1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                .addGap(43, 43, 43))
-                );
+                jLabel2.setFont(new java.awt.Font("Segoe UI", 1, 12)); // NOI18N
+                jLabel2.setForeground(new java.awt.Color(255, 255, 255));
+                jLabel2.setText("Select Supplier");
 
                 javax.swing.GroupLayout roundedPanel1Layout = new javax.swing.GroupLayout(roundedPanel1);
                 roundedPanel1.setLayout(roundedPanel1Layout);
@@ -182,23 +245,27 @@ public class Mw extends javax.swing.JFrame {
                         .addComponent(roundedPanel2, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                         .addGroup(roundedPanel1Layout.createSequentialGroup()
                                 .addContainerGap()
-                                .addComponent(jPanel2, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                                .addContainerGap())
+                                .addGroup(roundedPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                                        .addComponent(comboBox1, javax.swing.GroupLayout.PREFERRED_SIZE, 239, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                        .addComponent(jLabel2, javax.swing.GroupLayout.PREFERRED_SIZE, 85, javax.swing.GroupLayout.PREFERRED_SIZE))
+                                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
                 );
                 roundedPanel1Layout.setVerticalGroup(
                         roundedPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                         .addGroup(roundedPanel1Layout.createSequentialGroup()
                                 .addComponent(roundedPanel2, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                                .addComponent(jPanel2, javax.swing.GroupLayout.PREFERRED_SIZE, 107, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                .addContainerGap(7, Short.MAX_VALUE))
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                                .addComponent(jLabel2)
+                                .addGap(18, 18, 18)
+                                .addComponent(comboBox1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                .addContainerGap(371, Short.MAX_VALUE))
                 );
 
                 javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
                 getContentPane().setLayout(layout);
                 layout.setHorizontalGroup(
                         layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                        .addComponent(roundedPanel1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addComponent(roundedPanel1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                 );
                 layout.setVerticalGroup(
                         layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -222,13 +289,37 @@ public class Mw extends javax.swing.JFrame {
 	    this.setLocation(xx - x, yy - y);
     }//GEN-LAST:event_roundedPanel2MouseDragged
 
-        private void customButton1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_customButton1ActionPerformed
-		// TODO add your handling code here:
-		this.jf.setEnabled(true);
-		this.dispose();
-        }//GEN-LAST:event_customButton1ActionPerformed
-	boolean emailFieldEntred = false;
+    private void closeLabelMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_closeLabelMouseClicked
+	    // TODO add your handling code here:
+	    this.dispose();
+    }//GEN-LAST:event_closeLabelMouseClicked
 
+    private void closeLabelMouseEntered(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_closeLabelMouseEntered
+	    // TODO add your handling code here:
+	    closeLabel.setOpaque(true);
+	    closeLabel.setBackground(MainTheme.mainColor);
+    }//GEN-LAST:event_closeLabelMouseEntered
+
+    private void closeLabelMouseExited(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_closeLabelMouseExited
+	    // TODO add your handling code here:
+	    closeLabel.setBackground(MainTheme.secondColor);
+	    closeLabel.setOpaque(false);
+
+    }//GEN-LAST:event_closeLabelMouseExited
+
+    private void miniLabelMouseEntered(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_miniLabelMouseEntered
+	    // TODO add your handling code here:
+	    miniLabel.setOpaque(true);
+	    miniLabel.setBackground(MainTheme.mainColor);
+    }//GEN-LAST:event_miniLabelMouseEntered
+
+    private void miniLabelMouseExited(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_miniLabelMouseExited
+	    // TODO add your handling code here:
+
+	    miniLabel.setBackground(MainTheme.secondColor);
+	    miniLabel.setOpaque(false);
+    }//GEN-LAST:event_miniLabelMouseExited
+	boolean emailFieldEntred = false;
 	/**
 	 * @param args the command line arguments
 	 */
@@ -243,49 +334,25 @@ public class Mw extends javax.swing.JFrame {
 				if ("Nimbus".equals(info.getName())) {
 					javax.swing.UIManager.setLookAndFeel(info.getClassName());
 					break;
+
 				}
 			}
 		} catch (ClassNotFoundException ex) {
-			java.util.logging.Logger.getLogger(Mw.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
+			java.util.logging.Logger.getLogger(Template.class
+				.getName()).log(java.util.logging.Level.SEVERE, null, ex);
+
 		} catch (InstantiationException ex) {
-			java.util.logging.Logger.getLogger(Mw.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
+			java.util.logging.Logger.getLogger(Template.class
+				.getName()).log(java.util.logging.Level.SEVERE, null, ex);
+
 		} catch (IllegalAccessException ex) {
-			java.util.logging.Logger.getLogger(Mw.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
+			java.util.logging.Logger.getLogger(Template.class
+				.getName()).log(java.util.logging.Level.SEVERE, null, ex);
+
 		} catch (javax.swing.UnsupportedLookAndFeelException ex) {
-			java.util.logging.Logger.getLogger(Mw.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
+			java.util.logging.Logger.getLogger(Template.class
+				.getName()).log(java.util.logging.Level.SEVERE, null, ex);
 		}
-		//</editor-fold>
-		//</editor-fold>
-		//</editor-fold>
-		//</editor-fold>
-		//</editor-fold>
-		//</editor-fold>
-		//</editor-fold>
-		//</editor-fold>
-		//</editor-fold>
-		//</editor-fold>
-		//</editor-fold>
-		//</editor-fold>
-		//</editor-fold>
-		//</editor-fold>
-		//</editor-fold>
-		//</editor-fold>
-		//</editor-fold>
-		//</editor-fold>
-		//</editor-fold>
-		//</editor-fold>
-		//</editor-fold>
-		//</editor-fold>
-		//</editor-fold>
-		//</editor-fold>
-		//</editor-fold>
-		//</editor-fold>
-		//</editor-fold>
-		//</editor-fold>
-		//</editor-fold>
-		//</editor-fold>
-		//</editor-fold>
-		//</editor-fold>
 		//</editor-fold>
 		//</editor-fold>
 		//</editor-fold>
@@ -323,7 +390,7 @@ public class Mw extends javax.swing.JFrame {
 		java.awt.EventQueue.invokeLater(new Runnable() {
 			public void run() {
 
-				JFrame jf = new Mw();
+				JFrame jf = new Template();
 				jf.setVisible(true);
 
 			}
@@ -331,12 +398,14 @@ public class Mw extends javax.swing.JFrame {
 	}
 
         // Variables declaration - do not modify//GEN-BEGIN:variables
-        private frameutil.CustomButton customButton1;
+        private javax.swing.JLabel boxLabel;
+        private javax.swing.JLabel closeLabel;
+        private frameutil.ComboBox comboBox1;
         private javax.swing.JLabel jLabel1;
         private javax.swing.JLabel jLabel2;
         private javax.swing.JPanel jPanel1;
-        private javax.swing.JPanel jPanel2;
         private javax.swing.JToggleButton jToggleButton1;
+        private javax.swing.JLabel miniLabel;
         private RoundedPanel roundedPanel1;
         private RoundedPanel roundedPanel2;
         // End of variables declaration//GEN-END:variables
