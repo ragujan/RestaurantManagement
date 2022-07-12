@@ -12,6 +12,7 @@
             <file>file:/C:/Users/Acer/Documents/FoodRes4/AppGUI2/src/frameutil/CustomTable.java</file>
             <file>file:/C:/Users/Acer/Documents/FoodRes4/AppGUI2/src/gui/EmployeeWorkingHours.java</file>
             <file>file:/C:/Users/Acer/Documents/FoodRes4/AppGUI2/src/gui/FoodItem.java</file>
+            <file>file:/C:/Users/Acer/Documents/FoodRes4/AppGUI2/src/Util/IdCheck.java</file>
             <file>file:/C:/Users/Acer/Documents/FoodRes4/AppGUI2/src/gui/Employee.java</file>
             <file>file:/C:/Users/Acer/Documents/FoodRes4/AppGUI2/src/BCD.java</file>
             <file>file:/C:/Users/Acer/Documents/FoodRes4/AppGUI2/src/Util/SearchTable.java</file>
@@ -22,6 +23,7 @@
             <file>file:/C:/Users/Acer/Documents/FoodRes4/AppGUI2/src/gui/FRNITEMVIEW.java</file>
             <file>file:/C:/Users/Acer/Documents/FoodRes4/AppGUI2/src/gui/DealerT.java</file>
             <file>file:/C:/Users/Acer/Documents/FoodRes4/AppGUI2/src/Util/TableListenerAbs.java</file>
+            <file>file:/C:/Users/Acer/Documents/FoodRes4/AppGUI2/src/Util/TypeIds.java</file>
             <file>file:/C:/Users/Acer/Documents/FoodRes4/AppGUI2/src/Util/GetIdSingle.java</file>
             <file>file:/C:/Users/Acer/Documents/FoodRes4/AppGUI2/src/Util/CreateObject.java</file>
             <file>file:/C:/Users/Acer/Documents/FoodRes4/AppGUI2/src/Util/RemoveTRows.java</file>
@@ -31,8 +33,10 @@
             <file>file:/C:/Users/Acer/Documents/FoodRes4/AppGUI2/src/gui/FRNView.java</file>
             <file>file:/C:/Users/Acer/Documents/FoodRes4/AppGUI2/src/gui/StorageManage.java</file>
             <file>file:/C:/Users/Acer/Documents/FoodRes4/AppGUI2/src/frame/Home.java</file>
+            <file>file:/C:/Users/Acer/Documents/FoodRes4/AppGUI2/src/Util/BasicValidator.java</file>
             <file>file:/C:/Users/Acer/Documents/FoodRes4/AppGUI2/src/RagFrame.java</file>
             <file>file:/C:/Users/Acer/Documents/FoodRes4/AppGUI2/src/frame/NewJDialog1.java</file>
+            <file>file:/C:/Users/Acer/Documents/FoodRes4/AppGUI2/src/Util/FilterDocRagRegex.java</file>
             <file>file:/C:/Users/Acer/Documents/FoodRes4/AppGUI2/src/frame/NewJDialog.java</file>
             <file>file:/C:/Users/Acer/Documents/FoodRes4/AppGUI2/src/frameutil/OptionMessageLegit.java</file>
             <file>file:/C:/Users/Acer/Documents/FoodRes4/AppGUI2/src/Util/SetEmptyItems.java</file>
@@ -48,6 +52,7 @@
             <file>file:/C:/Users/Acer/Documents/FoodRes4/AppGUI2/src/gui/EmployeeSalary.java</file>
             <file>file:/C:/Users/Acer/Documents/FoodRes4/AppGUI2/src/Blah/JT.java</file>
             <file>file:/C:/Users/Acer/Documents/FoodRes4/AppGUI2/src/Util/InsertTable.java</file>
+            <file>file:/C:/Users/Acer/Documents/FoodRes4/AppGUI2/src/Util/PanelRemover.java</file>
             <file>file:/C:/Users/Acer/Documents/FoodRes4/AppGUI2/src/gui/Home.java</file>
             <file>file:/C:/Users/Acer/Documents/FoodRes4/AppGUI2/src/frame/NewDialog.java</file>
             <file>file:/C:/Users/Acer/Documents/FoodRes4/AppGUI2/src/gui/AddMenu.java</file>

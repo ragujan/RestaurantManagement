@@ -51,4 +51,21 @@ public class IdCheck {
 
 		return state;
 	}
+		public static boolean isLikeExits(String tname,String colname, String value) {
+		boolean state = false;
+                String tid = tname+"_id";
+		ResultSet rs;
+		try {
+			rs = MySql.sq("SELECT * FROM `" + tname + "` WHERE `" + colname + "` LIKE '%" + value + "%'");
+			if (rs.next()) {
+				state = true;
+			}
+		} catch (ClassNotFoundException ex) {
+			Logger.getLogger(IdCheck.class.getName()).log(Level.SEVERE, null, ex);
+		} catch (SQLException ex) {
+			Logger.getLogger(IdCheck.class.getName()).log(Level.SEVERE, null, ex);
+		}
+
+		return state;
+	}
 }

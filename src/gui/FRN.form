@@ -1437,16 +1437,18 @@
                   <Group type="103" groupAlignment="0" attributes="0">
                       <Group type="102" alignment="1" attributes="0">
                           <EmptySpace min="-2" pref="12" max="-2" attributes="0"/>
-                          <Group type="103" groupAlignment="3" attributes="0">
-                              <Component id="textF23" alignment="3" max="32767" attributes="0"/>
-                              <Component id="jLabel25" alignment="3" max="32767" attributes="0"/>
-                              <Component id="textF24" alignment="3" max="32767" attributes="0"/>
-                              <Component id="jLabel26" alignment="3" min="-2" max="-2" attributes="0"/>
-                              <Component id="textF25" alignment="3" max="32767" attributes="0"/>
-                              <Component id="jLabel24" alignment="3" max="32767" attributes="0"/>
-                              <Group type="103" alignment="3" groupAlignment="3" attributes="0">
+                          <Group type="103" groupAlignment="0" attributes="0">
+                              <Group type="103" alignment="0" groupAlignment="3" attributes="0">
                                   <Component id="comboBox1" alignment="3" min="-2" max="-2" attributes="0"/>
                                   <Component id="jLabel28" alignment="3" min="-2" max="-2" attributes="0"/>
+                              </Group>
+                              <Group type="103" groupAlignment="3" attributes="0">
+                                  <Component id="textF23" alignment="3" max="32767" attributes="0"/>
+                                  <Component id="jLabel25" alignment="3" max="32767" attributes="0"/>
+                                  <Component id="textF24" alignment="3" max="32767" attributes="0"/>
+                                  <Component id="jLabel26" alignment="3" min="-2" max="-2" attributes="0"/>
+                                  <Component id="textF25" alignment="3" max="32767" attributes="0"/>
+                                  <Component id="jLabel24" alignment="3" max="32767" attributes="0"/>
                               </Group>
                           </Group>
                           <EmptySpace type="unrelated" max="-2" attributes="0"/>

@@ -58,12 +58,11 @@ public class Bartender extends javax.swing.JFrame {
 	}
 	public String empId;
 
-	String loadTableQuery;
-	String[] colnames = {"employee_id", "bartender_id", "employee_name", "bartender_role_name"};
-
 	EmployeeT thiset;
 	Bartender manager;
 	boolean isEditmode;
+	String loadTableQuery;
+	String[] colnames = {"employee_id", "bartender_id", "employee_name", "bartender_role_name"};
 
 	private void loadQuery() {
 		ArrayList<String> al = new ArrayList<String>();
@@ -171,7 +170,6 @@ public class Bartender extends javax.swing.JFrame {
 					ArrayList<String> info = new ArrayList<>();
 					info.add(bartenderTypeId);
 					info.add(empId);
-					
 
 					InsertTable it = new InsertTable("bartender", info);
 					Message m = new Message(this, "Successfully entered ", "warning");
