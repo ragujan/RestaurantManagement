@@ -251,12 +251,12 @@ public class StorageRecord extends javax.swing.JFrame {
                 boxLabel = new javax.swing.JLabel();
                 jLabel1 = new javax.swing.JLabel();
                 jPanel2 = new javax.swing.JPanel();
-                comboBox1 = new frameutil.ComboBox();
+                comboBox1 = new frameutil.ComboBox<>();
                 jLabel2 = new javax.swing.JLabel();
                 jLabel3 = new javax.swing.JLabel();
                 textF1 = new frameutil.TextF();
                 jLabel4 = new javax.swing.JLabel();
-                comboBox2 = new frameutil.ComboBox();
+                comboBox2 = new frameutil.ComboBox<>();
                 customButton1 = new frameutil.CustomButton();
                 jPanel3 = new javax.swing.JPanel();
                 jScrollPane2 = new javax.swing.JScrollPane();
@@ -370,7 +370,7 @@ public class StorageRecord extends javax.swing.JFrame {
                 jLabel4.setForeground(new java.awt.Color(255, 255, 255));
                 jLabel4.setText("Sort");
 
-                comboBox2.setModel(new javax.swing.DefaultComboBoxModel(new String[] { "Newest", "Oldest", "High Qty", "Low Qty", "Price Low", "Price High" }));
+                comboBox2.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "Newest", "Oldest", "High Qty", "Low Qty", "Price Low", "Price High" }));
                 comboBox2.addActionListener(new java.awt.event.ActionListener() {
                         public void actionPerformed(java.awt.event.ActionEvent evt) {
                                 comboBox2ActionPerformed(evt);
@@ -749,8 +749,8 @@ public class StorageRecord extends javax.swing.JFrame {
         // Variables declaration - do not modify//GEN-BEGIN:variables
         private javax.swing.JLabel boxLabel;
         private javax.swing.JLabel closeLabel;
-        private frameutil.ComboBox comboBox1;
-        private frameutil.ComboBox comboBox2;
+        private frameutil.ComboBox<String> comboBox1;
+        private frameutil.ComboBox<String> comboBox2;
         private frameutil.CustomButton customButton1;
         private frameutil.CustomTable customTable1;
         private javax.swing.JLabel jLabel1;

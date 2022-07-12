@@ -21,22 +21,23 @@ public abstract class TableListenerAbs {
 		this.jt = jt;
 	}
 
-	public void tableListernRag(JTable jt) {
+
+	protected abstract void foo(ListSelectionEvent e);
+
+	final public void tableListenerRag(JTable jt) {
 		jt.getSelectionModel().addListSelectionListener(new ListSelectionListener() {
 			@Override
 			public void valueChanged(ListSelectionEvent e) {
-				System.out.println("HEY HEY");
-				if (jt.getRowCount() > 0 && jt.getRowCount() != -1) {
-					int row = jt.getSelectedRow();
-					if (row != -1) {
 
-					}
-
+				int row = jt.getSelectedRow();
+				if (row != -1) {
+					foo(e);
 				}
 
 			}
 
 		});
-
 	}
 }
+
+

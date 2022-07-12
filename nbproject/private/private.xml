@@ -3,30 +3,55 @@
     <editor-bookmarks xmlns="http://www.netbeans.org/ns/editor-bookmarks/2" lastBookmarkId="0"/>
     <open-files xmlns="http://www.netbeans.org/ns/projectui-open-files/2">
         <group>
-            <file>file:/C:/Users/Acer/Documents/FoodRes4/AppGUI2/src/gui/FRN.java</file>
-            <file>file:/C:/Users/Acer/Documents/FoodRes4/AppGUI2/src/frame/RagFrame.java</file>
-            <file>file:/C:/Users/Acer/Documents/FoodRes4/AppGUI2/src/frame/NewDialog.java</file>
-            <file>file:/C:/Users/Acer/Documents/FoodRes4/AppGUI2/src/Util/InsertTable.java</file>
-            <file>file:/C:/Users/Acer/Documents/FoodRes4/AppGUI2/src/frame/MessageCopy.java</file>
-            <file>file:/C:/Users/Acer/Documents/FoodRes4/AppGUI2/src/gui/FoodItem.java</file>
-            <file>file:/C:/Users/Acer/Documents/FoodRes4/AppGUI2/src/gui/Message.java</file>
-            <file>file:/C:/Users/Acer/Documents/FoodRes4/AppGUI2/src/Blah/JT.java</file>
-            <file>file:/C:/Users/Acer/Documents/FoodRes4/AppGUI2/src/frame/Home.java</file>
-            <file>file:/C:/Users/Acer/Documents/FoodRes4/AppGUI2/src/Util/GetIdSingle.java</file>
-            <file>file:/C:/Users/Acer/Documents/FoodRes4/AppGUI2/src/frameutil/MainTheme.java</file>
-            <file>file:/C:/Users/Acer/Documents/FoodRes4/AppGUI2/src/frame/NewJDialog.java</file>
-            <file>file:/C:/Users/Acer/Documents/FoodRes4/AppGUI2/src/Util/RemoveTRows.java</file>
+            <file>file:/C:/Users/Acer/Documents/FoodRes4/AppGUI2/src/reportXML/Blank_A4.jrxml</file>
             <file>file:/C:/Users/Acer/Documents/FoodRes4/AppGUI2/src/frame/NewClass.java</file>
-            <file>file:/C:/Users/Acer/Documents/FoodRes4/AppGUI2/src/ABC.java</file>
-            <file>file:/C:/Users/Acer/Documents/FoodRes4/AppGUI2/src/gui/Supplier.java</file>
-            <file>file:/C:/Users/Acer/Documents/FoodRes4/AppGUI2/src/frameutil/OptionMessageLegit.java</file>
-            <file>file:/C:/Users/Acer/Documents/FoodRes4/AppGUI2/src/gui/Manager.java</file>
-            <file>file:/C:/Users/Acer/Documents/FoodRes4/AppGUI2/src/Blah/RagFrame.java</file>
-            <file>file:/C:/Users/Acer/Documents/FoodRes4/AppGUI2/src/Util/SetEmptyItems.java</file>
+            <file>file:/C:/Users/Acer/Documents/FoodRes4/AppGUI2/src/Util/LoadTables.java</file>
+            <file>file:/C:/Users/Acer/Documents/FoodRes4/AppGUI2/src/frame/RagFrame.java</file>
+            <file>file:/C:/Users/Acer/Documents/FoodRes4/AppGUI2/src/frameutil/MainTheme.java</file>
+            <file>file:/C:/Users/Acer/Documents/FoodRes4/AppGUI2/src/frameutil/CustomButton.java</file>
+            <file>file:/C:/Users/Acer/Documents/FoodRes4/AppGUI2/src/frameutil/CustomTable.java</file>
+            <file>file:/C:/Users/Acer/Documents/FoodRes4/AppGUI2/src/gui/EmployeeWorkingHours.java</file>
+            <file>file:/C:/Users/Acer/Documents/FoodRes4/AppGUI2/src/gui/FoodItem.java</file>
+            <file>file:/C:/Users/Acer/Documents/FoodRes4/AppGUI2/src/gui/Employee.java</file>
             <file>file:/C:/Users/Acer/Documents/FoodRes4/AppGUI2/src/BCD.java</file>
+            <file>file:/C:/Users/Acer/Documents/FoodRes4/AppGUI2/src/Util/SearchTable.java</file>
+            <file>file:/C:/Users/Acer/Documents/FoodRes4/AppGUI2/src/frameutil/ImageSizer.java</file>
+            <file>file:/C:/Users/Acer/Documents/FoodRes4/AppGUI2/src/gui/Template.java</file>
+            <file>file:/C:/Users/Acer/Documents/FoodRes4/AppGUI2/src/gui/StorageRecord.java</file>
+            <file>file:/C:/Users/Acer/Documents/FoodRes4/AppGUI2/src/Util/ColorSetter.java</file>
+            <file>file:/C:/Users/Acer/Documents/FoodRes4/AppGUI2/src/gui/FRNITEMVIEW.java</file>
+            <file>file:/C:/Users/Acer/Documents/FoodRes4/AppGUI2/src/gui/DealerT.java</file>
+            <file>file:/C:/Users/Acer/Documents/FoodRes4/AppGUI2/src/Util/TableListenerAbs.java</file>
+            <file>file:/C:/Users/Acer/Documents/FoodRes4/AppGUI2/src/Util/GetIdSingle.java</file>
+            <file>file:/C:/Users/Acer/Documents/FoodRes4/AppGUI2/src/Util/CreateObject.java</file>
+            <file>file:/C:/Users/Acer/Documents/FoodRes4/AppGUI2/src/Util/RemoveTRows.java</file>
+            <file>file:/C:/Users/Acer/Documents/FoodRes4/AppGUI2/src/gui/Bartender.java</file>
+            <file>file:/C:/Users/Acer/Documents/FoodRes4/AppGUI2/src/frameutil/CustomJDialog.java</file>
+            <file>file:/C:/Users/Acer/Documents/FoodRes4/AppGUI2/src/gui/Cashier.java</file>
+            <file>file:/C:/Users/Acer/Documents/FoodRes4/AppGUI2/src/gui/FRNView.java</file>
+            <file>file:/C:/Users/Acer/Documents/FoodRes4/AppGUI2/src/gui/StorageManage.java</file>
+            <file>file:/C:/Users/Acer/Documents/FoodRes4/AppGUI2/src/frame/Home.java</file>
             <file>file:/C:/Users/Acer/Documents/FoodRes4/AppGUI2/src/RagFrame.java</file>
             <file>file:/C:/Users/Acer/Documents/FoodRes4/AppGUI2/src/frame/NewJDialog1.java</file>
-            <file>file:/C:/Users/Acer/Documents/FoodRes4/AppGUI2/src/gui/Cashier.java</file>
+            <file>file:/C:/Users/Acer/Documents/FoodRes4/AppGUI2/src/frame/NewJDialog.java</file>
+            <file>file:/C:/Users/Acer/Documents/FoodRes4/AppGUI2/src/frameutil/OptionMessageLegit.java</file>
+            <file>file:/C:/Users/Acer/Documents/FoodRes4/AppGUI2/src/Util/SetEmptyItems.java</file>
+            <file>file:/C:/Users/Acer/Documents/FoodRes4/AppGUI2/src/gui/FRN.java</file>
+            <file>file:/C:/Users/Acer/Documents/FoodRes4/AppGUI2/src/frameutil/DialogCustom.java</file>
+            <file>file:/C:/Users/Acer/Documents/FoodRes4/AppGUI2/src/gui/EmployeeT.java</file>
+            <file>file:/C:/Users/Acer/Documents/FoodRes4/AppGUI2/src/frame/MessageCopy.java</file>
+            <file>file:/C:/Users/Acer/Documents/FoodRes4/AppGUI2/src/gui/Supplier.java</file>
+            <file>file:/C:/Users/Acer/Documents/FoodRes4/AppGUI2/src/Blah/RagFrame.java</file>
+            <file>file:/C:/Users/Acer/Documents/FoodRes4/AppGUI2/src/gui/Message.java</file>
+            <file>file:/C:/Users/Acer/Documents/FoodRes4/AppGUI2/src/ABC.java</file>
+            <file>file:/C:/Users/Acer/Documents/FoodRes4/AppGUI2/src/gui/Manager.java</file>
+            <file>file:/C:/Users/Acer/Documents/FoodRes4/AppGUI2/src/gui/EmployeeSalary.java</file>
+            <file>file:/C:/Users/Acer/Documents/FoodRes4/AppGUI2/src/Blah/JT.java</file>
+            <file>file:/C:/Users/Acer/Documents/FoodRes4/AppGUI2/src/Util/InsertTable.java</file>
+            <file>file:/C:/Users/Acer/Documents/FoodRes4/AppGUI2/src/gui/Home.java</file>
+            <file>file:/C:/Users/Acer/Documents/FoodRes4/AppGUI2/src/frame/NewDialog.java</file>
+            <file>file:/C:/Users/Acer/Documents/FoodRes4/AppGUI2/src/gui/AddMenu.java</file>
+            <file>file:/C:/Users/Acer/Documents/FoodRes4/AppGUI2/src/gui/FoodNavi.java</file>
         </group>
     </open-files>
 </project-private>
