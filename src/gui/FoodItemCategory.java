@@ -1,17 +1,31 @@
 package gui;
 
+import Util.ColorSetter;
+import Util.GetIdSingle;
+import Util.IdCheck;
+import Util.InsertTable;
+import Util.LoadSubTypes;
+import Util.LoadTables;
+import Util.PanelRemover;
+import Util.SearchTable;
+import Util.SetEmptyItems;
+import Util.TableListenerAbs;
 import frameutil.RoundedPanel;
 import frameutil.ImageSizer;
 import frameutil.MainTheme;
+import java.awt.Color;
 import java.awt.geom.RoundRectangle2D;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.swing.ImageIcon;
+import javax.swing.JComponent;
 import javax.swing.JFrame;
+import javax.swing.event.ListSelectionEvent;
 import model.MySql;
 
 /*
@@ -24,118 +38,175 @@ import model.MySql;
  */
 public class FoodItemCategory extends javax.swing.JFrame {
 
-	/**
-	 * Creates new form NewJFrame
-	 */
-	public FoodItemCategory() {
-		initComponents();
-		this.setLocationRelativeTo(null);
-		this.setResizable(true);
-		this.setVisible(true);
-		setShape(new RoundRectangle2D.Double(0, 0, getWidth(), getHeight(), 7, 7));
+    /**
+     * Creates new form NewJFrame
+     */
+    public FoodItemCategory() {
+        initComponents();
+        this.setLocationRelativeTo(null);
+        this.setResizable(true);
+        this.setVisible(true);
+        setShape(new RoundRectangle2D.Double(0, 0, getWidth(), getHeight(), 7, 7));
 
-		jframeCustmize();
-		this.setBackground(MainTheme.mainColor);
-		roundedPanel1.setBackground(MainTheme.mainColor);
-		roundedPanel2.setBackground(MainTheme.secondColor);
+        jframeCustmize();
+        JComponent[] jc = {comboBox1, textF1};
+        JComponent[] jclbl = {jLabel2, jLabel3};
+        ColorSetter.setC(jc, MainTheme.thirdColor, 1);
+        ColorSetter.setC(jclbl, MainTheme.secondColor, 2);
+        this.setBackground(MainTheme.mainColor);
+        roundedPanel1.setBackground(MainTheme.mainColor);
+        roundedPanel2.setBackground(MainTheme.secondColor);
 
+        this.setForeground(MainTheme.secondColor);
 
+        setDocFilters();
+        loadCombos();
+        loadTable();
+        tableListenerRag();
 
-		this.setForeground(MainTheme.secondColor);
-		
-		setDocFilters();
-		loadCombos();
+    }
 
-	}
+    public FoodItemCategory(DealerT et, HashMap<String, String> hm) {
+        this();
+        this.updateId = hm.get("id");
 
-	public FoodItemCategory(DealerT et, HashMap<String, String> hm) {
-		this();
-		this.updateId = hm.get("id");
+    }
 
+    public FoodItemCategory(Chef c) {
+        this();
 
-	}
+    }
 
-	public FoodItemCategory(Chef c) {
-		this();
+    SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
+    String updateId;
+    String loadTableQuery;
+    String[] colnames = {"food_item_category_id", "food_item_category_name", "dealer_type_name"};
+    String foodItemCategoryID;
 
-	}
+    private void loadQuery() {
+        ArrayList<String> al = new ArrayList<String>();
+        al.add("food_item_category");
+        al.add("dealer_type,food_item_category");
 
+        SearchTable st = new SearchTable(al);
+        this.loadTableQuery = st.getTableQuery();
+        //System.out.println(this.loadTableQuery);
 
-	SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
-	String updateId;
+    }
 
-	private void jframeCustmize() {
-		closeLabel.setIcon(labelSetIcon("/Icons/close.png", closeLabel.getWidth() - 25, closeLabel.getHeight() - 17));
-		boxLabel.setIcon(labelSetIcon("/Icons/square.png", boxLabel.getWidth() - 23, boxLabel.getHeight() - 17));
-		miniLabel.setIcon(labelSetIcon("/Icons/minus.png", miniLabel.getWidth() - 20, miniLabel.getHeight() - 13));
+    private void loadTable() {
+        loadQuery();
+        String sort = "ORDER BY `food_item_category_name` ASC";
 
-		miniLabel.addMouseListener(new java.awt.event.MouseAdapter() {
-			@Override
-			public void mouseClicked(java.awt.event.MouseEvent evt) {
-				setState(JFrame.ICONIFIED);
-			}
-		});
-	}
+        StringBuilder stringquerybuild = new StringBuilder();
+        stringquerybuild.append(this.loadTableQuery).toString();
+        stringquerybuild.append(sort).toString();
+        String query = stringquerybuild.toString();
 
-	public ImageIcon labelSetIcon(String src, int w, int h) {
-		ImageSizer imgSizer = new ImageSizer();
-		ImageIcon i = imgSizer.overaallResizer(src, w, h);
-		return i;
-	}
+        LoadTables lt = new LoadTables(customTable1, query, this.colnames);
+    }
 
-	private void loadCombos() {
+    private void addMenuItemCategory(String tableName) {
 
-	
-	}
+        String typename = textF1.getText();
+        String type = comboBox1.getSelectedItem().toString();
+        if (type.equals("Select dealer_type")) {
+            Message m = new Message(this, "Please select a valid dealer type", "Warning");
+        } else if (typename.isEmpty()) {
+            Message m = new Message(this, "Please enter the type name", "Warning");
+        } else {
+            boolean exits = IdCheck.isExits(tableName, "" + tableName + "_name", typename);
+            if (exits) {
+                Message m = new Message(this, "This name already does it exits", "Warning");
+            } else {
+                String dealerTypeId = GetIdSingle.getId("dealer_type", type);
+                ArrayList<String> info = new ArrayList<>();
+                info.add(dealerTypeId);
+                info.add(typename);
 
-	private void setDocFilters() {
-	
-	}
+                InsertTable it = new InsertTable(tableName, info);
+                loadTable();
+                clearFields();
+            }
+        }
+    }
 
-	private void contactCheck(String contact) {
+    private void updateMenuItemCategory(String tableName) {
 
-		ResultSet rs;
-		try {
-			rs = MySql.sq("SELECT * FROM `dealer` WHERE `dealer_contact`='" + contact + "' ");
-			if (rs.next()) {
-				Message m = new Message(this, "this contact is already exits ", "warning");
-				
-			}
-		} catch (ClassNotFoundException ex) {
-			Logger.getLogger(FoodItemCategory.class.getName()).log(Level.SEVERE, null, ex);
-		} catch (SQLException ex) {
-			Logger.getLogger(FoodItemCategory.class.getName()).log(Level.SEVERE, null, ex);
-		}
+        String typename = textF1.getText();
+        String type = comboBox1.getSelectedItem().toString();
+        if (type.equals("Select dealer type")) {
+            Message m = new Message(this, "Please select a valid dealer type", "Warning");
+        } else if (typename.isEmpty()) {
+            Message m = new Message(this, "Please enter the type name", "Warning");
+        } else {
 
-	}
+            String dealerTypeId = GetIdSingle.getId("dealer_type", type);
+            MySql.iud("UPDATE `food_item_category` SET `food_item_category_name`='" + typename + "',`dealer_type_id`='" + dealerTypeId + "' WHERE `food_item_category_id`='" + foodItemCategoryID + "'");
+            foodItemCategoryID = null;
+            loadTable();
+            clearFields();
+            PanelRemover.removeP(jPanel4, customButton1);
 
-	private void emailCheck(String email) {
+        }
+    }
 
-		ResultSet rs;
-		try {
-			rs = MySql.sq("SELECT * FROM `dealer` WHERE `dealer_email`='" + email + "' ");
-			if (rs.next()) {
-				Message m = new Message(this, "this email is already exits ", "warning");
-				
-			}
-		} catch (ClassNotFoundException ex) {
-			Logger.getLogger(FoodItemCategory.class.getName()).log(Level.SEVERE, null, ex);
-		} catch (SQLException ex) {
-			Logger.getLogger(FoodItemCategory.class.getName()).log(Level.SEVERE, null, ex);
-		}
+    public void tableListenerRag() {
+        TableListenerAbs tlas = new TableListenerAbs(customTable1) {
+            @Override
+            protected void foo(ListSelectionEvent e) {
+                int row = customTable1.getSelectedRow();
+                String name = (String) customTable1.getValueAt(row, 1);
+                String dealerType = (String) customTable1.getValueAt(row, 2);
+                foodItemCategoryID = (String) customTable1.getValueAt(row, 0);
+                textF1.setText(name);
+                comboBox1.setSelectedItem(dealerType);
+                PanelRemover.removeP(jPanel4, customButton2);
+            }
+        };
+        tlas.tableListenerRag(customTable1);
+    }
 
-	}
+    private void clearFields() {
+        JComponent[] jc = {comboBox1, textF1};
+        SetEmptyItems.emptyItems(jc);
+        loadCombos();
+    }
 
+    private void jframeCustmize() {
+        closeLabel.setIcon(labelSetIcon("/Icons/close.png", closeLabel.getWidth() - 25, closeLabel.getHeight() - 17));
+        boxLabel.setIcon(labelSetIcon("/Icons/square.png", boxLabel.getWidth() - 23, boxLabel.getHeight() - 17));
+        miniLabel.setIcon(labelSetIcon("/Icons/minus.png", miniLabel.getWidth() - 20, miniLabel.getHeight() - 13));
 
+        miniLabel.addMouseListener(new java.awt.event.MouseAdapter() {
+            @Override
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                setState(JFrame.ICONIFIED);
+            }
+        });
+    }
 
-	
+    public ImageIcon labelSetIcon(String src, int w, int h) {
+        ImageSizer imgSizer = new ImageSizer();
+        ImageIcon i = imgSizer.overaallResizer(src, w, h);
+        return i;
+    }
 
-	/**
-	 * This method is called from within the constructor to initialize the
-	 * form. WARNING: Do NOT modify this code. The content of this method is
-	 * always regenerated by the Form Editor.
-	 */
-	@SuppressWarnings("unchecked")
+    private void loadCombos() {
+        LoadSubTypes.loadType(comboBox1, "dealer_type");
+
+    }
+
+    private void setDocFilters() {
+
+    }
+
+    /**
+     * This method is called from within the constructor to initialize the form.
+     * WARNING: Do NOT modify this code. The content of this method is always
+     * regenerated by the Form Editor.
+     */
+    @SuppressWarnings("unchecked")
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
     private void initComponents() {
 
@@ -147,8 +218,17 @@ public class FoodItemCategory extends javax.swing.JFrame {
         miniLabel = new javax.swing.JLabel();
         boxLabel = new javax.swing.JLabel();
         jLabel1 = new javax.swing.JLabel();
-        comboBox1 = new frameutil.ComboBox();
+        jPanel2 = new javax.swing.JPanel();
+        textF1 = new frameutil.TextF();
         jLabel2 = new javax.swing.JLabel();
+        comboBox1 = new frameutil.ComboBox();
+        jLabel3 = new javax.swing.JLabel();
+        jPanel4 = new javax.swing.JPanel();
+        customButton1 = new frameutil.CustomButton();
+        customButton2 = new frameutil.CustomButton();
+        jPanel3 = new javax.swing.JPanel();
+        jScrollPane1 = new javax.swing.JScrollPane();
+        customTable1 = new frameutil.CustomTable();
 
         jToggleButton1.setText("jToggleButton1");
 
@@ -222,7 +302,7 @@ public class FoodItemCategory extends javax.swing.JFrame {
             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, roundedPanel2Layout.createSequentialGroup()
                 .addContainerGap()
                 .addComponent(jLabel1)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 746, Short.MAX_VALUE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                 .addComponent(jPanel1, javax.swing.GroupLayout.PREFERRED_SIZE, 120, javax.swing.GroupLayout.PREFERRED_SIZE))
         );
         roundedPanel2Layout.setVerticalGroup(
@@ -236,7 +316,92 @@ public class FoodItemCategory extends javax.swing.JFrame {
 
         jLabel2.setFont(new java.awt.Font("Segoe UI", 1, 12)); // NOI18N
         jLabel2.setForeground(new java.awt.Color(255, 255, 255));
-        jLabel2.setText("Select Supplier");
+        jLabel2.setText("Food Item Category Name");
+
+        jLabel3.setFont(new java.awt.Font("Segoe UI", 1, 12)); // NOI18N
+        jLabel3.setForeground(new java.awt.Color(255, 255, 255));
+        jLabel3.setText("Dealer");
+
+        jPanel4.setLayout(new java.awt.CardLayout());
+
+        customButton1.setText("Add Food Item Category");
+        customButton1.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                customButton1ActionPerformed(evt);
+            }
+        });
+        jPanel4.add(customButton1, "card2");
+
+        customButton2.setText("Update");
+        customButton2.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                customButton2ActionPerformed(evt);
+            }
+        });
+        jPanel4.add(customButton2, "card3");
+
+        javax.swing.GroupLayout jPanel2Layout = new javax.swing.GroupLayout(jPanel2);
+        jPanel2.setLayout(jPanel2Layout);
+        jPanel2Layout.setHorizontalGroup(
+            jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(jPanel2Layout.createSequentialGroup()
+                .addContainerGap()
+                .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
+                    .addComponent(comboBox1, javax.swing.GroupLayout.PREFERRED_SIZE, 175, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(jLabel3, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.PREFERRED_SIZE, 85, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                    .addComponent(textF1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addComponent(jLabel2, javax.swing.GroupLayout.PREFERRED_SIZE, 180, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(jPanel4, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+        );
+        jPanel2Layout.setVerticalGroup(
+            jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(jPanel2Layout.createSequentialGroup()
+                .addContainerGap()
+                .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(jLabel2)
+                    .addComponent(jLabel3))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                    .addComponent(jPanel4, javax.swing.GroupLayout.PREFERRED_SIZE, 0, Short.MAX_VALUE)
+                    .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                        .addComponent(comboBox1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addComponent(textF1, javax.swing.GroupLayout.PREFERRED_SIZE, 25, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+        );
+
+        customTable1.setModel(new javax.swing.table.DefaultTableModel(
+            new Object [][] {
+                {null, null, null},
+                {null, null, null},
+                {null, null, null},
+                {null, null, null}
+            },
+            new String [] {
+                "Id", "Name", "Dealer Type"
+            }
+        ));
+        jScrollPane1.setViewportView(customTable1);
+
+        javax.swing.GroupLayout jPanel3Layout = new javax.swing.GroupLayout(jPanel3);
+        jPanel3.setLayout(jPanel3Layout);
+        jPanel3Layout.setHorizontalGroup(
+            jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(jPanel3Layout.createSequentialGroup()
+                .addContainerGap()
+                .addComponent(jScrollPane1)
+                .addContainerGap())
+        );
+        jPanel3Layout.setVerticalGroup(
+            jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(jPanel3Layout.createSequentialGroup()
+                .addContainerGap()
+                .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 212, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+        );
 
         javax.swing.GroupLayout roundedPanel1Layout = new javax.swing.GroupLayout(roundedPanel1);
         roundedPanel1.setLayout(roundedPanel1Layout);
@@ -246,19 +411,19 @@ public class FoodItemCategory extends javax.swing.JFrame {
             .addGroup(roundedPanel1Layout.createSequentialGroup()
                 .addContainerGap()
                 .addGroup(roundedPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(comboBox1, javax.swing.GroupLayout.PREFERRED_SIZE, 239, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(jLabel2, javax.swing.GroupLayout.PREFERRED_SIZE, 85, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                    .addComponent(jPanel2, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addComponent(jPanel3, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                .addContainerGap())
         );
         roundedPanel1Layout.setVerticalGroup(
             roundedPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(roundedPanel1Layout.createSequentialGroup()
                 .addComponent(roundedPanel2, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                .addComponent(jLabel2)
-                .addGap(18, 18, 18)
-                .addComponent(comboBox1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap(371, Short.MAX_VALUE))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(jPanel2, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(jPanel3, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addContainerGap())
         );
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
@@ -275,170 +440,190 @@ public class FoodItemCategory extends javax.swing.JFrame {
         pack();
     }// </editor-fold>//GEN-END:initComponents
     int x = 0;
-	int y = 0;
+    int y = 0;
     private void roundedPanel2MousePressed(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_roundedPanel2MousePressed
-	    // TODO add your handling code here:
-	    x = evt.getX();
-	    y = evt.getY();
+        // TODO add your handling code here:
+        x = evt.getX();
+        y = evt.getY();
     }//GEN-LAST:event_roundedPanel2MousePressed
 
     private void roundedPanel2MouseDragged(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_roundedPanel2MouseDragged
-	    // TODO add your handling code here:
-	    int xx = evt.getXOnScreen();
-	    int yy = evt.getYOnScreen();
-	    this.setLocation(xx - x, yy - y);
+        // TODO add your handling code here:
+        int xx = evt.getXOnScreen();
+        int yy = evt.getYOnScreen();
+        this.setLocation(xx - x, yy - y);
     }//GEN-LAST:event_roundedPanel2MouseDragged
 
     private void closeLabelMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_closeLabelMouseClicked
-	    // TODO add your handling code here:
-	    this.dispose();
+        // TODO add your handling code here:
+        this.dispose();
     }//GEN-LAST:event_closeLabelMouseClicked
 
     private void closeLabelMouseEntered(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_closeLabelMouseEntered
-	    // TODO add your handling code here:
-	    closeLabel.setOpaque(true);
-	    closeLabel.setBackground(MainTheme.mainColor);
+        // TODO add your handling code here:
+        closeLabel.setOpaque(true);
+        closeLabel.setBackground(MainTheme.mainColor);
     }//GEN-LAST:event_closeLabelMouseEntered
 
     private void closeLabelMouseExited(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_closeLabelMouseExited
-	    // TODO add your handling code here:
-	    closeLabel.setBackground(MainTheme.secondColor);
-	    closeLabel.setOpaque(false);
+        // TODO add your handling code here:
+        closeLabel.setBackground(MainTheme.secondColor);
+        closeLabel.setOpaque(false);
 
     }//GEN-LAST:event_closeLabelMouseExited
 
     private void miniLabelMouseEntered(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_miniLabelMouseEntered
-	    // TODO add your handling code here:
-	    miniLabel.setOpaque(true);
-	    miniLabel.setBackground(MainTheme.mainColor);
+        // TODO add your handling code here:
+        miniLabel.setOpaque(true);
+        miniLabel.setBackground(MainTheme.mainColor);
     }//GEN-LAST:event_miniLabelMouseEntered
 
     private void miniLabelMouseExited(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_miniLabelMouseExited
-	    // TODO add your handling code here:
+        // TODO add your handling code here:
 
-	    miniLabel.setBackground(MainTheme.secondColor);
-	    miniLabel.setOpaque(false);
+        miniLabel.setBackground(MainTheme.secondColor);
+        miniLabel.setOpaque(false);
     }//GEN-LAST:event_miniLabelMouseExited
-	boolean emailFieldEntred = false;
-	/**
-	 * @param args the command line arguments
-	 */
-	public static void main(String args[]) {
-		/* Set the Nimbus look and feel */
-		//<editor-fold defaultstate="collapsed" desc=" Look and feel setting code (optional) ">
-		/* If Nimbus (introduced in Java SE 6) is not available, stay with the default look and feel.
+
+    private void customButton1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_customButton1ActionPerformed
+        // TODO add your handling code here:
+        addMenuItemCategory("food_item_category");
+    }//GEN-LAST:event_customButton1ActionPerformed
+
+    private void customButton2ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_customButton2ActionPerformed
+        // TODO add your handling code here:
+        updateMenuItemCategory("food_item_category");
+    }//GEN-LAST:event_customButton2ActionPerformed
+    boolean emailFieldEntred = false;
+
+    /**
+     * @param args the command line arguments
+     */
+    public static void main(String args[]) {
+        /* Set the Nimbus look and feel */
+        //<editor-fold defaultstate="collapsed" desc=" Look and feel setting code (optional) ">
+        /* If Nimbus (introduced in Java SE 6) is not available, stay with the default look and feel.
          * For details see http://download.oracle.com/javase/tutorial/uiswing/lookandfeel/plaf.html 
-		 */
-		try {
-			for (javax.swing.UIManager.LookAndFeelInfo info : javax.swing.UIManager.getInstalledLookAndFeels()) {
-				if ("Nimbus".equals(info.getName())) {
-					javax.swing.UIManager.setLookAndFeel(info.getClassName());
-					break;
+         */
+        try {
+            for (javax.swing.UIManager.LookAndFeelInfo info : javax.swing.UIManager.getInstalledLookAndFeels()) {
+                if ("Nimbus".equals(info.getName())) {
+                    javax.swing.UIManager.setLookAndFeel(info.getClassName());
+                    break;
 
-				}
-			}
-		} catch (ClassNotFoundException ex) {
-			java.util.logging.Logger.getLogger(FoodItemCategory.class
-				.getName()).log(java.util.logging.Level.SEVERE, null, ex);
+                }
+            }
+        } catch (ClassNotFoundException ex) {
+            java.util.logging.Logger.getLogger(FoodItemCategory.class
+                    .getName()).log(java.util.logging.Level.SEVERE, null, ex);
 
-		} catch (InstantiationException ex) {
-			java.util.logging.Logger.getLogger(FoodItemCategory.class
-				.getName()).log(java.util.logging.Level.SEVERE, null, ex);
+        } catch (InstantiationException ex) {
+            java.util.logging.Logger.getLogger(FoodItemCategory.class
+                    .getName()).log(java.util.logging.Level.SEVERE, null, ex);
 
-		} catch (IllegalAccessException ex) {
-			java.util.logging.Logger.getLogger(FoodItemCategory.class
-				.getName()).log(java.util.logging.Level.SEVERE, null, ex);
+        } catch (IllegalAccessException ex) {
+            java.util.logging.Logger.getLogger(FoodItemCategory.class
+                    .getName()).log(java.util.logging.Level.SEVERE, null, ex);
 
-		} catch (javax.swing.UnsupportedLookAndFeelException ex) {
-			java.util.logging.Logger.getLogger(FoodItemCategory.class
-				.getName()).log(java.util.logging.Level.SEVERE, null, ex);
-		}
-		//</editor-fold>
-		//</editor-fold>
-		//</editor-fold>
-		//</editor-fold>
-		//</editor-fold>
-		//</editor-fold>
-		//</editor-fold>
-		//</editor-fold>
-		//</editor-fold>
-		//</editor-fold>
-		//</editor-fold>
-		//</editor-fold>
-		//</editor-fold>
-		//</editor-fold>
-		//</editor-fold>
-		//</editor-fold>
-		//</editor-fold>
-		//</editor-fold>
-		//</editor-fold>
-		//</editor-fold>
-		//</editor-fold>
-		//</editor-fold>
-		//</editor-fold>
-		//</editor-fold>
-		//</editor-fold>
-		//</editor-fold>
-		//</editor-fold>
-		//</editor-fold>
-		//</editor-fold>
-		//</editor-fold>
-		//</editor-fold>
-		//</editor-fold>
-		//</editor-fold>
-		//</editor-fold>
-		//</editor-fold>
-		//</editor-fold>
-		//</editor-fold>
-		//</editor-fold>
-		//</editor-fold>
-		//</editor-fold>
-		//</editor-fold>
-		//</editor-fold>
-		//</editor-fold>
-		//</editor-fold>
-		//</editor-fold>
-		//</editor-fold>
-		//</editor-fold>
-		//</editor-fold>
-		//</editor-fold>
-		//</editor-fold>
-		//</editor-fold>
-		//</editor-fold>
-		//</editor-fold>
-		//</editor-fold>
-		//</editor-fold>
-		//</editor-fold>
-		//</editor-fold>
-		//</editor-fold>
-		//</editor-fold>
-		//</editor-fold>
-		//</editor-fold>
-		//</editor-fold>
-		//</editor-fold>
-		//</editor-fold>
+        } catch (javax.swing.UnsupportedLookAndFeelException ex) {
+            java.util.logging.Logger.getLogger(FoodItemCategory.class
+                    .getName()).log(java.util.logging.Level.SEVERE, null, ex);
+        }
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
 
-		/* Create and display the form */
-		java.awt.EventQueue.invokeLater(new Runnable() {
-			public void run() {
+        /* Create and display the form */
+        java.awt.EventQueue.invokeLater(new Runnable() {
+            public void run() {
 
-				JFrame jf = new FoodItemCategory();
-				jf.setVisible(true);
+                JFrame jf = new FoodItemCategory();
+                jf.setVisible(true);
 
-			}
-		});
-	}
+            }
+        });
+    }
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JLabel boxLabel;
     private javax.swing.JLabel closeLabel;
     private frameutil.ComboBox comboBox1;
+    private frameutil.CustomButton customButton1;
+    private frameutil.CustomButton customButton2;
+    private frameutil.CustomTable customTable1;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel2;
+    private javax.swing.JLabel jLabel3;
     private javax.swing.JPanel jPanel1;
+    private javax.swing.JPanel jPanel2;
+    private javax.swing.JPanel jPanel3;
+    private javax.swing.JPanel jPanel4;
+    private javax.swing.JScrollPane jScrollPane1;
     private javax.swing.JToggleButton jToggleButton1;
     private javax.swing.JLabel miniLabel;
     private RoundedPanel roundedPanel1;
     private RoundedPanel roundedPanel2;
+    private frameutil.TextF textF1;
     // End of variables declaration//GEN-END:variables
 }

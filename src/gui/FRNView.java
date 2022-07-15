@@ -139,7 +139,7 @@ public class FRNView extends javax.swing.JFrame {
 		customTable1.getSelectionModel().addListSelectionListener(new ListSelectionListener() {
 			@Override
 			public void valueChanged(ListSelectionEvent e) {
-				System.out.println("HEY HEY");
+				
 				if (customTable1.getRowCount() > 0 && customTable1.getRowCount() != -1) {
 					int row = customTable1.getSelectedRow();
 					if (row != -1) {

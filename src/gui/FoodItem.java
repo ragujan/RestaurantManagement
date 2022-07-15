@@ -46,305 +46,305 @@ import model.MySql;
  */
 public class FoodItem extends javax.swing.JFrame {
 
-	/**
-	 * Creates new form NewJFrame
-	 */
-	public FoodItem() {
-		initComponents();
-		this.setLocationRelativeTo(null);
-		this.setResizable(true);
-		this.setVisible(true);
-		setShape(new RoundRectangle2D.Double(0, 0, getWidth(), getHeight(), 7, 7));
+    /**
+     * Creates new form NewJFrame
+     */
+    public FoodItem() {
+        initComponents();
+        this.setLocationRelativeTo(null);
+        this.setResizable(true);
+        this.setVisible(true);
+        setShape(new RoundRectangle2D.Double(0, 0, getWidth(), getHeight(), 7, 7));
 
-		jframeCustmize();
-		this.setBackground(MainTheme.mainColor);
-		roundedPanel1.setBackground(MainTheme.mainColor);
-		roundedPanel2.setBackground(MainTheme.secondColor);
-		textF1.setBackground(MainTheme.fourthColor);
-		textF1.setForeground(MainTheme.secondColor);
-		jPanel2.setBackground(MainTheme.secondColor);
-		jPanel8.setBackground(MainTheme.secondColor);
-		this.setForeground(MainTheme.secondColor);
-		this.setVisible(true);
-		loadCombos();
-		loadTable();
-		tableListernRag();
-             
+        jframeCustmize();
+        this.setBackground(MainTheme.mainColor);
+        roundedPanel1.setBackground(MainTheme.mainColor);
+        roundedPanel2.setBackground(MainTheme.secondColor);
+        textF1.setBackground(MainTheme.fourthColor);
+        textF1.setForeground(MainTheme.secondColor);
+        jPanel2.setBackground(MainTheme.secondColor);
+        jPanel8.setBackground(MainTheme.secondColor);
+        this.setForeground(MainTheme.secondColor);
+        this.setVisible(true);
+        loadCombos();
+        loadTable();
+        tableListernRag();
 
-	}
+    }
 
-	public FoodItem(FRN frn, String foodItemType) {
-		this();
-		this.frn = frn;
-		this.fi = this;
-		comboBox3.setSelectedItem(foodItemType);
-		isFRNInvolved = true;
-		otherFramesInvolved = true;
-	}
-	FRN frn;
-	FoodItem fi;
-	boolean isFRNInvolved = false;
-	boolean otherFramesInvolved = false;
-	String loadTableQuery;
-	String[] colnames = {"food_item_id", "food_item_name", "food_item_category_name", "contain_method_name"};
-	boolean updateMode = false;
-	String itemId = "";
+    public FoodItem(FRN frn, String foodItemType) {
+        this();
+        this.frn = frn;
+        this.fi = this;
+        comboBox3.setSelectedItem(foodItemType);
+        isFRNInvolved = true;
+        otherFramesInvolved = true;
+    }
+    FRN frn;
+    FoodItem fi;
+    boolean isFRNInvolved = false;
+    boolean otherFramesInvolved = false;
+    boolean updateMode = false;
+    String itemId = "";
 
-	private void updateModeActive() {
-		updateMode = true;
-		jPanel7.removeAll();
-		jPanel7.add(customButton4);
-		jPanel7.repaint();
-		jPanel7.revalidate();
-		jPanel6.removeAll();
-		jPanel6.add(customButton2);
-		jPanel6.repaint();
-		jPanel6.revalidate();
-		removeValues();
-	}
+    String loadTableQuery;
+    String[] colnames = {"food_item_id", "food_item_name", "food_item_category_name", "contain_method_name"};
 
-	private void updateModeDeactivate() {
-		updateMode = false;
-		jPanel7.removeAll();
-		jPanel7.add(customButton3);
-		jPanel7.repaint();
-		jPanel7.revalidate();
-		jPanel6.removeAll();
-		jPanel6.add(customButton1);
-		jPanel6.repaint();
-		jPanel6.revalidate();
-		removeValues();
-	}
+    private void loadQuery() {
+        ArrayList<String> al = new ArrayList<String>();
+        al.add("food_item");
+        al.add("food_item_category,food_item");
+        al.add("contain_method,food_item");
 
-	private void loadQuery() {
-		ArrayList<String> al = new ArrayList<String>();
-		al.add("food_item");
-		al.add("food_item_category,food_item");
-		al.add("contain_method,food_item");
+        SearchTable st = new SearchTable(al);
+        this.loadTableQuery = st.getTableQuery();
+        //System.out.println(this.loadTableQuery);
 
-		SearchTable st = new SearchTable(al);
-		this.loadTableQuery = st.getTableQuery();
-		//System.out.println(this.loadTableQuery);
+    }
 
-	}
+    private void loadTable() {
+        loadQuery();
+        String sort = "ORDER BY `food_item_name` ASC";
 
-	private JComponent[] getComponentsRag() {
-		JComponent[] abc = {textF1, comboBox1, comboBox2, textF2, comboBox3, comboBox4};
-		return abc;
+        StringBuilder stringquerybuild = new StringBuilder();
+        stringquerybuild.append(this.loadTableQuery).toString();
+        stringquerybuild.append(sort).toString();
+        String query = stringquerybuild.toString();
 
-	}
+        LoadTables lt = new LoadTables(customTable1, query, this.colnames);
+    }
 
-	private void removeValues() {
-		SetEmptyItems.emptyItems(getComponentsRag());
-	}
+    private void loadCombos() {
+        LoadSubTypes.loadType(comboBox1, "food_item_category");
+        LoadSubTypes.loadType(comboBox2, "contain_method");
+        LoadSubTypes.loadType(comboBox3, "food_item_category");
+        LoadSubTypes.loadType(comboBox4, "contain_method");
+    }
 
-	private void loadTable() {
-		loadQuery();
-		String sort = "ORDER BY `food_item_name` ASC";
+    private void clearFields() {
+        JComponent[] jp = {textF1, comboBox1, comboBox2, textF2, comboBox3, comboBox4};
+        SetEmptyItems.emptyItems(jp);
+    }
 
-		StringBuilder stringquerybuild = new StringBuilder();
-		stringquerybuild.append(this.loadTableQuery).toString();
-		stringquerybuild.append(sort).toString();
-		String query = stringquerybuild.toString();
+    private void add() {
+        String name = textF1.getText();
+        String containMethod = comboBox2.getSelectedItem().toString();
+        String type = comboBox1.getSelectedItem().toString();
 
-		LoadTables lt = new LoadTables(customTable1, query, this.colnames);
-	}
+        if (name.isEmpty()) {
+            Message m = new Message(this, "Please enter a food item name", "Warning");
+        } else if (containMethod.equals("Select contain_method")) {
+            Message m = new Message(this, "Please select a valid containing method", "Warning");
+        } else if (type.equals("Select food_item_category")) {
+            Message m = new Message(this, "Please select a valid category name", "Warning");
+        } else {
+            String typeid = TypeIds.getId("food_item_category", type);
+            String containMethodId = TypeIds.getId("contain_method", containMethod);
+            if (!IdCheck.isExits("food_item", "food_item_name", name)) {
+                ArrayList<String> info = new ArrayList<>();
+                info.add(containMethodId);
+                info.add(typeid);
+                info.add(name);
+                InsertTable it = new InsertTable("food_item", info);
+                loadTable();
+                clearFields();
+            } else {
+                Message m = new Message(this, "This food name already exists", "Warning");
+            }
+        }
+    }
 
-	private void loadCombos() {
-		LoadSubTypes.loadType(comboBox1, "food_item_category");
-		LoadSubTypes.loadType(comboBox2, "contain_method");
-		LoadSubTypes.loadType(comboBox3, "food_item_category");
-		LoadSubTypes.loadType(comboBox4, "contain_method");
-	}
+    private void update() {
+        String name = textF1.getText();
+        String containMethod = comboBox2.getSelectedItem().toString();
+        String type = comboBox1.getSelectedItem().toString();
 
-	private void clearFields() {
-		JComponent[] jp = {textF1, comboBox1, comboBox2, textF2, comboBox3, comboBox4};
-		SetEmptyItems.emptyItems(jp);
-	}
+        if (name.isEmpty()) {
+            Message m = new Message(this, "Please enter a food item name", "Warning");
+        } else if (containMethod.equals("Select contain_method")) {
+            Message m = new Message(this, "Please select a valid containing method", "Warning");
+        } else if (type.equals("Select food_item_category")) {
+            Message m = new Message(this, "Please select a valid category name", "Warning");
+        } else {
+            String typeid = TypeIds.getId("food_item_category", type);
+            String containMethodId = TypeIds.getId("contain_method", containMethod);
+            if (!IdCheck.isExits("food_item", "food_item_name", name)) {
+                MySql.iud("UPDATE `food_item` SET `food_item_name`='" + name + "' WHERE `food_item_id`='" + itemId + "'");
+                loadTable();
+                clearFields();
+            } else {
+                Message m = new Message(this, "This food name already exists", "Warning");
+            }
+        }
+    }
 
-	private void add() {
-		String name = textF1.getText();
-		String containMethod = comboBox2.getSelectedItem().toString();
-		String type = comboBox1.getSelectedItem().toString();
+    public void tableListernRag() {
+        customTable1.getSelectionModel().addListSelectionListener(new ListSelectionListener() {
+            @Override
+            public void valueChanged(ListSelectionEvent e) {
+                int row = customTable1.getSelectedRow();
+                if (row != -1 && updateMode) {
+                    String id = customTable1.getValueAt(row, 0).toString();
+                    String name = customTable1.getValueAt(row, 1).toString();
+                    String category = customTable1.getValueAt(row, 2).toString();
+                    String containing = customTable1.getValueAt(row, 3).toString();
+                    textF1.setText(name);
+                    comboBox1.setSelectedItem(category);
+                    comboBox2.setSelectedItem(containing);
+                    itemId = id;
 
-		if (name.isEmpty()) {
-			Message m = new Message(this, "Please enter a food item name", "Warning");
-		} else if (containMethod.equals("Select contain_method")) {
-			Message m = new Message(this, "Please select a valid containing method", "Warning");
-		} else if (type.equals("Select food_item_category")) {
-			Message m = new Message(this, "Please select a valid category name", "Warning");
-		} else {
-			String typeid = TypeIds.getId("food_item_category", type);
-			String containMethodId = TypeIds.getId("contain_method", containMethod);
-			if (!IdCheck.isExits("food_item", "food_item_name", name)) {
-				ArrayList<String> info = new ArrayList<>();
-				info.add(containMethodId);
-				info.add(typeid);
-				info.add(name);
-				InsertTable it = new InsertTable("food_item", info);
-				loadTable();
-				clearFields();
-			} else {
-				Message m = new Message(this, "This food name already exists", "Warning");
-			}
-		}
-	}
+                }
+                if (row != -1 && isFRNInvolved) {
+                    String id = customTable1.getValueAt(row, 0).toString();
+                    String name = customTable1.getValueAt(row, 1).toString();
+                    String category = customTable1.getValueAt(row, 2).toString();
+                    String containing = customTable1.getValueAt(row, 3).toString();
+                    textF1.setText(name);
+                    comboBox1.setSelectedItem(category);
+                    comboBox2.setSelectedItem(containing);
+                    itemId = id;
+                    if (isFRNInvolved) {
+                        frn.textF1.setText(id);
+                        frn.textF2.setText(name);
+                        frn.textF3.setText(category);
+                        fi.dispose();
+                    }
 
-	private void update() {
-		String name = textF1.getText();
-		String containMethod = comboBox2.getSelectedItem().toString();
-		String type = comboBox1.getSelectedItem().toString();
+                }
+            }
 
-		if (name.isEmpty()) {
-			Message m = new Message(this, "Please enter a food item name", "Warning");
-		} else if (containMethod.equals("Select contain_method")) {
-			Message m = new Message(this, "Please select a valid containing method", "Warning");
-		} else if (type.equals("Select food_item_category")) {
-			Message m = new Message(this, "Please select a valid category name", "Warning");
-		} else {
-			String typeid = TypeIds.getId("food_item_category", type);
-			String containMethodId = TypeIds.getId("contain_method", containMethod);
-			if (!IdCheck.isExits("food_item", "food_item_name", name)) {
-				MySql.iud("UPDATE `food_item` SET `food_item_name`='" + name + "' WHERE `food_item_id`='" + itemId + "'");
-				loadTable();
-				clearFields();
-			} else {
-				Message m = new Message(this, "This food name already exists", "Warning");
-			}
-		}
-	}
- 
-	public void tableListernRag() {
-		customTable1.getSelectionModel().addListSelectionListener(new ListSelectionListener() {
-			@Override
-			public void valueChanged(ListSelectionEvent e) {
-				int row = customTable1.getSelectedRow();
-				if (row != -1 && updateMode) {
-					String id = customTable1.getValueAt(row, 0).toString();
-					String name = customTable1.getValueAt(row, 1).toString();
-					String category = customTable1.getValueAt(row, 2).toString();
-					String containing = customTable1.getValueAt(row, 3).toString();
-					textF1.setText(name);
-					comboBox1.setSelectedItem(category);
-					comboBox2.setSelectedItem(containing);
-					itemId = id;
+        });
 
-				}
-				if (row != -1 && isFRNInvolved) {
-					String id = customTable1.getValueAt(row, 0).toString();
-					String name = customTable1.getValueAt(row, 1).toString();
-					String category = customTable1.getValueAt(row, 2).toString();
-					String containing = customTable1.getValueAt(row, 3).toString();
-					textF1.setText(name);
-					comboBox1.setSelectedItem(category);
-					comboBox2.setSelectedItem(containing);
-					itemId = id;
-					if (isFRNInvolved) {
-						frn.textF1.setText(id);
-						frn.textF2.setText(name);
-						frn.textF3.setText(category);
-						fi.dispose();
-					}
+    }
 
-				}
-			}
+    private void advancedSearch() {
 
-		});
+        String sort = comboBox5.getSelectedItem().toString();
+        boolean isSelected = false;
+        String containMethod = "Select contain_method";
+        String type = "Select food_item_category";
+        String name = textF2.getText();
+        if (comboBox4.getSelectedItem() != null && comboBox3.getSelectedItem() != null) {
+            isSelected = true;
 
-	}
+            containMethod = comboBox4.getSelectedItem().toString();
+            type = comboBox3.getSelectedItem().toString();
+        }
 
-	private void advancedSearch() {
+        StringBuilder stringquerybuild = new StringBuilder();
+        StringBuilder whereQueryBuilder = new StringBuilder();
+        Vector<String> v = new Vector<String>();
+        boolean queriesInvolved = false;
 
-		String sort = comboBox5.getSelectedItem().toString();
-		boolean isSelected = false;
-		String containMethod = "Select contain_method";
-		String type = "Select food_item_category";
-		String name = textF2.getText();
-		if (comboBox4.getSelectedItem() != null && comboBox3.getSelectedItem() != null) {
-			isSelected = true;
-			
-			containMethod = comboBox4.getSelectedItem().toString();
-			type = comboBox3.getSelectedItem().toString();
-		}
-                       
-		StringBuilder stringquerybuild = new StringBuilder();
-		StringBuilder whereQueryBuilder = new StringBuilder();
-		Vector<String> v = new Vector<String>();
-		boolean queriesInvolved = false;
+        String sortQuery = "";
+        String whereQuery = "";
+        if (sort.equals("NAME A-Z")) {
+            sortQuery = "ORDER BY `food_item`.`food_item_name` ASC";
+        } else if (sort.equals("NAME Z-A")) {
+            sortQuery = "ORDER BY `food_item`.`food_item_name` DESC";
+        } else if (sort.equals("CAT A-Z")) {
+            sortQuery = "ORDER BY `food_item`.`food_item_name` DESC";
+        } else if (sort.equals("CAT Z-A")) {
+            sortQuery = "ORDER BY `food_item`.`food_item_name` DESC";
+        }
+        if (!name.isEmpty()) {
+            v.add("`food_item_name` LIKE '%" + name + "%' ");
+            queriesInvolved = true;
+        }
+        if (!type.equals("Select food_item_category") && isSelected) {
+            v.add("`food_item_category_name` LIKE '%" + type + "%' ");
+            queriesInvolved = true;
+        }
+        if (!containMethod.equals("Select contain_method") && isSelected) {
+            v.add("`contain_method_name` LIKE '%" + containMethod + "%' ");
+            queriesInvolved = true;
+        }
+        if (queriesInvolved) {
+            whereQueryBuilder.append("where ");
+        }
+        for (int i = 0; i < v.size(); i++) {
+            //System.out.println("vectors are " + v.get(i));
 
-		String sortQuery = "";
-		String whereQuery = "";
-		if (sort.equals("NAME A-Z")) {
-			sortQuery = "ORDER BY `food_item`.`food_item_name` ASC";
-		} else if (sort.equals("NAME Z-A")) {
-			sortQuery = "ORDER BY `food_item`.`food_item_name` DESC";
-		} else if (sort.equals("CAT A-Z")) {
-			sortQuery = "ORDER BY `food_item`.`food_item_name` DESC";
-		} else if (sort.equals("CAT Z-A")) {
-			sortQuery = "ORDER BY `food_item`.`food_item_name` DESC";
-		}
-		if (!name.isEmpty()) {
-			v.add("`food_item_name` LIKE '%" + name + "%' ");
-			queriesInvolved = true;
-		}
-		if (!type.equals("Select food_item_category") && isSelected) {
-			v.add("`food_item_category_name` LIKE '%" + type + "%' ");
-			queriesInvolved = true;
-		}
-		if (!containMethod.equals("Select contain_method") && isSelected) {
-			v.add("`contain_method_name` LIKE '%" + containMethod + "%' ");
-			queriesInvolved = true;
-		}
-		if (queriesInvolved) {
-			whereQueryBuilder.append("where ");
-		}
-		for (int i = 0; i < v.size(); i++) {
-			//System.out.println("vectors are " + v.get(i));
+            whereQueryBuilder.append("");
+            whereQueryBuilder.append(v.get(i));
 
-			whereQueryBuilder.append("");
-			whereQueryBuilder.append(v.get(i));
+            if (i != v.size() - 1) {
+                whereQueryBuilder.append("AND ");
+            }
+        }
+        if (queriesInvolved) {
+            stringquerybuild.append(this.loadTableQuery);
+            stringquerybuild.append(whereQueryBuilder);
+            stringquerybuild.append(sortQuery);
+            String query = stringquerybuild.toString();
+            //System.out.println("where query is " + whereQueryBuilder);
+            LoadTables lt = new LoadTables(customTable1, query, this.colnames);
+        }
+        //System.out.println("where query is " + whereQueryBuilder);
 
-			if (i != v.size() - 1) {
-				whereQueryBuilder.append("AND ");
-			}
-		}
-		if (queriesInvolved) {
-			stringquerybuild.append(this.loadTableQuery);
-			stringquerybuild.append(whereQueryBuilder);
-			stringquerybuild.append(sortQuery);
-			String query = stringquerybuild.toString();
-			//System.out.println("where query is " + whereQueryBuilder);
-			LoadTables lt = new LoadTables(customTable1, query, this.colnames);
-		}
-		//System.out.println("where query is " + whereQueryBuilder);
+    }
 
-	}
+    private JComponent[] getComponentsRag() {
+        JComponent[] abc = {textF1, comboBox1, comboBox2, textF2, comboBox3, comboBox4};
+        return abc;
 
-	private void jframeCustmize() {
-		closeLabel.setIcon(labelSetIcon("/Icons/close.png", closeLabel.getWidth() - 25, closeLabel.getHeight() - 17));
-		boxLabel.setIcon(labelSetIcon("/Icons/square.png", boxLabel.getWidth() - 23, boxLabel.getHeight() - 17));
-		miniLabel.setIcon(labelSetIcon("/Icons/minus.png", miniLabel.getWidth() - 20, miniLabel.getHeight() - 13));
+    }
 
-		miniLabel.addMouseListener(new java.awt.event.MouseAdapter() {
-			@Override
-			public void mouseClicked(java.awt.event.MouseEvent evt) {
-				setState(JFrame.ICONIFIED);
-			}
-		});
-	}
+    private void removeValues() {
+        SetEmptyItems.emptyItems(getComponentsRag());
+    }
 
-	public ImageIcon labelSetIcon(String src, int w, int h) {
-		ImageSizer imgSizer = new ImageSizer();
-		ImageIcon i = imgSizer.overaallResizer(src, w, h);
-		return i;
-	}
+    private void updateModeActive() {
+        updateMode = true;
+        jPanel7.removeAll();
+        jPanel7.add(customButton4);
+        jPanel7.repaint();
+        jPanel7.revalidate();
+        jPanel6.removeAll();
+        jPanel6.add(customButton2);
+        jPanel6.repaint();
+        jPanel6.revalidate();
+        removeValues();
+    }
 
-	/**
-	 * This method is called from within the constructor to initialize the
-	 * form. WARNING: Do NOT modify this code. The content of this method is
-	 * always regenerated by the Form Editor.
-	 */
-	@SuppressWarnings("unchecked")
+    private void updateModeDeactivate() {
+        updateMode = false;
+        jPanel7.removeAll();
+        jPanel7.add(customButton3);
+        jPanel7.repaint();
+        jPanel7.revalidate();
+        jPanel6.removeAll();
+        jPanel6.add(customButton1);
+        jPanel6.repaint();
+        jPanel6.revalidate();
+        removeValues();
+    }
+
+    private void jframeCustmize() {
+        closeLabel.setIcon(labelSetIcon("/Icons/close.png", closeLabel.getWidth() - 25, closeLabel.getHeight() - 17));
+        boxLabel.setIcon(labelSetIcon("/Icons/square.png", boxLabel.getWidth() - 23, boxLabel.getHeight() - 17));
+        miniLabel.setIcon(labelSetIcon("/Icons/minus.png", miniLabel.getWidth() - 20, miniLabel.getHeight() - 13));
+
+        miniLabel.addMouseListener(new java.awt.event.MouseAdapter() {
+            @Override
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                setState(JFrame.ICONIFIED);
+            }
+        });
+    }
+
+    public ImageIcon labelSetIcon(String src, int w, int h) {
+        ImageSizer imgSizer = new ImageSizer();
+        ImageIcon i = imgSizer.overaallResizer(src, w, h);
+        return i;
+    }
+
+    /**
+     * This method is called from within the constructor to initialize the form.
+     * WARNING: Do NOT modify this code. The content of this method is always
+     * regenerated by the Form Editor.
+     */
+    @SuppressWarnings("unchecked")
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
     private void initComponents() {
 
@@ -793,221 +793,221 @@ public class FoodItem extends javax.swing.JFrame {
         pack();
     }// </editor-fold>//GEN-END:initComponents
     int x = 0;
-	int y = 0;
+    int y = 0;
     private void roundedPanel2MousePressed(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_roundedPanel2MousePressed
-	    // TODO add your handling code here:
-	    x = evt.getX();
-	    y = evt.getY();
+        // TODO add your handling code here:
+        x = evt.getX();
+        y = evt.getY();
     }//GEN-LAST:event_roundedPanel2MousePressed
 
     private void roundedPanel2MouseDragged(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_roundedPanel2MouseDragged
-	    // TODO add your handling code here:
-	    int xx = evt.getXOnScreen();
-	    int yy = evt.getYOnScreen();
-	    this.setLocation(xx - x, yy - y);
+        // TODO add your handling code here:
+        int xx = evt.getXOnScreen();
+        int yy = evt.getYOnScreen();
+        this.setLocation(xx - x, yy - y);
     }//GEN-LAST:event_roundedPanel2MouseDragged
 
     private void closeLabelMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_closeLabelMouseClicked
-	    // TODO add your handling code here:
-	    if (otherFramesInvolved) {
-		    fi.dispose();
-	    } else {
-		    System.exit(0);
-	    }
+        // TODO add your handling code here:
+        if (otherFramesInvolved) {
+            fi.dispose();
+        } else {
+            System.exit(0);
+        }
     }//GEN-LAST:event_closeLabelMouseClicked
 
     private void closeLabelMouseEntered(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_closeLabelMouseEntered
-	    // TODO add your handling code here:
-	    closeLabel.setOpaque(true);
-	    closeLabel.setBackground(MainTheme.mainColor);
+        // TODO add your handling code here:
+        closeLabel.setOpaque(true);
+        closeLabel.setBackground(MainTheme.mainColor);
     }//GEN-LAST:event_closeLabelMouseEntered
 
     private void closeLabelMouseExited(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_closeLabelMouseExited
-	    // TODO add your handling code here:
-	    closeLabel.setBackground(MainTheme.secondColor);
-	    closeLabel.setOpaque(false);
+        // TODO add your handling code here:
+        closeLabel.setBackground(MainTheme.secondColor);
+        closeLabel.setOpaque(false);
 
     }//GEN-LAST:event_closeLabelMouseExited
 
     private void miniLabelMouseEntered(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_miniLabelMouseEntered
-	    // TODO add your handling code here:
-	    miniLabel.setOpaque(true);
-	    miniLabel.setBackground(MainTheme.mainColor);
+        // TODO add your handling code here:
+        miniLabel.setOpaque(true);
+        miniLabel.setBackground(MainTheme.mainColor);
     }//GEN-LAST:event_miniLabelMouseEntered
 
     private void miniLabelMouseExited(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_miniLabelMouseExited
-	    // TODO add your handling code here:
+        // TODO add your handling code here:
 
-	    miniLabel.setBackground(MainTheme.secondColor);
-	    miniLabel.setOpaque(false);
+        miniLabel.setBackground(MainTheme.secondColor);
+        miniLabel.setOpaque(false);
     }//GEN-LAST:event_miniLabelMouseExited
 
         private void customButton1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_customButton1ActionPerformed
-		// TODO add your handling code here:
-		add();
-		clearFields();
-		loadCombos();
-		loadTable();
+            // TODO add your handling code here:
+            add();
+            clearFields();
+            loadCombos();
+            loadTable();
         }//GEN-LAST:event_customButton1ActionPerformed
 
         private void customButton3ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_customButton3ActionPerformed
-		// TODO add your handling code here:
-		updateModeActive();
-		clearFields();
-		loadCombos();
-		loadTable();
+            // TODO add your handling code here:
+            updateModeActive();
+            clearFields();
+            loadCombos();
+            loadTable();
         }//GEN-LAST:event_customButton3ActionPerformed
 
         private void customButton4ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_customButton4ActionPerformed
-		// TODO add your handling code here:
-		updateModeDeactivate();
-		clearFields();
-		loadCombos();
-		loadTable();
+            // TODO add your handling code here:
+            updateModeDeactivate();
+            clearFields();
+            loadCombos();
+            loadTable();
         }//GEN-LAST:event_customButton4ActionPerformed
 
         private void customButton2ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_customButton2ActionPerformed
-		// TODO add your handling code here:
-		update();
-		clearFields();
-		loadCombos();
-		loadTable();
+            // TODO add your handling code here:
+            update();
+            clearFields();
+            loadCombos();
+            loadTable();
         }//GEN-LAST:event_customButton2ActionPerformed
 
         private void customButton5ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_customButton5ActionPerformed
-		// TODO add your handling code here:
+            // TODO add your handling code here:
 //		jPanel4.removeAll();
 //		jPanel4.add(jPanel2);
 //		jPanel4.repaint();
 //		jPanel4.revalidate();
-		PanelRemover.removeP(jPanel4, jPanel2);
+            PanelRemover.removeP(jPanel4, jPanel2);
         }//GEN-LAST:event_customButton5ActionPerformed
 
         private void customButton6ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_customButton6ActionPerformed
-		// TODO add your handling code here:
-		PanelRemover.removeP(jPanel4, jPanel8);
+            // TODO add your handling code here:
+            PanelRemover.removeP(jPanel4, jPanel8);
         }//GEN-LAST:event_customButton6ActionPerformed
 
         private void textF2ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_textF2ActionPerformed
-		// TODO add your handling code here:
+            // TODO add your handling code here:
 
         }//GEN-LAST:event_textF2ActionPerformed
 
         private void textF2KeyTyped(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_textF2KeyTyped
-		// TODO add your handling code here:
-		advancedSearch();
+            // TODO add your handling code here:
+            advancedSearch();
         }//GEN-LAST:event_textF2KeyTyped
 
         private void comboBox4ItemStateChanged(java.awt.event.ItemEvent evt) {//GEN-FIRST:event_comboBox4ItemStateChanged
-		// TODO add your handling code here:
-		//advancedSearch();
+            // TODO add your handling code here:
+            //advancedSearch();
         }//GEN-LAST:event_comboBox4ItemStateChanged
 
         private void comboBox3ItemStateChanged(java.awt.event.ItemEvent evt) {//GEN-FIRST:event_comboBox3ItemStateChanged
-		// TODO add your handling code here:
-		//System.out.println(comboBox3.getSelectedItem().toString());
-		//System.out.println("HEY ITEM CHANGED");
+            // TODO add your handling code here:
+            //System.out.println(comboBox3.getSelectedItem().toString());
+            //System.out.println("HEY ITEM CHANGED");
         }//GEN-LAST:event_comboBox3ItemStateChanged
 
         private void comboBox4PropertyChange(java.beans.PropertyChangeEvent evt) {//GEN-FIRST:event_comboBox4PropertyChange
-		// TODO add your handling code here:
-		//System.out.println(comboBox4.getSelectedItem().toString());
-		
+            // TODO add your handling code here:
+            //System.out.println(comboBox4.getSelectedItem().toString());
+
         }//GEN-LAST:event_comboBox4PropertyChange
 
         private void comboBox4ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_comboBox4ActionPerformed
-		// TODO add your handling code here:
+            // TODO add your handling code here:
 
-		advancedSearch();
+            advancedSearch();
 
         }//GEN-LAST:event_comboBox4ActionPerformed
 
         private void comboBox3ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_comboBox3ActionPerformed
-		// TODO add your handling code here:
-		advancedSearch();
+            // TODO add your handling code here:
+            advancedSearch();
         }//GEN-LAST:event_comboBox3ActionPerformed
 
         private void customButton7ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_customButton7ActionPerformed
-		// TODO add your handling code here:
-		clearFields();
-		loadCombos();
-		loadTable();
+            // TODO add your handling code here:
+            clearFields();
+            loadCombos();
+            loadTable();
         }//GEN-LAST:event_customButton7ActionPerformed
 
         private void comboBox5ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_comboBox5ActionPerformed
-		// TODO add your handling code here:
-		advancedSearch();
+            // TODO add your handling code here:
+            advancedSearch();
         }//GEN-LAST:event_comboBox5ActionPerformed
-	boolean emailFieldEntred = false;
+    boolean emailFieldEntred = false;
 
-	/**
-	 * @param args the command line arguments
-	 */
-	public static void main(String args[]) {
-		/* Set the Nimbus look and feel */
-		//<editor-fold defaultstate="collapsed" desc=" Look and feel setting code (optional) ">
-		/* If Nimbus (introduced in Java SE 6) is not available, stay with the default look and feel.
+    /**
+     * @param args the command line arguments
+     */
+    public static void main(String args[]) {
+        /* Set the Nimbus look and feel */
+        //<editor-fold defaultstate="collapsed" desc=" Look and feel setting code (optional) ">
+        /* If Nimbus (introduced in Java SE 6) is not available, stay with the default look and feel.
          * For details see http://download.oracle.com/javase/tutorial/uiswing/lookandfeel/plaf.html 
-		 */
-		try {
-			for (javax.swing.UIManager.LookAndFeelInfo info : javax.swing.UIManager.getInstalledLookAndFeels()) {
-				if ("Nimbus".equals(info.getName())) {
-					javax.swing.UIManager.setLookAndFeel(info.getClassName());
-					break;
-				}
-			}
-		} catch (ClassNotFoundException ex) {
-			java.util.logging.Logger.getLogger(FoodItem.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
-		} catch (InstantiationException ex) {
-			java.util.logging.Logger.getLogger(FoodItem.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
-		} catch (IllegalAccessException ex) {
-			java.util.logging.Logger.getLogger(FoodItem.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
-		} catch (javax.swing.UnsupportedLookAndFeelException ex) {
-			java.util.logging.Logger.getLogger(FoodItem.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
-		}
-		//</editor-fold>
-		//</editor-fold>
-		//</editor-fold>
-		//</editor-fold>
-		//</editor-fold>
-		//</editor-fold>
-		//</editor-fold>
-		//</editor-fold>
-		//</editor-fold>
-		//</editor-fold>
-		//</editor-fold>
-		//</editor-fold>
-		//</editor-fold>
-		//</editor-fold>
-		//</editor-fold>
-		//</editor-fold>
-		//</editor-fold>
-		//</editor-fold>
-		//</editor-fold>
-		//</editor-fold>
-		//</editor-fold>
-		//</editor-fold>
-		//</editor-fold>
-		//</editor-fold>
-		//</editor-fold>
-		//</editor-fold>
-		//</editor-fold>
-		//</editor-fold>
-		//</editor-fold>
-		//</editor-fold>
-		//</editor-fold>
-		//</editor-fold>
+         */
+        try {
+            for (javax.swing.UIManager.LookAndFeelInfo info : javax.swing.UIManager.getInstalledLookAndFeels()) {
+                if ("Nimbus".equals(info.getName())) {
+                    javax.swing.UIManager.setLookAndFeel(info.getClassName());
+                    break;
+                }
+            }
+        } catch (ClassNotFoundException ex) {
+            java.util.logging.Logger.getLogger(FoodItem.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
+        } catch (InstantiationException ex) {
+            java.util.logging.Logger.getLogger(FoodItem.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
+        } catch (IllegalAccessException ex) {
+            java.util.logging.Logger.getLogger(FoodItem.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
+        } catch (javax.swing.UnsupportedLookAndFeelException ex) {
+            java.util.logging.Logger.getLogger(FoodItem.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
+        }
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
 
-		/* Create and display the form */
-		java.awt.EventQueue.invokeLater(new Runnable() {
-			public void run() {
+        /* Create and display the form */
+        java.awt.EventQueue.invokeLater(new Runnable() {
+            public void run() {
 
-				JFrame jf = new FoodItem();
-				jf.setVisible(true);
+                JFrame jf = new FoodItem();
+                jf.setVisible(true);
 
-			}
-		});
-	}
+            }
+        });
+    }
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JLabel boxLabel;
