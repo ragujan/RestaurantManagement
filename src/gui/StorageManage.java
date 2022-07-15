@@ -64,6 +64,7 @@ public class StorageManage extends javax.swing.JFrame {
 		loadTable();
 		
 	}
+        boolean otherFramesInvolve = false;
 	public String supplierID;
 	public String FRNId;
 	public String storageId;
@@ -626,7 +627,11 @@ public class StorageManage extends javax.swing.JFrame {
 
     private void closeLabelMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_closeLabelMouseClicked
 	    // TODO add your handling code here:
-	    this.dispose();
+	  if(otherFramesInvolve){
+              
+          }else{
+              System.exit(0);
+          }
     }//GEN-LAST:event_closeLabelMouseClicked
 
     private void closeLabelMouseEntered(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_closeLabelMouseEntered

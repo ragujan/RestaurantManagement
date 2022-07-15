@@ -40,491 +40,496 @@ import model.MySql;
  */
 public class EmployeeSalary extends javax.swing.JFrame {
 
-	/**
-	 * Creates new form NewJFrame
-	 */
-	public EmployeeSalary() {
-		initComponents();
-		this.setLocationRelativeTo(null);
-		this.setResizable(true);
-		this.setVisible(true);
-		setShape(new RoundRectangle2D.Double(0, 0, getWidth(), getHeight(), 7, 7));
+    /**
+     * Creates new form NewJFrame
+     */
+    public EmployeeSalary() {
+        initComponents();
+        this.setLocationRelativeTo(null);
+        this.setResizable(true);
+        this.setVisible(true);
+        setShape(new RoundRectangle2D.Double(0, 0, getWidth(), getHeight(), 7, 7));
 
-		jframeCustmize();
-		this.setBackground(MainTheme.mainColor);
-		roundedPanel1.setBackground(MainTheme.mainColor);
-		roundedPanel2.setBackground(MainTheme.secondColor);
+        jframeCustmize();
+        this.setBackground(MainTheme.mainColor);
+        roundedPanel1.setBackground(MainTheme.mainColor);
+        roundedPanel2.setBackground(MainTheme.secondColor);
 
-		this.setForeground(MainTheme.secondColor);
-		jPanel2.setBackground(MainTheme.fourthColor);
-		loadTable();
-		loadCombos();
-		setValidadions();
-		this.tableListernRag();
-		this.thiset = this;
-		jPanel5.setBackground(MainTheme.thirdColor);
-		textF4.setBackground(MainTheme.secondColor);
-		textF5.setBackground(MainTheme.secondColor);
-		textF4.setForeground(MainTheme.fourthColor);
-		textF5.setForeground(MainTheme.fourthColor);
-		jPanel7.setBackground(MainTheme.secondColor);
-		jDateChooser1.setVisible(false);
-		jDateChooser2.setVisible(false);
-		jDateChooser1.setBackground(MainTheme.secondColor);
-		jDateChooser2.setBackground(MainTheme.secondColor);
-	}
+        this.setForeground(MainTheme.secondColor);
+        jPanel2.setBackground(MainTheme.fourthColor);
+        loadTable();
+        loadCombos();
+        setValidadions();
+        this.tableListernRag();
+        this.thiset = this;
+        jPanel5.setBackground(MainTheme.thirdColor);
+        textF4.setBackground(MainTheme.secondColor);
+        textF5.setBackground(MainTheme.secondColor);
+        textF4.setForeground(MainTheme.fourthColor);
+        textF5.setForeground(MainTheme.fourthColor);
+        jPanel7.setBackground(MainTheme.secondColor);
+        jDateChooser1.setVisible(false);
+        jDateChooser2.setVisible(false);
+        jDateChooser1.setBackground(MainTheme.secondColor);
+        jDateChooser2.setBackground(MainTheme.secondColor);
+    }
 
-	public EmployeeSalary(Chef c) {
-		this();
-		this.chef = c;
-		this.isUpdateStatus = true;
-		this.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
-		comboBox1.setSelectedItem("Chef");
-		comboBox1.setEnabled(false);
-		isChefInvolved = true;
-	}
+    public EmployeeSalary(Chef c) {
+        this();
+        this.chef = c;
+        this.isUpdateStatus = true;
+        this.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
+        comboBox1.setSelectedItem("Chef");
+        comboBox1.setEnabled(false);
+        isChefInvolved = true;
+    }
 
-	public EmployeeSalary(Manager c) {
-		this();
-		this.manager = c;
-		this.isUpdateStatus = true;
-		this.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
-		comboBox1.setSelectedItem("Manager");
-		comboBox1.setEnabled(false);
-		isMangerInvolved = true;
-	}
+    public EmployeeSalary(Manager c) {
+        this();
+        this.manager = c;
+        this.isUpdateStatus = true;
+        this.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
+        comboBox1.setSelectedItem("Manager");
+        comboBox1.setEnabled(false);
+        isMangerInvolved = true;
+    }
 
-	public EmployeeSalary(Server c) {
-		this();
-		this.server = c;
-		this.isUpdateStatus = true;
-		this.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
-		comboBox1.setSelectedItem("Server");
-		comboBox1.setEnabled(false);
-		isServerInvolved = true;
-	}
+    public EmployeeSalary(Server c) {
+        this();
+        this.server = c;
+        this.isUpdateStatus = true;
+        this.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
+        comboBox1.setSelectedItem("Server");
+        comboBox1.setEnabled(false);
+        isServerInvolved = true;
+    }
 
-	public EmployeeSalary(Cleaner c) {
-		this();
-		this.cleaner = c;
-		this.isUpdateStatus = true;
-		this.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
-		comboBox1.setSelectedItem("Cleaner");
-		comboBox1.setEnabled(false);
-		isCleanerInvolved = true;
-	}
+    public EmployeeSalary(Cleaner c) {
+        this();
+        this.cleaner = c;
+        this.isUpdateStatus = true;
+        this.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
+        comboBox1.setSelectedItem("Cleaner");
+        comboBox1.setEnabled(false);
+        isCleanerInvolved = true;
+    }
 
-	public EmployeeSalary(Bartender c) {
-		this();
-		this.bartender = c;
-		this.isUpdateStatus = true;
-		this.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
-		comboBox1.setSelectedItem("Bartender");
-		comboBox1.setEnabled(false);
-		isBartenderInvolved = true;
-	}
+    public EmployeeSalary(Bartender c) {
+        this();
+        this.bartender = c;
+        this.isUpdateStatus = true;
+        this.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
+        comboBox1.setSelectedItem("Bartender");
+        comboBox1.setEnabled(false);
+        isBartenderInvolved = true;
+    }
 
-	public EmployeeSalary(Cashier c) {
-		this();
-		this.cashier = c;
-		this.isUpdateStatus = true;
-		this.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
-		comboBox1.setSelectedItem("Cashier");
-		comboBox1.setEnabled(false);
-		isCashierInvolved = true;
-	}
-	String loadTableQuery;
-	String[] colnames = {"employee_id", "employee_name", "employee_type_name", "employee_email", "paid_amount", "bonus", "paid_date"};
-	boolean isUpdateStatus = false;
-	boolean isChefInvolved = false;
-	boolean isMangerInvolved = false;
-	boolean isServerInvolved = false;
-	boolean isCleanerInvolved = false;
-	boolean isBartenderInvolved = false;
-	boolean isCashierInvolved = false;
-	EmployeeSalary thiset;
-	Chef chef;
-	Manager manager;
-	Server server;
-	Cleaner cleaner;
-	Bartender bartender;
-	Cashier cashier;
+    public EmployeeSalary(Cashier c) {
+        this();
+        this.cashier = c;
+        this.isUpdateStatus = true;
+        this.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
+        comboBox1.setSelectedItem("Cashier");
+        comboBox1.setEnabled(false);
+        isCashierInvolved = true;
+    }
 
-	private void loadQuery() {
-		ArrayList<String> al = new ArrayList<String>();
-		al.add("employee_salary");
-		al.add("employee,employee_salary");
+    public EmployeeSalary(EmployeeNavi c) {
+        this();
+        
+    }
+    String loadTableQuery;
+    String[] colnames = {"employee_id", "employee_name", "employee_type_name", "employee_email", "paid_amount", "bonus", "paid_date"};
+    boolean isUpdateStatus = false;
+    boolean isChefInvolved = false;
+    boolean isMangerInvolved = false;
+    boolean isServerInvolved = false;
+    boolean isCleanerInvolved = false;
+    boolean isBartenderInvolved = false;
+    boolean isCashierInvolved = false;
+    EmployeeSalary thiset;
+    Chef chef;
+    Manager manager;
+    Server server;
+    Cleaner cleaner;
+    Bartender bartender;
+    Cashier cashier;
 
-		al.add("employee_type,employee");
-		al.add("gender,employee");
-		SearchTable st = new SearchTable(al);
-		this.loadTableQuery = st.getTableQuery();
-		//System.out.println(this.loadTableQuery);
+    private void loadQuery() {
+        ArrayList<String> al = new ArrayList<String>();
+        al.add("employee_salary");
+        al.add("employee,employee_salary");
 
-	}
+        al.add("employee_type,employee");
+        al.add("gender,employee");
+        SearchTable st = new SearchTable(al);
+        this.loadTableQuery = st.getTableQuery();
+        //System.out.println(this.loadTableQuery);
 
-	private void loadCombos() {
+    }
 
-		LoadSubTypes.loadType(comboBox1, "employee_type");
-	}
+    private void loadCombos() {
 
-	private void loadTable() {
-		loadQuery();
-		String sort = "ORDER BY `employee_name` ASC";
+        LoadSubTypes.loadType(comboBox1, "employee_type");
+    }
 
-		StringBuilder stringquerybuild = new StringBuilder();
-		stringquerybuild.append(this.loadTableQuery).toString();
-		stringquerybuild.append(sort).toString();
-		String query = stringquerybuild.toString();
+    private void loadTable() {
+        loadQuery();
+        String sort = "ORDER BY `employee_name` ASC";
 
-		LoadTables lt = new LoadTables(customTable2, query, this.colnames);
-	}
-	String searchText;
-	String seachcontact;
-	String searchemail;
+        StringBuilder stringquerybuild = new StringBuilder();
+        stringquerybuild.append(this.loadTableQuery).toString();
+        stringquerybuild.append(sort).toString();
+        String query = stringquerybuild.toString();
 
-	private void clearFields() {
-		JComponent[] jp = {textF1, textF2, textF3, textF10, textF11, textF4, textF5, textF6, textF7, textF8, textF9, comboBox1};
-		SetEmptyItems.emptyItems(jp);
-	}
+        LoadTables lt = new LoadTables(customTable2, query, this.colnames);
+    }
+    String searchText;
+    String seachcontact;
+    String searchemail;
 
-	public void advancedSearch() {
-		String name = textF1.getText();
-		boolean isNameInvolved = false;
-		String contact = textF2.getText();
-		boolean isContactIvolved = false;
-		String email = textF3.getText();
-		boolean isEmailInvolved = false;
-		String sort = comboBox2.getSelectedItem().toString();
-		String emptype = comboBox1.getSelectedItem().toString();
-		String fromDate = textF10.getText();
-		String toDate = textF11.getText();
-		StringBuilder stringquerybuild = new StringBuilder();
-		StringBuilder whereQueryBuilder = new StringBuilder();
-		Vector<String> v = new Vector<String>();
-		boolean queriesInvolved = false;
+    private void clearFields() {
+        JComponent[] jp = {textF1, textF2, textF3, textF10, textF11, textF4, textF5, textF6, textF7, textF8, textF9, comboBox1};
+        SetEmptyItems.emptyItems(jp);
+    }
 
-		String sortQuery = "";
-		String whereQuery = "";
-		if (sort.equals("NAME A-Z")) {
-			sortQuery = "ORDER BY `employee`.`employee_name` ASC";
-		} else if (sort.equals("NAME Z-A")) {
-			sortQuery = "ORDER BY `employee`.`employee_name` DESC";
-		} else if (sort.equals("EMAIL A-Z")) {
-			sortQuery = "ORDER BY `employee`.`employee_email` ASC";
-		} else if (sort.equals("EMAIL Z-A")) {
-			sortQuery = "ORDER BY `employee`.`employee_email` DESC";
-		} else if (sort.equals("GENDER M")) {
-			sortQuery = "AND `gender_name`='Male'";
-		} else if (sort.equals("GENDER F")) {
-			sortQuery = "AND `gender_name`='Female'";
-		}
-		if (!name.isEmpty()) {
-			v.add("`employee_name` LIKE '%" + name + "%' ");
-			queriesInvolved = true;
-		}
-		if (!contact.isEmpty()) {
-			v.add("`employee_contact` LIKE '%" + contact + "%' ");
-			queriesInvolved = true;
-		}
+    public void advancedSearch() {
+        String name = textF1.getText();
+        boolean isNameInvolved = false;
+        String contact = textF2.getText();
+        boolean isContactIvolved = false;
+        String email = textF3.getText();
+        boolean isEmailInvolved = false;
+        String sort = comboBox2.getSelectedItem().toString();
+        String emptype = comboBox1.getSelectedItem().toString();
+        String fromDate = textF10.getText();
+        String toDate = textF11.getText();
+        StringBuilder stringquerybuild = new StringBuilder();
+        StringBuilder whereQueryBuilder = new StringBuilder();
+        Vector<String> v = new Vector<String>();
+        boolean queriesInvolved = false;
 
-		if (!email.isEmpty()) {
-			v.add("`employee_email` LIKE '%" + email + "%' ");
-			queriesInvolved = true;
-		}
-		if (!emptype.equals("Select employee_type")) {
-			v.add("`employee_type_name` = '" + emptype + "' ");
-			queriesInvolved = true;
-		}
-		if (!fromDate.isEmpty() && !toDate.isEmpty()) {
-			String fromTime = fromDate + " 00:00:00";
-			String toTime = toDate + " 00:00:00";
-			v.add("`employee_salary`.`paid_date` BETWEEN '" + fromTime + "' AND '" + toTime + "' ");
-			queriesInvolved = true;
-		}
-		if (queriesInvolved) {
-			whereQueryBuilder.append("where ");
-		}
-		for (int i = 0; i < v.size(); i++) {
-			//System.out.println("vectors are " + v.get(i));
+        String sortQuery = "";
+        String whereQuery = "";
+        if (sort.equals("NAME A-Z")) {
+            sortQuery = "ORDER BY `employee`.`employee_name` ASC";
+        } else if (sort.equals("NAME Z-A")) {
+            sortQuery = "ORDER BY `employee`.`employee_name` DESC";
+        } else if (sort.equals("EMAIL A-Z")) {
+            sortQuery = "ORDER BY `employee`.`employee_email` ASC";
+        } else if (sort.equals("EMAIL Z-A")) {
+            sortQuery = "ORDER BY `employee`.`employee_email` DESC";
+        } else if (sort.equals("GENDER M")) {
+            sortQuery = "AND `gender_name`='Male'";
+        } else if (sort.equals("GENDER F")) {
+            sortQuery = "AND `gender_name`='Female'";
+        }
+        if (!name.isEmpty()) {
+            v.add("`employee_name` LIKE '%" + name + "%' ");
+            queriesInvolved = true;
+        }
+        if (!contact.isEmpty()) {
+            v.add("`employee_contact` LIKE '%" + contact + "%' ");
+            queriesInvolved = true;
+        }
 
-			whereQueryBuilder.append("");
-			whereQueryBuilder.append(v.get(i));
+        if (!email.isEmpty()) {
+            v.add("`employee_email` LIKE '%" + email + "%' ");
+            queriesInvolved = true;
+        }
+        if (!emptype.equals("Select employee_type")) {
+            v.add("`employee_type_name` = '" + emptype + "' ");
+            queriesInvolved = true;
+        }
+        if (!fromDate.isEmpty() && !toDate.isEmpty()) {
+            String fromTime = fromDate + " 00:00:00";
+            String toTime = toDate + " 00:00:00";
+            v.add("`employee_salary`.`paid_date` BETWEEN '" + fromTime + "' AND '" + toTime + "' ");
+            queriesInvolved = true;
+        }
+        if (queriesInvolved) {
+            whereQueryBuilder.append("where ");
+        }
+        for (int i = 0; i < v.size(); i++) {
+            //System.out.println("vectors are " + v.get(i));
 
-			if (i != v.size() - 1) {
-				whereQueryBuilder.append("AND ");
-			}
-		}
-		//System.out.println("where query is " + whereQueryBuilder);
-		stringquerybuild.append(this.loadTableQuery);
-		stringquerybuild.append(whereQueryBuilder);
-		stringquerybuild.append(sortQuery);
-		String query = stringquerybuild.toString();
-		//System.out.println("where query is " + whereQueryBuilder);
-		LoadTables lt = new LoadTables(customTable2, query, this.colnames);
-	}
+            whereQueryBuilder.append("");
+            whereQueryBuilder.append(v.get(i));
 
-	public void advancedSearch(String name, String contact, String email) {
+            if (i != v.size() - 1) {
+                whereQueryBuilder.append("AND ");
+            }
+        }
+        //System.out.println("where query is " + whereQueryBuilder);
+        stringquerybuild.append(this.loadTableQuery);
+        stringquerybuild.append(whereQueryBuilder);
+        stringquerybuild.append(sortQuery);
+        String query = stringquerybuild.toString();
+        //System.out.println("where query is " + whereQueryBuilder);
+        LoadTables lt = new LoadTables(customTable2, query, this.colnames);
+    }
 
-		boolean isNameInvolved = false;
+    public void advancedSearch(String name, String contact, String email) {
 
-		boolean isContactIvolved = false;
+        boolean isNameInvolved = false;
 
-		boolean isEmailInvolved = false;
-		String sort = comboBox2.getSelectedItem().toString();
-		String emptype = comboBox1.getSelectedItem().toString();
+        boolean isContactIvolved = false;
 
-		StringBuilder stringquerybuild = new StringBuilder();
-		StringBuilder whereQueryBuilder = new StringBuilder();
-		Vector<String> v = new Vector<String>();
-		boolean queriesInvolved = false;
+        boolean isEmailInvolved = false;
+        String sort = comboBox2.getSelectedItem().toString();
+        String emptype = comboBox1.getSelectedItem().toString();
 
-		String sortQuery = "";
-		String whereQuery = "";
-		if (sort.equals("NAME A-Z")) {
-			sortQuery = "ORDER BY `employee`.`employee_name` ASC";
-		} else if (sort.equals("NAME Z-A")) {
-			sortQuery = "ORDER BY `employee`.`employee_name` DESC";
-		} else if (sort.equals("EMAIL A-Z")) {
-			sortQuery = "ORDER BY `employee`.`employee_email` ASC";
-		} else if (sort.equals("EMAIL Z-A")) {
-			sortQuery = "ORDER BY `employee`.`employee_email` DESC";
-		} else if (sort.equals("GENDER M")) {
-			sortQuery = "AND `gender_name`='Male'";
-		} else if (sort.equals("GENDER F")) {
-			sortQuery = "AND `gender_name`='Female'";
-		}
-		if (!name.isEmpty()) {
-			v.add("`employee_name` LIKE '%" + name + "%' ");
-			queriesInvolved = true;
-		}
-		if (!contact.isEmpty()) {
-			v.add("`employee_contact` LIKE '%" + contact + "%' ");
-			queriesInvolved = true;
-		}
+        StringBuilder stringquerybuild = new StringBuilder();
+        StringBuilder whereQueryBuilder = new StringBuilder();
+        Vector<String> v = new Vector<String>();
+        boolean queriesInvolved = false;
 
-		if (!email.isEmpty()) {
-			v.add("`employee_email` LIKE '%" + email + "%' ");
-			queriesInvolved = true;
-		}
-		if (!emptype.equals("Select employee_type")) {
-			v.add("`employee_type_name` = '" + emptype + "' ");
-			queriesInvolved = true;
-		}
-		if (queriesInvolved) {
-			whereQueryBuilder.append("where ");
-		}
-		for (int i = 0; i < v.size(); i++) {
-			//System.out.println("vectors are " + v.get(i));
+        String sortQuery = "";
+        String whereQuery = "";
+        if (sort.equals("NAME A-Z")) {
+            sortQuery = "ORDER BY `employee`.`employee_name` ASC";
+        } else if (sort.equals("NAME Z-A")) {
+            sortQuery = "ORDER BY `employee`.`employee_name` DESC";
+        } else if (sort.equals("EMAIL A-Z")) {
+            sortQuery = "ORDER BY `employee`.`employee_email` ASC";
+        } else if (sort.equals("EMAIL Z-A")) {
+            sortQuery = "ORDER BY `employee`.`employee_email` DESC";
+        } else if (sort.equals("GENDER M")) {
+            sortQuery = "AND `gender_name`='Male'";
+        } else if (sort.equals("GENDER F")) {
+            sortQuery = "AND `gender_name`='Female'";
+        }
+        if (!name.isEmpty()) {
+            v.add("`employee_name` LIKE '%" + name + "%' ");
+            queriesInvolved = true;
+        }
+        if (!contact.isEmpty()) {
+            v.add("`employee_contact` LIKE '%" + contact + "%' ");
+            queriesInvolved = true;
+        }
 
-			whereQueryBuilder.append("");
-			whereQueryBuilder.append(v.get(i));
+        if (!email.isEmpty()) {
+            v.add("`employee_email` LIKE '%" + email + "%' ");
+            queriesInvolved = true;
+        }
+        if (!emptype.equals("Select employee_type")) {
+            v.add("`employee_type_name` = '" + emptype + "' ");
+            queriesInvolved = true;
+        }
+        if (queriesInvolved) {
+            whereQueryBuilder.append("where ");
+        }
+        for (int i = 0; i < v.size(); i++) {
+            //System.out.println("vectors are " + v.get(i));
 
-			if (i != v.size() - 1) {
-				whereQueryBuilder.append("AND ");
-			}
-		}
-		//System.out.println("where query is " + whereQueryBuilder);
-		stringquerybuild.append(this.loadTableQuery);
-		stringquerybuild.append(whereQueryBuilder);
-		stringquerybuild.append(sortQuery);
-		String query = stringquerybuild.toString();
-		//System.out.println("where query is " + whereQueryBuilder);
-		LoadTables lt = new LoadTables(customTable2, query, this.colnames);
+            whereQueryBuilder.append("");
+            whereQueryBuilder.append(v.get(i));
 
-	}
+            if (i != v.size() - 1) {
+                whereQueryBuilder.append("AND ");
+            }
+        }
+        //System.out.println("where query is " + whereQueryBuilder);
+        stringquerybuild.append(this.loadTableQuery);
+        stringquerybuild.append(whereQueryBuilder);
+        stringquerybuild.append(sortQuery);
+        String query = stringquerybuild.toString();
+        //System.out.println("where query is " + whereQueryBuilder);
+        LoadTables lt = new LoadTables(customTable2, query, this.colnames);
 
-	private void setValidadions() {
-		String priceregex = "^\\d*([,]\\d*)*([.]\\d*)?";
-		FilterDocRagRegex bonus = new FilterDocRagRegex(textF5, priceregex);
+    }
 
-		FilterDocRagRegex amount = new FilterDocRagRegex(textF4, priceregex);
-		String contactregex = "((([0][7][24-8][0-9]{7})|([0][7][24-8][0-9]*))|([0][7][24-8])|[0][7]|[0])";
-		FilterDocRagRegex contact = new FilterDocRagRegex(textF2, contactregex, 10);
-	}
+    private void setValidadions() {
+        String priceregex = "^\\d*([,]\\d*)*([.]\\d*)?";
+        FilterDocRagRegex bonus = new FilterDocRagRegex(textF5, priceregex);
 
-	private void jframeCustmize() {
-		closeLabel.setIcon(labelSetIcon("/Icons/close.png", closeLabel.getWidth() - 25, closeLabel.getHeight() - 17));
-		boxLabel.setIcon(labelSetIcon("/Icons/square.png", boxLabel.getWidth() - 23, boxLabel.getHeight() - 17));
-		miniLabel.setIcon(labelSetIcon("/Icons/minus.png", miniLabel.getWidth() - 20, miniLabel.getHeight() - 13));
+        FilterDocRagRegex amount = new FilterDocRagRegex(textF4, priceregex);
+        String contactregex = "((([0][7][24-8][0-9]{7})|([0][7][24-8][0-9]*))|([0][7][24-8])|[0][7]|[0])";
+        FilterDocRagRegex contact = new FilterDocRagRegex(textF2, contactregex, 10);
+    }
 
-		miniLabel.addMouseListener(new java.awt.event.MouseAdapter() {
-			@Override
-			public void mouseClicked(java.awt.event.MouseEvent evt) {
-				setState(JFrame.ICONIFIED);
-			}
-		});
-	}
+    private void jframeCustmize() {
+        closeLabel.setIcon(labelSetIcon("/Icons/close.png", closeLabel.getWidth() - 25, closeLabel.getHeight() - 17));
+        boxLabel.setIcon(labelSetIcon("/Icons/square.png", boxLabel.getWidth() - 23, boxLabel.getHeight() - 17));
+        miniLabel.setIcon(labelSetIcon("/Icons/minus.png", miniLabel.getWidth() - 20, miniLabel.getHeight() - 13));
 
-	public ImageIcon labelSetIcon(String src, int w, int h) {
-		ImageSizer imgSizer = new ImageSizer();
-		ImageIcon i = imgSizer.overaallResizer(src, w, h);
-		return i;
-	}
+        miniLabel.addMouseListener(new java.awt.event.MouseAdapter() {
+            @Override
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                setState(JFrame.ICONIFIED);
+            }
+        });
+    }
 
-	private void clearSearch() {
-		ItemListener it = comboBox1.getItemListeners()[0];
-		comboBox1.removeItemListener(it);
-		loadCombos();
-		clearFields();
-		loadTable();
-		comboBox1.addItemListener(it);
-	}
+    public ImageIcon labelSetIcon(String src, int w, int h) {
+        ImageSizer imgSizer = new ImageSizer();
+        ImageIcon i = imgSizer.overaallResizer(src, w, h);
+        return i;
+    }
 
-	private void enterSalary() {
-		String name = textF5.getText();
-		String amount = textF4.getText();
-		String bonus = textF5.getText();
-		String empId = textF8.getText();
+    private void clearSearch() {
+        ItemListener it = comboBox1.getItemListeners()[0];
+        comboBox1.removeItemListener(it);
+        loadCombos();
+        clearFields();
+        loadTable();
+        comboBox1.addItemListener(it);
+    }
 
-		if (name.equals("none")) {
-			Message m = new Message(this, "Please a Select an Employee", "Warning");
-		} else if (amount.isEmpty()) {
-			Message m = new Message(this, "Please a enter amount", "Warning");
-		} else if (bonus.isEmpty()) {
-			Message m = new Message(this, "Please a enter bonus", "Warning");
-		} else {
-			SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
-			String date = sdf.format(new Date());
-			ArrayList<String> info = new ArrayList<>();
-			info.add(bonus);
-			info.add(empId);
-			info.add(amount);
-			info.add(date);
+    private void enterSalary() {
+        String name = textF5.getText();
+        String amount = textF4.getText();
+        String bonus = textF5.getText();
+        String empId = textF8.getText();
 
-			InsertTable it = new InsertTable("employee_salary", info);
-			clearFields();
-			loadTable();
-		}
-	}
+        if (name.equals("none")) {
+            Message m = new Message(this, "Please a Select an Employee", "Warning");
+        } else if (amount.isEmpty()) {
+            Message m = new Message(this, "Please a enter amount", "Warning");
+        } else if (bonus.isEmpty()) {
+            Message m = new Message(this, "Please a enter bonus", "Warning");
+        } else {
+            SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+            String date = sdf.format(new Date());
+            ArrayList<String> info = new ArrayList<>();
+            info.add(bonus);
+            info.add(empId);
+            info.add(amount);
+            info.add(date);
 
-	private void editMode() {
-		jPanel7.removeAll();
-		jPanel7.add(jPanel9);
-		jPanel7.repaint();
-		jPanel7.revalidate();
-		jPanel11.removeAll();
-		jPanel11.add(customButton5);
-		jPanel11.repaint();
-		jPanel11.revalidate();
-	}
+            InsertTable it = new InsertTable("employee_salary", info);
+            clearFields();
+            loadTable();
+        }
+    }
 
-	private void enterMode() {
-		jPanel7.removeAll();
-		jPanel7.add(jPanel8);
-		jPanel7.repaint();
-		jPanel7.revalidate();
-		jPanel11.removeAll();
-		jPanel11.add(customButton3);
-		jPanel11.repaint();
-		jPanel11.revalidate();
-	}
+    private void editMode() {
+        jPanel7.removeAll();
+        jPanel7.add(jPanel9);
+        jPanel7.repaint();
+        jPanel7.revalidate();
+        jPanel11.removeAll();
+        jPanel11.add(customButton5);
+        jPanel11.repaint();
+        jPanel11.revalidate();
+    }
 
-	public void tableListernRag() {
-		customTable2.getSelectionModel().addListSelectionListener(new ListSelectionListener() {
-			@Override
-			public void valueChanged(ListSelectionEvent e) {
-				int row = customTable2.getSelectedRow();
-				if (row != -1 && isUpdateStatus) {
-					String id = customTable2.getValueAt(row, 0).toString();
-					String name = customTable2.getValueAt(row, 1).toString();
-					String emptype = customTable2.getValueAt(row, 2).toString();
-					String contact = customTable2.getValueAt(row, 3).toString();
-					String email = customTable2.getValueAt(row, 4).toString();
-					String gender = customTable2.getValueAt(row, 7).toString();
-					String dob = customTable2.getValueAt(row, 9).toString();
-					String city = customTable2.getValueAt(row, 6).toString();
-					ArrayList<String> al = new ArrayList<String>();
-					al.add("employee");
-					al.add("address,employee");
-					al.add("city,address");
+    private void enterMode() {
+        jPanel7.removeAll();
+        jPanel7.add(jPanel8);
+        jPanel7.repaint();
+        jPanel7.revalidate();
+        jPanel11.removeAll();
+        jPanel11.add(customButton3);
+        jPanel11.repaint();
+        jPanel11.revalidate();
+    }
 
-					SearchTable st = new SearchTable(al);
+    public void tableListernRag() {
+        customTable2.getSelectionModel().addListSelectionListener(new ListSelectionListener() {
+            @Override
+            public void valueChanged(ListSelectionEvent e) {
+                int row = customTable2.getSelectedRow();
+                if (row != -1 && isUpdateStatus) {
+                    String id = customTable2.getValueAt(row, 0).toString();
+                    String name = customTable2.getValueAt(row, 1).toString();
+                    String emptype = customTable2.getValueAt(row, 2).toString();
+                    String contact = customTable2.getValueAt(row, 3).toString();
+                    String email = customTable2.getValueAt(row, 4).toString();
+                    String gender = customTable2.getValueAt(row, 7).toString();
+                    String dob = customTable2.getValueAt(row, 9).toString();
+                    String city = customTable2.getValueAt(row, 6).toString();
+                    ArrayList<String> al = new ArrayList<String>();
+                    al.add("employee");
+                    al.add("address,employee");
+                    al.add("city,address");
 
-					String whereQuery = st.getTableQuery() + " WHERE `employee_id`='" + id + "'";
-					try {
-						System.out.println(whereQuery);
-						ResultSet rs = MySql.sq(whereQuery);
-						rs.next();
-						String add1 = rs.getString("street_1");
-						String add2 = rs.getString("street_2");
-						HashMap<String, String> hm = new HashMap<String, String>();
-						hm.put("id", id);
-						hm.put("name", name);
-						hm.put("type", emptype);
-						hm.put("contact", contact);
-						hm.put("email", email);
-						hm.put("add1", add1);
-						hm.put("add2", add2);
-						hm.put("city", city);
-						hm.put("gender", gender);
-						hm.put("dob", dob);
-						if (isChefInvolved) {
-							chef.textF1.setText(name);
+                    SearchTable st = new SearchTable(al);
 
-							chef.textF3.setText(email);
-							chef.setEnabled(true);
-							chef.empId = id;
-							thiset.dispose();
-						} else if (isMangerInvolved) {
-							manager.textF1.setText(name);
+                    String whereQuery = st.getTableQuery() + " WHERE `employee_id`='" + id + "'";
+                    try {
+                        System.out.println(whereQuery);
+                        ResultSet rs = MySql.sq(whereQuery);
+                        rs.next();
+                        String add1 = rs.getString("street_1");
+                        String add2 = rs.getString("street_2");
+                        HashMap<String, String> hm = new HashMap<String, String>();
+                        hm.put("id", id);
+                        hm.put("name", name);
+                        hm.put("type", emptype);
+                        hm.put("contact", contact);
+                        hm.put("email", email);
+                        hm.put("add1", add1);
+                        hm.put("add2", add2);
+                        hm.put("city", city);
+                        hm.put("gender", gender);
+                        hm.put("dob", dob);
+                        if (isChefInvolved) {
+                            chef.textF1.setText(name);
 
-							manager.textF3.setText(email);
-							manager.setEnabled(true);
-							manager.empId = id;
-							thiset.dispose();
-						} else if (isServerInvolved) {
-							server.textF1.setText(name);
+                            chef.textF3.setText(email);
+                            chef.setEnabled(true);
+                            chef.empId = id;
+                            thiset.dispose();
+                        } else if (isMangerInvolved) {
+                            manager.textF1.setText(name);
 
-							server.textF3.setText(email);
-							server.setEnabled(true);
-							server.empId = id;
-							thiset.dispose();
-						} else if (isCleanerInvolved) {
-							cleaner.textF1.setText(name);
+                            manager.textF3.setText(email);
+                            manager.setEnabled(true);
+                            manager.empId = id;
+                            thiset.dispose();
+                        } else if (isServerInvolved) {
+                            server.textF1.setText(name);
 
-							cleaner.textF3.setText(email);
-							cleaner.setEnabled(true);
-							cleaner.empId = id;
-							thiset.dispose();
-						} else if (isBartenderInvolved) {
-							bartender.textF1.setText(name);
+                            server.textF3.setText(email);
+                            server.setEnabled(true);
+                            server.empId = id;
+                            thiset.dispose();
+                        } else if (isCleanerInvolved) {
+                            cleaner.textF1.setText(name);
 
-							bartender.textF3.setText(email);
-							bartender.setEnabled(true);
-							bartender.empId = id;
-							thiset.dispose();
-						} else if (isCashierInvolved) {
-							cashier.textF1.setText(name);
+                            cleaner.textF3.setText(email);
+                            cleaner.setEnabled(true);
+                            cleaner.empId = id;
+                            thiset.dispose();
+                        } else if (isBartenderInvolved) {
+                            bartender.textF1.setText(name);
 
-							cashier.textF3.setText(email);
-							cashier.setEnabled(true);
-							cashier.empId = id;
-							thiset.dispose();
-						} else {
+                            bartender.textF3.setText(email);
+                            bartender.setEnabled(true);
+                            bartender.empId = id;
+                            thiset.dispose();
+                        } else if (isCashierInvolved) {
+                            cashier.textF1.setText(name);
 
-							isUpdateStatus = false;
-							thiset.dispose();
-						}
+                            cashier.textF3.setText(email);
+                            cashier.setEnabled(true);
+                            cashier.empId = id;
+                            thiset.dispose();
+                        } else {
 
-					} catch (ClassNotFoundException ex) {
-						Logger.getLogger(EmployeeSalary.class.getName()).log(Level.SEVERE, null, ex);
-					} catch (SQLException ex) {
-						Logger.getLogger(EmployeeSalary.class.getName()).log(Level.SEVERE, null, ex);
-					}
-				}
-			}
+                            isUpdateStatus = false;
+                            thiset.dispose();
+                        }
 
-		});
+                    } catch (ClassNotFoundException ex) {
+                        Logger.getLogger(EmployeeSalary.class.getName()).log(Level.SEVERE, null, ex);
+                    } catch (SQLException ex) {
+                        Logger.getLogger(EmployeeSalary.class.getName()).log(Level.SEVERE, null, ex);
+                    }
+                }
+            }
 
-	}
+        });
 
-	/**
-	 * This method is called from within the constructor to initialize the
-	 * form. WARNING: Do NOT modify this code. The content of this method is
-	 * always regenerated by the Form Editor.
-	 */
-	@SuppressWarnings("unchecked")
+    }
+
+    /**
+     * This method is called from within the constructor to initialize the form.
+     * WARNING: Do NOT modify this code. The content of this method is always
+     * regenerated by the Form Editor.
+     */
+    @SuppressWarnings("unchecked")
         // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
         private void initComponents() {
 
@@ -1086,278 +1091,278 @@ public class EmployeeSalary extends javax.swing.JFrame {
                 pack();
         }// </editor-fold>//GEN-END:initComponents
     int x = 0;
-	int y = 0;
+    int y = 0;
     private void roundedPanel2MousePressed(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_roundedPanel2MousePressed
-	    // TODO add your handling code here:
-	    x = evt.getX();
-	    y = evt.getY();
+        // TODO add your handling code here:
+        x = evt.getX();
+        y = evt.getY();
     }//GEN-LAST:event_roundedPanel2MousePressed
 
     private void roundedPanel2MouseDragged(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_roundedPanel2MouseDragged
-	    // TODO add your handling code here:
-	    int xx = evt.getXOnScreen();
-	    int yy = evt.getYOnScreen();
-	    this.setLocation(xx - x, yy - y);
+        // TODO add your handling code here:
+        int xx = evt.getXOnScreen();
+        int yy = evt.getYOnScreen();
+        this.setLocation(xx - x, yy - y);
     }//GEN-LAST:event_roundedPanel2MouseDragged
 
     private void closeLabelMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_closeLabelMouseClicked
-	    // TODO add your handling code here:
-	    System.exit(0);
+        // TODO add your handling code here:
+        System.exit(0);
     }//GEN-LAST:event_closeLabelMouseClicked
 
     private void closeLabelMouseEntered(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_closeLabelMouseEntered
-	    // TODO add your handling code here:
-	    closeLabel.setOpaque(true);
-	    closeLabel.setBackground(MainTheme.mainColor);
+        // TODO add your handling code here:
+        closeLabel.setOpaque(true);
+        closeLabel.setBackground(MainTheme.mainColor);
     }//GEN-LAST:event_closeLabelMouseEntered
 
     private void closeLabelMouseExited(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_closeLabelMouseExited
-	    // TODO add your handling code here:
-	    closeLabel.setBackground(MainTheme.secondColor);
-	    closeLabel.setOpaque(false);
+        // TODO add your handling code here:
+        closeLabel.setBackground(MainTheme.secondColor);
+        closeLabel.setOpaque(false);
 
     }//GEN-LAST:event_closeLabelMouseExited
 
     private void miniLabelMouseEntered(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_miniLabelMouseEntered
-	    // TODO add your handling code here:
-	    miniLabel.setOpaque(true);
-	    miniLabel.setBackground(MainTheme.mainColor);
+        // TODO add your handling code here:
+        miniLabel.setOpaque(true);
+        miniLabel.setBackground(MainTheme.mainColor);
     }//GEN-LAST:event_miniLabelMouseEntered
 
     private void miniLabelMouseExited(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_miniLabelMouseExited
-	    // TODO add your handling code here:
+        // TODO add your handling code here:
 
-	    miniLabel.setBackground(MainTheme.secondColor);
-	    miniLabel.setOpaque(false);
+        miniLabel.setBackground(MainTheme.secondColor);
+        miniLabel.setOpaque(false);
     }//GEN-LAST:event_miniLabelMouseExited
-	ComboBox<String> cb;
+    ComboBox<String> cb;
         private void customButton4ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_customButton4ActionPerformed
-		// TODO add your handling code here:
-		//loadCombos();
-		clearSearch();
+            // TODO add your handling code here:
+            //loadCombos();
+            clearSearch();
 
-		//EmployeeSalary et = new EmployeeSalary();
-		//.setVisible(true);
-		//this.dispose();
+            //EmployeeSalary et = new EmployeeSalary();
+            //.setVisible(true);
+            //this.dispose();
 
         }//GEN-LAST:event_customButton4ActionPerformed
 
         private void textF1KeyTyped(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_textF1KeyTyped
-		// TODO add your handling code here:
-		String name = textF1.getText() + evt.getKeyChar();
-		String contact = textF2.getText();
-		String email = textF3.getText();
-		advancedSearch(name, contact, email);
+            // TODO add your handling code here:
+            String name = textF1.getText() + evt.getKeyChar();
+            String contact = textF2.getText();
+            String email = textF3.getText();
+            advancedSearch(name, contact, email);
         }//GEN-LAST:event_textF1KeyTyped
 
         private void textF2KeyTyped(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_textF2KeyTyped
-		// TODO add your handling code here:
-		String name = textF1.getText();
-		String contact = textF2.getText() + evt.getKeyChar();
-		String email = textF3.getText();
-		advancedSearch(name, contact, email);
+            // TODO add your handling code here:
+            String name = textF1.getText();
+            String contact = textF2.getText() + evt.getKeyChar();
+            String email = textF3.getText();
+            advancedSearch(name, contact, email);
         }//GEN-LAST:event_textF2KeyTyped
 
         private void textF3KeyTyped(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_textF3KeyTyped
-		// TODO add your handling code here:
-		String name = textF1.getText();
-		String contact = textF2.getText();
-		String email = textF3.getText() + evt.getKeyChar();
-		advancedSearch(name, contact, email);
+            // TODO add your handling code here:
+            String name = textF1.getText();
+            String contact = textF2.getText();
+            String email = textF3.getText() + evt.getKeyChar();
+            advancedSearch(name, contact, email);
         }//GEN-LAST:event_textF3KeyTyped
 
         private void comboBox2ItemStateChanged(java.awt.event.ItemEvent evt) {//GEN-FIRST:event_comboBox2ItemStateChanged
-		// TODO add your handling code here:
-		advancedSearch();
+            // TODO add your handling code here:
+            advancedSearch();
 
         }//GEN-LAST:event_comboBox2ItemStateChanged
 
         private void customButton1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_customButton1ActionPerformed
-		// TODO add your handling code here:
-		CreateObject.make(new EmployeeT(this));
-		clearSearch();
-		enterMode();
+            // TODO add your handling code here:
+            CreateObject.make(new EmployeeT(this));
+            clearSearch();
+            enterMode();
         }//GEN-LAST:event_customButton1ActionPerformed
 
         private void customButton2ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_customButton2ActionPerformed
-		// TODO add your handling code here:
-		enterSalary();
+            // TODO add your handling code here:
+            enterSalary();
 
         }//GEN-LAST:event_customButton2ActionPerformed
 
         private void textF8ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_textF8ActionPerformed
-		// TODO add your handling code here:
+            // TODO add your handling code here:
         }//GEN-LAST:event_textF8ActionPerformed
 
         private void customButton3ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_customButton3ActionPerformed
-		// TODO add your handling code here:
-		editMode();
+            // TODO add your handling code here:
+            editMode();
         }//GEN-LAST:event_customButton3ActionPerformed
 
         private void customButton5ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_customButton5ActionPerformed
-		// TODO add your handling code here:
-		enterMode();
+            // TODO add your handling code here:
+            enterMode();
 
         }//GEN-LAST:event_customButton5ActionPerformed
 
         private void textF10FocusGained(java.awt.event.FocusEvent evt) {//GEN-FIRST:event_textF10FocusGained
-		// TODO add your handling code here:
-		jDateChooser1.setVisible(true);
+            // TODO add your handling code here:
+            jDateChooser1.setVisible(true);
         }//GEN-LAST:event_textF10FocusGained
 
         private void textF10FocusLost(java.awt.event.FocusEvent evt) {//GEN-FIRST:event_textF10FocusLost
-		// TODO add your handling code here:
-		jDateChooser1.setVisible(false);
+            // TODO add your handling code here:
+            jDateChooser1.setVisible(false);
         }//GEN-LAST:event_textF10FocusLost
 
         private void textF10MouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_textF10MouseClicked
-		// TODO add your handling code here:
+            // TODO add your handling code here:
         }//GEN-LAST:event_textF10MouseClicked
 
         private void jDateChooser1PropertyChange(java.beans.PropertyChangeEvent evt) {//GEN-FIRST:event_jDateChooser1PropertyChange
-		// TODO add your handling code here:
-		SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
-		String d = sdf.format(new Date());
-		if (jDateChooser1.getDate() != null) {
+            // TODO add your handling code here:
+            SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
+            String d = sdf.format(new Date());
+            if (jDateChooser1.getDate() != null) {
 
-			textF10.setText(sdf.format(jDateChooser1.getDate()).toString());
-			advancedSearch();
+                textF10.setText(sdf.format(jDateChooser1.getDate()).toString());
+                advancedSearch();
 
-		}
+            }
         }//GEN-LAST:event_jDateChooser1PropertyChange
 
         private void textF11FocusGained(java.awt.event.FocusEvent evt) {//GEN-FIRST:event_textF11FocusGained
-		// TODO add your handling code here:
-		jDateChooser2.setVisible(true);
+            // TODO add your handling code here:
+            jDateChooser2.setVisible(true);
         }//GEN-LAST:event_textF11FocusGained
 
         private void textF11FocusLost(java.awt.event.FocusEvent evt) {//GEN-FIRST:event_textF11FocusLost
-		// TODO add your handling code here:
-		jDateChooser2.setVisible(false);
+            // TODO add your handling code here:
+            jDateChooser2.setVisible(false);
         }//GEN-LAST:event_textF11FocusLost
 
         private void textF11MouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_textF11MouseClicked
-		// TODO add your handling code here:
+            // TODO add your handling code here:
         }//GEN-LAST:event_textF11MouseClicked
 
         private void jDateChooser2PropertyChange(java.beans.PropertyChangeEvent evt) {//GEN-FIRST:event_jDateChooser2PropertyChange
-		// TODO add your handling code here:
-		SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
-		String d = sdf.format(new Date());
-		if (jDateChooser2.getDate() != null) {
+            // TODO add your handling code here:
+            SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
+            String d = sdf.format(new Date());
+            if (jDateChooser2.getDate() != null) {
 
-			textF11.setText(sdf.format(jDateChooser2.getDate()).toString());
-			advancedSearch();
+                textF11.setText(sdf.format(jDateChooser2.getDate()).toString());
+                advancedSearch();
 
-		}
+            }
         }//GEN-LAST:event_jDateChooser2PropertyChange
 
         private void comboBox1ItemStateChanged(java.awt.event.ItemEvent evt) {//GEN-FIRST:event_comboBox1ItemStateChanged
-		// TODO add your handling code here:
-		advancedSearch();
+            // TODO add your handling code here:
+            advancedSearch();
         }//GEN-LAST:event_comboBox1ItemStateChanged
-	boolean emailFieldEntred = false;
+    boolean emailFieldEntred = false;
 
-	/**
-	 * @param args the command line arguments
-	 */
-	public static void main(String args[]) {
-		/* Set the Nimbus look and feel */
-		//<editor-fold defaultstate="collapsed" desc=" Look and feel setting code (optional) ">
-		/* If Nimbus (introduced in Java SE 6) is not available, stay with the default look and feel.
+    /**
+     * @param args the command line arguments
+     */
+    public static void main(String args[]) {
+        /* Set the Nimbus look and feel */
+        //<editor-fold defaultstate="collapsed" desc=" Look and feel setting code (optional) ">
+        /* If Nimbus (introduced in Java SE 6) is not available, stay with the default look and feel.
          * For details see http://download.oracle.com/javase/tutorial/uiswing/lookandfeel/plaf.html 
-		 */
-		try {
-			for (javax.swing.UIManager.LookAndFeelInfo info : javax.swing.UIManager.getInstalledLookAndFeels()) {
-				if ("Nimbus".equals(info.getName())) {
-					javax.swing.UIManager.setLookAndFeel(info.getClassName());
-					break;
-				}
-			}
-		} catch (ClassNotFoundException ex) {
-			java.util.logging.Logger.getLogger(EmployeeSalary.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
-		} catch (InstantiationException ex) {
-			java.util.logging.Logger.getLogger(EmployeeSalary.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
-		} catch (IllegalAccessException ex) {
-			java.util.logging.Logger.getLogger(EmployeeSalary.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
-		} catch (javax.swing.UnsupportedLookAndFeelException ex) {
-			java.util.logging.Logger.getLogger(EmployeeSalary.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
-		}
-		//</editor-fold>
-		//</editor-fold>
-		//</editor-fold>
-		//</editor-fold>
-		//</editor-fold>
-		//</editor-fold>
-		//</editor-fold>
-		//</editor-fold>
-		//</editor-fold>
-		//</editor-fold>
-		//</editor-fold>
-		//</editor-fold>
-		//</editor-fold>
-		//</editor-fold>
-		//</editor-fold>
-		//</editor-fold>
-		//</editor-fold>
-		//</editor-fold>
-		//</editor-fold>
-		//</editor-fold>
-		//</editor-fold>
-		//</editor-fold>
-		//</editor-fold>
-		//</editor-fold>
-		//</editor-fold>
-		//</editor-fold>
-		//</editor-fold>
-		//</editor-fold>
-		//</editor-fold>
-		//</editor-fold>
-		//</editor-fold>
-		//</editor-fold>
-		//</editor-fold>
-		//</editor-fold>
-		//</editor-fold>
-		//</editor-fold>
-		//</editor-fold>
-		//</editor-fold>
-		//</editor-fold>
-		//</editor-fold>
-		//</editor-fold>
-		//</editor-fold>
-		//</editor-fold>
-		//</editor-fold>
-		//</editor-fold>
-		//</editor-fold>
-		//</editor-fold>
-		//</editor-fold>
-		//</editor-fold>
-		//</editor-fold>
-		//</editor-fold>
-		//</editor-fold>
-		//</editor-fold>
-		//</editor-fold>
-		//</editor-fold>
-		//</editor-fold>
-		//</editor-fold>
-		//</editor-fold>
-		//</editor-fold>
-		//</editor-fold>
-		//</editor-fold>
-		//</editor-fold>
-		//</editor-fold>
-		//</editor-fold>
+         */
+        try {
+            for (javax.swing.UIManager.LookAndFeelInfo info : javax.swing.UIManager.getInstalledLookAndFeels()) {
+                if ("Nimbus".equals(info.getName())) {
+                    javax.swing.UIManager.setLookAndFeel(info.getClassName());
+                    break;
+                }
+            }
+        } catch (ClassNotFoundException ex) {
+            java.util.logging.Logger.getLogger(EmployeeSalary.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
+        } catch (InstantiationException ex) {
+            java.util.logging.Logger.getLogger(EmployeeSalary.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
+        } catch (IllegalAccessException ex) {
+            java.util.logging.Logger.getLogger(EmployeeSalary.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
+        } catch (javax.swing.UnsupportedLookAndFeelException ex) {
+            java.util.logging.Logger.getLogger(EmployeeSalary.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
+        }
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
 
-		/* Create and display the form */
-		java.awt.EventQueue.invokeLater(new Runnable() {
-			public void run() {
+        /* Create and display the form */
+        java.awt.EventQueue.invokeLater(new Runnable() {
+            public void run() {
 
-				JFrame jf = new EmployeeSalary();
-				jf.setVisible(true);
+                JFrame jf = new EmployeeSalary();
+                jf.setVisible(true);
 
-			}
-		});
-	}
+            }
+        });
+    }
 
         // Variables declaration - do not modify//GEN-BEGIN:variables
         private javax.swing.JLabel boxLabel;

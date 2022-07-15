@@ -214,16 +214,25 @@
               <Properties>
                 <Property name="text" type="java.lang.String" value="FRN ITEM VIEW"/>
               </Properties>
+              <Events>
+                <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="customButton4ActionPerformed"/>
+              </Events>
             </Component>
             <Component class="frameutil.CustomButton" name="customButton5">
               <Properties>
                 <Property name="text" type="java.lang.String" value="Storage Record"/>
               </Properties>
+              <Events>
+                <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="customButton5ActionPerformed"/>
+              </Events>
             </Component>
             <Component class="frameutil.CustomButton" name="customButton6">
               <Properties>
                 <Property name="text" type="java.lang.String" value="Manage Storage"/>
               </Properties>
+              <Events>
+                <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="customButton6ActionPerformed"/>
+              </Events>
             </Component>
           </SubComponents>
         </Container>

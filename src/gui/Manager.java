@@ -66,6 +66,15 @@ public class Manager extends javax.swing.JFrame {
 		isOtherFramesInvolved = true;
 		manager = this;
 	}
+        
+        
+	public Manager(EmployeeNavi en) {
+		this();
+	      
+		
+		isOtherFramesInvolved = false;
+		
+	}
 	public String empId;
 
 	String loadTableQuery;

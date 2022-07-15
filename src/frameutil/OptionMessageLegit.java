@@ -26,7 +26,7 @@ public abstract class OptionMessageLegit extends javax.swing.JDialog {
 		this.setLocationRelativeTo(null);
 		this.setResizable(true);
 		//this.setVisible(true);
-		setShape(new RoundRectangle2D.Double(0, 0, getWidth(), getHeight(), 25, 25));
+		setShape(new RoundRectangle2D.Double(0, 0, getWidth(), getHeight(), 7, 7));
 
 		//	jLabel2.setText(message);
 		//jLabel2.setForeground(Color.WHITE);

@@ -36,7 +36,7 @@ public class IdCheck {
 
 	public static boolean isExits(String tname, String value) {
 		boolean state = false;
-                String tid = tname+"_id";
+		String tid = tname + "_id";
 		ResultSet rs;
 		try {
 			rs = MySql.sq("SELECT * FROM `" + tname + "` WHERE `" + tid + "`='" + value + "'");
@@ -51,15 +51,25 @@ public class IdCheck {
 
 		return state;
 	}
-		public static boolean isLikeExits(String tname,String colname, String value) {
+        public static int rowCount = 0;
+	public static boolean isLikeExits(String tname, String colname, String value) {
 		boolean state = false;
-                String tid = tname+"_id";
+		String tid = tname + "_id";
 		ResultSet rs;
+		ResultSet countrs;
+		rowCount = 0;
 		try {
 			rs = MySql.sq("SELECT * FROM `" + tname + "` WHERE `" + colname + "` LIKE '%" + value + "%'");
+			countrs = MySql.sq("SELECT * FROM `" + tname + "` WHERE `" + colname + "` LIKE '%" + value + "%'");
+
 			if (rs.next()) {
+				while (countrs.next()) {
+					rowCount++;
+					
+				}
 				state = true;
 			}
+			System.out.println(rowCount);
 		} catch (ClassNotFoundException ex) {
 			Logger.getLogger(IdCheck.class.getName()).log(Level.SEVERE, null, ex);
 		} catch (SQLException ex) {
