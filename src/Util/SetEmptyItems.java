@@ -6,6 +6,7 @@ package Util;
 
 import com.toedter.calendar.JDateChooser;
 import java.util.Date;
+import java.util.Vector;
 import javax.swing.JComboBox;
 import javax.swing.JComponent;
 import javax.swing.JLabel;
@@ -85,5 +86,10 @@ public class SetEmptyItems {
             JDateChooser jb = (JDateChooser) jcp;
             jb.setDate(null);
         }
+    }
+    static Vector<JComponent> jcv = new Vector<>();
+    public static JComponent[] getJC(JComponent jc){
+        jcv.add(jc);
+        return new JComponent[3];
     }
 }

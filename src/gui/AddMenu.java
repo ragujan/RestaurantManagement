@@ -1,12 +1,15 @@
 package gui;
 
 import Util.ColorSetter;
+import Util.FilterDocRagRegex;
 import Util.GetIdSingle;
 import Util.IdCheck;
 import Util.InsertTable;
 import Util.LoadSubTypes;
 import Util.LoadTables;
+import Util.PanelRemover;
 import Util.SearchTable;
+import Util.SetEmptyItems;
 import Util.TableListenerAbs;
 import frameutil.DescriptionBox;
 import frameutil.RoundedPanel;
@@ -21,6 +24,7 @@ import java.sql.SQLException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.Vector;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.swing.ImageIcon;
@@ -39,253 +43,340 @@ import model.MySql;
  */
 public class AddMenu extends javax.swing.JFrame {
 
-	/**
-	 * Creates new form NewJFrame
-	 */
-	public AddMenu() {
-		initComponents();
-		this.setLocationRelativeTo(null);
-		this.setResizable(true);
-		this.setVisible(true);
-		setShape(new RoundRectangle2D.Double(0, 0, getWidth(), getHeight(), 7, 7));
+    /**
+     * Creates new form NewJFrame
+     */
+    public AddMenu() {
+        initComponents();
+        this.setLocationRelativeTo(null);
+        this.setResizable(true);
+        this.setVisible(true);
+        setShape(new RoundRectangle2D.Double(0, 0, getWidth(), getHeight(), 7, 7));
 
-		jframeCustmize();
-		this.setBackground(MainTheme.mainColor);
-		roundedPanel1.setBackground(MainTheme.mainColor);
-		roundedPanel2.setBackground(MainTheme.secondColor);
-		jPanel4.setBackground(MainTheme.secondColor);
-		jPanel2.setBackground(MainTheme.fourthColor);
-		JComponent[] jc = {textF4, textF5};
-		ColorSetter.setC(jc, MainTheme.thirdColor, 1);
-		ColorSetter.setC(jc, Color.WHITE, 2);
-		this.setForeground(MainTheme.secondColor);
+        jframeCustmize();
+        this.setBackground(MainTheme.mainColor);
+        roundedPanel1.setBackground(MainTheme.mainColor);
+        roundedPanel2.setBackground(MainTheme.secondColor);
+        jPanel4.setBackground(MainTheme.secondColor);
+        jPanel5.setBackground(MainTheme.secondColor);
+        jPanel2.setBackground(MainTheme.fourthColor);
+        JComponent[] jc = {textF4, textF5};
+        ColorSetter.setC(jc, MainTheme.thirdColor, 1);
+        ColorSetter.setC(jc, Color.WHITE, 2);
+        this.setForeground(MainTheme.secondColor);
 
-		setDocFilters();
-		loadCombos();
-		loadTable();
+        setDocFilters();
+        loadCombos();
+        loadTable();
 
-	}
-	SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
-	String updateId;
-	public String description;
+    }
+    SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
+    String updateId;
+    public String description;
 
-	public AddMenu(DealerT et, HashMap<String, String> hm) {
-		this();
-		this.updateId = hm.get("id");
+    public AddMenu(DealerT et, HashMap<String, String> hm) {
+        this();
+        this.updateId = hm.get("id");
 
-	}
+    }
 
-	public AddMenu(Chef c) {
-		this();
+    public AddMenu(Chef c) {
+        this();
 
-	}
-	String loadTableQuery;
-	String[] colnames = {"menuItemId", "menuItemName", "menuItemPrice", "menu_item_category_name", "serving_type_name"};
+    }
+    String loadTableQuery;
+    String[] colnames = {"menuItemId", "menuItemName", "menuItemPrice", "menu_item_category_name", "serving_type_name"};
 
-	private void loadQuery() {
-		ArrayList<String> al = new ArrayList<String>();
-		al.add("mainmenu");
-		al.add("menu_item_category,mainmenu");
-		al.add("serving_type,mainmenu");
+    private void loadQuery() {
+        ArrayList<String> al = new ArrayList<String>();
+        al.add("mainmenu");
+        al.add("menu_item_category,mainmenu");
+        al.add("serving_type,mainmenu");
 
-		SearchTable st = new SearchTable(al);
-		this.loadTableQuery = st.getTableQuery();
+        SearchTable st = new SearchTable(al);
+        this.loadTableQuery = st.getTableQuery();
 
-	}
+    }
 
-	private void loadTable() {
-		loadQuery();
-		String sort = "ORDER BY `menuItemName` ASC";
+    private void loadTable() {
+        loadQuery();
+        String sort = "ORDER BY `menuItemName` ASC";
 
-		StringBuilder stringquerybuild = new StringBuilder();
-		stringquerybuild.append(this.loadTableQuery).toString();
-		stringquerybuild.append(sort).toString();
-		String query = stringquerybuild.toString();
+        StringBuilder stringquerybuild = new StringBuilder();
+        stringquerybuild.append(this.loadTableQuery).toString();
+        stringquerybuild.append(sort).toString();
+        String query = stringquerybuild.toString();
 
-		LoadTables lt = new LoadTables(customTable1, query, this.colnames);
-	}
+        LoadTables lt = new LoadTables(customTable1, query, this.colnames);
+    }
 
-	private void loadTable(String loadTableQuery) {
-		loadQuery();
-		String sort = "ORDER BY `menuItemName` ASC";
+    private void loadTable(String loadTableQuery) {
+        loadQuery();
+        String sort = "ORDER BY `menuItemName` ASC";
 
-		StringBuilder stringquerybuild = new StringBuilder();
-		stringquerybuild.append(loadTableQuery).toString();
-		stringquerybuild.append(sort).toString();
-		String query = stringquerybuild.toString();
+        StringBuilder stringquerybuild = new StringBuilder();
+        stringquerybuild.append(loadTableQuery).toString();
+        stringquerybuild.append(sort).toString();
+        String query = stringquerybuild.toString();
 
-		LoadTables lt = new LoadTables(customTable1, query, this.colnames);
-		System.out.println(loadTableQuery);
-	}
+        LoadTables lt = new LoadTables(customTable1, query, this.colnames);
+        System.out.println(loadTableQuery);
+    }
 
-	public void addDes() {
-		DescriptionBox db = new DescriptionBox(this, "You have to add description") {
-			@Override
-			public void actionConfirmed() {
+    public void addDes() {
+        DescriptionBox db = new DescriptionBox(this, "You have to add description") {
+            @Override
+            public void actionConfirmed() {
 
-				description = jTextArea1.getText();
-				System.out.println(description);
-			}
+                description = jTextArea1.getText();
+                System.out.println(description);
+            }
 
-			@Override
-			public void actionCancelled() {
-			}
-		};
-		db.setVisible(true);
-	}
+            @Override
+            public void actionCancelled() {
+            }
+        };
+        db.setVisible(true);
+    }
 
-	public void add() {
-		String name = textF5.getText();
-		String servingType = null;
-		String category = null;
-		String price = textF4.getText();
-		if (comboBox4.getSelectedItem() != null) {
-			category = comboBox4.getSelectedItem().toString();
-		}
-		if (comboBox3.getSelectedItem() != null) {
-			servingType = comboBox3.getSelectedItem().toString();
-		}
-		if (name.isEmpty()) {
-			Message m = new Message(this, "Please enter the menu item name", "Warning");
-		} else if (price.isEmpty()) {
-			Message m = new Message(this, "Please enter the menu item price ", "Warning");
-		} else if (description.isEmpty() || description == null) {
-			Message m = new Message(this, "Please enter the menu item description", "Warning");
-		} else if (description.length() > 200) {
-			Message m = new Message(this, "Menu item description is too long", "Warning");
-		} else {
-			String servingId = GetIdSingle.getId("serving_type", servingType);
-			String categoryId = GetIdSingle.getId("menu_item_category", category);
-			if (IdCheck.isLikeExits("mainmenu", "menuItemName", name)) {
-				if (IdCheck.rowCount == 0) {
-					ArrayList<String> info = new ArrayList<>();
-					info.add(categoryId);
-					info.add(description);
-					info.add(name);
-					info.add(price);
-					info.add(servingId);
-					InsertTable it = new InsertTable("mainmenu", info);
-					loadTable();
-					
-				} else if (IdCheck.rowCount == 1) {
-					Message M = new Message(this, "This menu item name already exits", "Warning");
-				} else if (IdCheck.rowCount > 1) {
-					ShortMessageBox m = new ShortMessageBox(this, "This menu item name likely exists do you want to add ") {
+    public void clearFields() {
+        JComponent[] jc = {textF5, textF4, comboBox3, comboBox4};
+        SetEmptyItems.emptyItems(jc);
+    }
 
-						@Override
-						public void actionConfirmed() {
+    public void add() {
+        String name = textF5.getText();
+        String servingType = null;
+        String category = null;
+        String price = textF4.getText();
+        if (comboBox4.getSelectedItem() != null) {
+            category = comboBox4.getSelectedItem().toString();
+        }
+        if (comboBox3.getSelectedItem() != null) {
+            servingType = comboBox3.getSelectedItem().toString();
+        }
+        if (name.isEmpty()) {
+            Message m = new Message(this, "Please enter the menu item name", "Warning");
+        } else if (price.isEmpty()) {
+            Message m = new Message(this, "Please enter the menu item price ", "Warning");
+        } else if (description.isEmpty() || description == null) {
+            Message m = new Message(this, "Please enter the menu item description", "Warning");
+        } else if (description.length() > 200) {
+            Message m = new Message(this, "Menu item description is too long", "Warning");
+        } else {
 
-//							ArrayList<String> info = new ArrayList<>();
-//							info.add(categoryId);
-//							info.add(description);
-//							info.add(name);
-//							info.add(price);
-//							info.add(servingId);
-//							InsertTable it = new InsertTable("mainmenu", info);
-//							loadTable();
-						}
+            String servingId = GetIdSingle.getId("serving_type", servingType);
+            String categoryId = GetIdSingle.getId("menu_item_category", category);
+            if (IdCheck.isLikeExits("mainmenu", "menuItemName", name)) {
+                if (IdCheck.rowCount == 0) {
+                    ArrayList<String> info = new ArrayList<>();
+                    info.add(categoryId);
+                    info.add(description);
+                    info.add(name);
+                    info.add(price);
+                    info.add(servingId);
+                    InsertTable it = new InsertTable("mainmenu", info);
+                    loadTable();
 
-						@Override
-						public void actionCancelled() {
+                } else if (IdCheck.rowCount == 1) {
+                    Message M = new Message(this, "This menu item name already exits", "Warning");
+                } else if (IdCheck.rowCount > 1) {
+                    ShortMessageBox m = new ShortMessageBox(this, "This menu item name likely exists do you want to add ") {
 
-						}
+                        @Override
+                        public void actionConfirmed() {
 
-						@Override
-						public void loadMessage() {
-							loadTableQuery += "WHERE `menuItemName` LIKE '%" + name
-								+ "%'";
+                            ArrayList<String> info = new ArrayList<>();
+                            info.add(categoryId);
+                            info.add(description);
+                            info.add(name);
+                            info.add(price);
+                            info.add(servingId);
+                            InsertTable it = new InsertTable("mainmenu", info);
+                            loadTable();
+                        }
 
-							loadTable(loadTableQuery);
-						}
-					};
-					m.setVisible(true);
-				}
+                        @Override
+                        public void actionCancelled() {
 
-			} else {
+                        }
 
-			}
+                        @Override
+                        public void loadMessage() {
+                            loadTableQuery += "WHERE `menuItemName` LIKE '%" + name
+                                    + "%'";
 
-		}
+                            loadTable(loadTableQuery);
+                        }
+                    };
+                    m.setVisible(true);
+                }
 
-	}
-//	public void doTable() {
-//		TableListenerAbs tlas = new TableListenerAbs(customTable1) {
-//			@Override
-//			protected void foo(ListSelectionEvent e) {
-//                            
-//			}
-//		};
-//		tlas.tableListenerRag(customTable1);
-//	}
+            } else {
+                ArrayList<String> info = new ArrayList<>();
+                info.add(categoryId);
+                info.add(description);
+                info.add(name);
+                info.add(price);
+                info.add(servingId);
+                InsertTable it = new InsertTable("mainmenu", info);
+                loadTable();
+            }
+            clearFields();
+            loadCombos();
+        }
 
-	private void jframeCustmize() {
-		closeLabel.setIcon(labelSetIcon("/Icons/close.png", closeLabel.getWidth() - 25, closeLabel.getHeight() - 17));
-		boxLabel.setIcon(labelSetIcon("/Icons/square.png", boxLabel.getWidth() - 23, boxLabel.getHeight() - 17));
-		miniLabel.setIcon(labelSetIcon("/Icons/minus.png", miniLabel.getWidth() - 20, miniLabel.getHeight() - 13));
+    }
 
-		miniLabel.addMouseListener(new java.awt.event.MouseAdapter() {
-			@Override
-			public void mouseClicked(java.awt.event.MouseEvent evt) {
-				setState(JFrame.ICONIFIED);
-			}
-		});
-	}
+    public void advancedSearch() {
+        String name = textF7.getText();
+        boolean isNameInvolved = false;
+        String categoryType = "Select menu_item_category";
+        if (comboBox6.getSelectedItem() != null) {
+            categoryType = comboBox6.getSelectedItem().toString();
+        }
+        String servingType = "Select serving_type";
+        if (comboBox5.getSelectedItem() != null) {
+            servingType = comboBox5.getSelectedItem().toString();
+        }
 
-	public ImageIcon labelSetIcon(String src, int w, int h) {
-		ImageSizer imgSizer = new ImageSizer();
-		ImageIcon i = imgSizer.overaallResizer(src, w, h);
-		return i;
-	}
+        String sort = comboBox7.getSelectedItem().toString();
 
-	private void loadCombos() {
-		LoadSubTypes.loadType(comboBox4, "menu_item_category");
-		LoadSubTypes.loadType(comboBox3, "serving_type");
-	}
+        StringBuilder stringquerybuild = new StringBuilder();
+        StringBuilder whereQueryBuilder = new StringBuilder();
+        Vector<String> v = new Vector<String>();
+        boolean queriesInvolved = false;
 
-	private void setDocFilters() {
+        String sortQuery = "";
+        String whereQuery = "";
+        if (sort.equals("NAME A-Z")) {
+            sortQuery = "ORDER BY `mainmenu`.`menuItemName` ASC";
+        } else if (sort.equals("NAME Z-A")) {
+            sortQuery = "ORDER BY `mainmenu`.`menuItemName` DESC";
+        } else if (sort.equals("CAT NAME Z-A")) {
+            sortQuery = "ORDER BY `menu_item_category`.`menu_item_category_name` DESC";
+        } else if (sort.equals("CAT A-Z")) {
+            sortQuery = "ORDER BY `menu_item_category`.`menu_item_category_name` ASC";
+        } else if (sort.equals("SERVING Z-A")) {
+            sortQuery = "ORDER BY `serving_type`.`serving_type_name` DESC";
+        } else if (sort.equals("SERVING A-Z")) {
+            sortQuery = "ORDER BY `serving_type`.`serving_type_name` ASC";
+        } else if (sort.equals("PRICE H-L")) {
+            sortQuery = "ORDER BY `mainmenu`.`menuItemPrice` DESC";
+        } else if (sort.equals("PRICE L-H")) {
+            sortQuery = "ORDER BY `mainmenu`.`menuItemPrice` ASC";
+        }
+        if (!name.isEmpty()) {
+            v.add("`food_item`.`food_item_name` LIKE '%" + name + "%' ");
+            queriesInvolved = true;
+        }
 
-	}
+        if (!categoryType.equals("Select menu_item_category")) {
+            System.out.println(categoryType);
+            v.add("`menu_item_category`.`menu_item_category_name` = '" + categoryType + "' ");
+            queriesInvolved = true;
+            System.out.println("HO");
 
-	private void contactCheck(String contact) {
+        }
+        if (!servingType.equals("Select serving_type")) {
+            v.add(" `serving_type`.`serving_type_name` = '" + servingType + "' ");
+            queriesInvolved = true;
 
-		ResultSet rs;
-		try {
-			rs = MySql.sq("SELECT * FROM `dealer` WHERE `dealer_contact`='" + contact + "' ");
-			if (rs.next()) {
-				Message m = new Message(this, "this contact is already exits ", "warning");
+        }
+        if (queriesInvolved) {
+            whereQueryBuilder.append("where ");
+        }
+        for (int i = 0; i < v.size(); i++) {
+            //System.out.println("vectors are " + v.get(i));
 
-			}
-		} catch (ClassNotFoundException ex) {
-			Logger.getLogger(AddMenu.class.getName()).log(Level.SEVERE, null, ex);
-		} catch (SQLException ex) {
-			Logger.getLogger(AddMenu.class.getName()).log(Level.SEVERE, null, ex);
-		}
+            whereQueryBuilder.append("");
+            whereQueryBuilder.append(v.get(i));
 
-	}
+            if (i != v.size() - 1) {
+                whereQueryBuilder.append("AND ");
+            }
+        }
+        //System.out.println("where query is " + whereQueryBuilder);
+        stringquerybuild.append(this.loadTableQuery);
+        stringquerybuild.append(whereQueryBuilder);
+        stringquerybuild.append(sortQuery);
+        String query = stringquerybuild.toString();
+        //System.out.println("where query is " + whereQueryBuilder);
+        LoadTables lt = new LoadTables(customTable1, query, this.colnames);
+    }
 
-	private void emailCheck(String email) {
+    private void jframeCustmize() {
+        closeLabel.setIcon(labelSetIcon("/Icons/close.png", closeLabel.getWidth() - 25, closeLabel.getHeight() - 17));
+        boxLabel.setIcon(labelSetIcon("/Icons/square.png", boxLabel.getWidth() - 23, boxLabel.getHeight() - 17));
+        miniLabel.setIcon(labelSetIcon("/Icons/minus.png", miniLabel.getWidth() - 20, miniLabel.getHeight() - 13));
 
-		ResultSet rs;
-		try {
-			rs = MySql.sq("SELECT * FROM `dealer` WHERE `dealer_email`='" + email + "' ");
-			if (rs.next()) {
-				Message m = new Message(this, "this email is already exits ", "warning");
+        miniLabel.addMouseListener(new java.awt.event.MouseAdapter() {
+            @Override
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                setState(JFrame.ICONIFIED);
+            }
+        });
+    }
 
-			}
-		} catch (ClassNotFoundException ex) {
-			Logger.getLogger(AddMenu.class.getName()).log(Level.SEVERE, null, ex);
-		} catch (SQLException ex) {
-			Logger.getLogger(AddMenu.class.getName()).log(Level.SEVERE, null, ex);
-		}
+    public ImageIcon labelSetIcon(String src, int w, int h) {
+        ImageSizer imgSizer = new ImageSizer();
+        ImageIcon i = imgSizer.overaallResizer(src, w, h);
+        return i;
+    }
 
-	}
+    private void loadCombos() {
+        LoadSubTypes.loadType(comboBox4, "menu_item_category");
+        LoadSubTypes.loadType(comboBox3, "serving_type");
+        LoadSubTypes.loadType(comboBox6, "menu_item_category");
+        LoadSubTypes.loadType(comboBox5, "serving_type");
+    }
 
-	/**
-	 * This method is called from within the constructor to initialize the
-	 * form. WARNING: Do NOT modify this code. The content of this method is
-	 * always regenerated by the Form Editor.
-	 */
-	@SuppressWarnings("unchecked")
+    private void setDocFilters() {
+        String priceRegex = "^\\d*([,]\\d*)*([.]\\d*)?";
+        new FilterDocRagRegex(textF6, priceRegex, 10);
+        new FilterDocRagRegex(textF4, priceRegex, 10);
+    }
+
+    private void contactCheck(String contact) {
+
+        ResultSet rs;
+        try {
+            rs = MySql.sq("SELECT * FROM `dealer` WHERE `dealer_contact`='" + contact + "' ");
+            if (rs.next()) {
+                Message m = new Message(this, "this contact is already exits ", "warning");
+
+            }
+        } catch (ClassNotFoundException ex) {
+            Logger.getLogger(AddMenu.class.getName()).log(Level.SEVERE, null, ex);
+        } catch (SQLException ex) {
+            Logger.getLogger(AddMenu.class.getName()).log(Level.SEVERE, null, ex);
+        }
+
+    }
+
+    private void emailCheck(String email) {
+
+        ResultSet rs;
+        try {
+            rs = MySql.sq("SELECT * FROM `dealer` WHERE `dealer_email`='" + email + "' ");
+            if (rs.next()) {
+                Message m = new Message(this, "this email is already exits ", "warning");
+
+            }
+        } catch (ClassNotFoundException ex) {
+            Logger.getLogger(AddMenu.class.getName()).log(Level.SEVERE, null, ex);
+        } catch (SQLException ex) {
+            Logger.getLogger(AddMenu.class.getName()).log(Level.SEVERE, null, ex);
+        }
+
+    }
+
+    /**
+     * This method is called from within the constructor to initialize the form.
+     * WARNING: Do NOT modify this code. The content of this method is always
+     * regenerated by the Form Editor.
+     */
+    @SuppressWarnings("unchecked")
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
     private void initComponents() {
 
@@ -297,6 +388,24 @@ public class AddMenu extends javax.swing.JFrame {
         miniLabel = new javax.swing.JLabel();
         boxLabel = new javax.swing.JLabel();
         jLabel1 = new javax.swing.JLabel();
+        jPanel2 = new javax.swing.JPanel();
+        jScrollPane1 = new javax.swing.JScrollPane();
+        customTable1 = new frameutil.CustomTable();
+        jPanel3 = new javax.swing.JPanel();
+        jPanel5 = new javax.swing.JPanel();
+        comboBox5 = new frameutil.ComboBox<>();
+        customButton9 = new frameutil.CustomButton();
+        jLabel12 = new javax.swing.JLabel();
+        comboBox6 = new frameutil.ComboBox<>();
+        textF6 = new frameutil.TextF();
+        jLabel13 = new javax.swing.JLabel();
+        jLabel14 = new javax.swing.JLabel();
+        textF7 = new frameutil.TextF();
+        jLabel15 = new javax.swing.JLabel();
+        jLabel16 = new javax.swing.JLabel();
+        customButton10 = new frameutil.CustomButton();
+        customButton12 = new frameutil.CustomButton();
+        comboBox7 = new frameutil.ComboBox<>();
         jPanel4 = new javax.swing.JPanel();
         comboBox3 = new frameutil.ComboBox<>();
         customButton4 = new frameutil.CustomButton();
@@ -312,9 +421,6 @@ public class AddMenu extends javax.swing.JFrame {
         customButton6 = new frameutil.CustomButton();
         customButton7 = new frameutil.CustomButton();
         customButton8 = new frameutil.CustomButton();
-        jPanel2 = new javax.swing.JPanel();
-        jScrollPane1 = new javax.swing.JScrollPane();
-        customTable1 = new frameutil.CustomTable();
 
         jToggleButton1.setText("jToggleButton1");
 
@@ -399,6 +505,159 @@ public class AddMenu extends javax.swing.JFrame {
                 .addComponent(jLabel1))
         );
 
+        customTable1.setModel(new javax.swing.table.DefaultTableModel(
+            new Object [][] {
+                {null, null, null, null, null},
+                {null, null, null, null, null},
+                {null, null, null, null, null}
+            },
+            new String [] {
+                "Id", "Name", "Price", "Category", "Serving_Type"
+            }
+        ));
+        customTable1.getTableHeader().setReorderingAllowed(false);
+        jScrollPane1.setViewportView(customTable1);
+
+        jPanel3.setOpaque(false);
+        jPanel3.setLayout(new java.awt.CardLayout());
+
+        comboBox5.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                comboBox5ActionPerformed(evt);
+            }
+        });
+
+        customButton9.setText("Search");
+        customButton9.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                customButton9ActionPerformed(evt);
+            }
+        });
+
+        jLabel12.setFont(new java.awt.Font("Yu Gothic", 1, 12)); // NOI18N
+        jLabel12.setForeground(new java.awt.Color(255, 255, 255));
+        jLabel12.setText("Serving Type");
+        jLabel12.setToolTipText("");
+
+        comboBox6.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                comboBox6ActionPerformed(evt);
+            }
+        });
+
+        textF6.setCaretColor(new java.awt.Color(58, 78, 122));
+        textF6.setSelectedTextColor(new java.awt.Color(58, 78, 122));
+
+        jLabel13.setFont(new java.awt.Font("Yu Gothic", 1, 12)); // NOI18N
+        jLabel13.setForeground(new java.awt.Color(255, 255, 255));
+        jLabel13.setText("Price");
+        jLabel13.setToolTipText("");
+
+        jLabel14.setFont(new java.awt.Font("Yu Gothic", 1, 12)); // NOI18N
+        jLabel14.setForeground(new java.awt.Color(255, 255, 255));
+        jLabel14.setText("Category");
+        jLabel14.setToolTipText("");
+
+        jLabel15.setFont(new java.awt.Font("Yu Gothic", 1, 12)); // NOI18N
+        jLabel15.setForeground(new java.awt.Color(255, 255, 255));
+        jLabel15.setText("Sort");
+        jLabel15.setToolTipText("");
+
+        jLabel16.setFont(new java.awt.Font("Yu Gothic", 1, 12)); // NOI18N
+        jLabel16.setForeground(new java.awt.Color(255, 255, 255));
+        jLabel16.setText("Name");
+        jLabel16.setToolTipText("");
+
+        customButton10.setText("Enter Mode");
+        customButton10.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                customButton10ActionPerformed(evt);
+            }
+        });
+
+        customButton12.setText("Clear");
+
+        comboBox7.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "NAME A-Z", "NAME Z-A", "CAT A-Z", "CAT Z-A", "SERVING A-Z", "SERVNG Z-A", "PRICE L-H", "PRICE H-L" }));
+        comboBox7.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                comboBox7ActionPerformed(evt);
+            }
+        });
+
+        javax.swing.GroupLayout jPanel5Layout = new javax.swing.GroupLayout(jPanel5);
+        jPanel5.setLayout(jPanel5Layout);
+        jPanel5Layout.setHorizontalGroup(
+            jPanel5Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(jPanel5Layout.createSequentialGroup()
+                .addContainerGap()
+                .addGroup(jPanel5Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addGroup(jPanel5Layout.createSequentialGroup()
+                        .addGroup(jPanel5Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addGroup(jPanel5Layout.createSequentialGroup()
+                                .addGroup(jPanel5Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                                    .addGroup(jPanel5Layout.createSequentialGroup()
+                                        .addComponent(textF6, javax.swing.GroupLayout.PREFERRED_SIZE, 91, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                        .addComponent(comboBox6, javax.swing.GroupLayout.PREFERRED_SIZE, 181, javax.swing.GroupLayout.PREFERRED_SIZE))
+                                    .addGroup(jPanel5Layout.createSequentialGroup()
+                                        .addComponent(jLabel13, javax.swing.GroupLayout.PREFERRED_SIZE, 43, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                        .addGap(54, 54, 54)
+                                        .addComponent(jLabel14)))
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                                .addGroup(jPanel5Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                                    .addComponent(jLabel12)
+                                    .addComponent(comboBox5, javax.swing.GroupLayout.PREFERRED_SIZE, 157, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                            .addComponent(jLabel16, javax.swing.GroupLayout.PREFERRED_SIZE, 145, javax.swing.GroupLayout.PREFERRED_SIZE))
+                        .addGroup(jPanel5Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addGroup(jPanel5Layout.createSequentialGroup()
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                                .addComponent(customButton9, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                .addComponent(customButton12, javax.swing.GroupLayout.PREFERRED_SIZE, 81, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                .addComponent(customButton10, javax.swing.GroupLayout.PREFERRED_SIZE, 88, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                .addGap(447, 447, 447))
+                            .addGroup(jPanel5Layout.createSequentialGroup()
+                                .addGap(9, 9, 9)
+                                .addComponent(jLabel15)
+                                .addGap(0, 0, Short.MAX_VALUE))))
+                    .addGroup(jPanel5Layout.createSequentialGroup()
+                        .addComponent(textF7, javax.swing.GroupLayout.PREFERRED_SIZE, 438, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addGap(18, 18, 18)
+                        .addComponent(comboBox7, javax.swing.GroupLayout.PREFERRED_SIZE, 185, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))))
+        );
+        jPanel5Layout.setVerticalGroup(
+            jPanel5Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel5Layout.createSequentialGroup()
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .addGroup(jPanel5Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel5Layout.createSequentialGroup()
+                        .addGroup(jPanel5Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                            .addComponent(jLabel16, javax.swing.GroupLayout.PREFERRED_SIZE, 20, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addComponent(jLabel15))
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(textF7, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addComponent(comboBox7, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.PREFERRED_SIZE, 26, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addGroup(jPanel5Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addComponent(jLabel12, javax.swing.GroupLayout.PREFERRED_SIZE, 20, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addGroup(jPanel5Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                        .addComponent(jLabel14)
+                        .addComponent(jLabel13)))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addGroup(jPanel5Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(textF6, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(comboBox5, javax.swing.GroupLayout.PREFERRED_SIZE, 26, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(customButton9, javax.swing.GroupLayout.PREFERRED_SIZE, 26, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(comboBox6, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(customButton10, javax.swing.GroupLayout.PREFERRED_SIZE, 26, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(customButton12, javax.swing.GroupLayout.PREFERRED_SIZE, 26, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addGap(12, 12, 12))
+        );
+
+        jPanel3.add(jPanel5, "card2");
+
         customButton4.setText("Add");
         customButton4.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
@@ -436,9 +695,19 @@ public class AddMenu extends javax.swing.JFrame {
 
         customButton5.setText("Menu");
 
-        customButton6.setText("View Table");
+        customButton6.setText("Seasrch Mode");
+        customButton6.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                customButton6ActionPerformed(evt);
+            }
+        });
 
         customButton7.setText("Update");
+        customButton7.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                customButton7ActionPerformed(evt);
+            }
+        });
 
         customButton8.setText("Add Description");
         customButton8.addActionListener(new java.awt.event.ActionListener() {
@@ -473,24 +742,24 @@ public class AddMenu extends javax.swing.JFrame {
                             .addComponent(jLabel11, javax.swing.GroupLayout.PREFERRED_SIZE, 145, javax.swing.GroupLayout.PREFERRED_SIZE))
                         .addGroup(jPanel4Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                             .addGroup(jPanel4Layout.createSequentialGroup()
-                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                                .addComponent(customButton4, javax.swing.GroupLayout.DEFAULT_SIZE, 99, Short.MAX_VALUE)
-                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                                .addComponent(customButton6, javax.swing.GroupLayout.DEFAULT_SIZE, 133, Short.MAX_VALUE)
-                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                                .addComponent(customButton7, javax.swing.GroupLayout.DEFAULT_SIZE, 115, Short.MAX_VALUE)
-                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                                .addComponent(customButton5, javax.swing.GroupLayout.PREFERRED_SIZE, 88, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                .addGap(13, 13, 13))
+                                .addGap(12, 12, 12)
+                                .addComponent(customButton4, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                                .addGap(576, 576, 576))
                             .addGroup(jPanel4Layout.createSequentialGroup()
                                 .addGap(9, 9, 9)
                                 .addComponent(jLabel10)
                                 .addGap(0, 0, Short.MAX_VALUE))))
-                    .addGroup(jPanel4Layout.createSequentialGroup()
+                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel4Layout.createSequentialGroup()
                         .addComponent(textF5, javax.swing.GroupLayout.PREFERRED_SIZE, 438, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addGap(18, 18, 18)
                         .addComponent(customButton8, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))))
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                        .addGroup(jPanel4Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                            .addComponent(customButton6, javax.swing.GroupLayout.DEFAULT_SIZE, 107, Short.MAX_VALUE)
+                            .addComponent(customButton7, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(customButton5, javax.swing.GroupLayout.PREFERRED_SIZE, 88, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addGap(370, 370, 370))))
         );
         jPanel4Layout.setVerticalGroup(
             jPanel4Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -502,7 +771,8 @@ public class AddMenu extends javax.swing.JFrame {
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addGroup(jPanel4Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(textF5, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(customButton8, javax.swing.GroupLayout.PREFERRED_SIZE, 24, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addComponent(customButton8, javax.swing.GroupLayout.PREFERRED_SIZE, 24, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(customButton7, javax.swing.GroupLayout.PREFERRED_SIZE, 26, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addGroup(jPanel4Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addComponent(jLabel7, javax.swing.GroupLayout.PREFERRED_SIZE, 20, javax.swing.GroupLayout.PREFERRED_SIZE)
@@ -513,26 +783,14 @@ public class AddMenu extends javax.swing.JFrame {
                 .addGroup(jPanel4Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(textF4, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(comboBox3, javax.swing.GroupLayout.PREFERRED_SIZE, 26, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(customButton4, javax.swing.GroupLayout.PREFERRED_SIZE, 26, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(comboBox4, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(customButton6, javax.swing.GroupLayout.PREFERRED_SIZE, 26, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(customButton5, javax.swing.GroupLayout.PREFERRED_SIZE, 26, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(customButton7, javax.swing.GroupLayout.PREFERRED_SIZE, 26, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addComponent(customButton6, javax.swing.GroupLayout.PREFERRED_SIZE, 26, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(customButton4, javax.swing.GroupLayout.PREFERRED_SIZE, 26, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addGap(12, 12, 12))
         );
 
-        customTable1.setModel(new javax.swing.table.DefaultTableModel(
-            new Object [][] {
-                {null, null, null, null, null},
-                {null, null, null, null, null},
-                {null, null, null, null, null}
-            },
-            new String [] {
-                "Id", "Name", "Price", "Category", "Serving_Type"
-            }
-        ));
-        customTable1.getTableHeader().setReorderingAllowed(false);
-        jScrollPane1.setViewportView(customTable1);
+        jPanel3.add(jPanel4, "card3");
 
         javax.swing.GroupLayout jPanel2Layout = new javax.swing.GroupLayout(jPanel2);
         jPanel2.setLayout(jPanel2Layout);
@@ -540,15 +798,21 @@ public class AddMenu extends javax.swing.JFrame {
             jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(jPanel2Layout.createSequentialGroup()
                 .addContainerGap()
-                .addComponent(jScrollPane1)
+                .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addComponent(jScrollPane1)
+                    .addGroup(jPanel2Layout.createSequentialGroup()
+                        .addComponent(jPanel3, javax.swing.GroupLayout.PREFERRED_SIZE, 790, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addGap(0, 0, Short.MAX_VALUE)))
                 .addContainerGap())
         );
         jPanel2Layout.setVerticalGroup(
             jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(jPanel2Layout.createSequentialGroup()
                 .addContainerGap()
-                .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 327, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap(116, Short.MAX_VALUE))
+                .addComponent(jPanel3, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 217, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addContainerGap())
         );
 
         javax.swing.GroupLayout roundedPanel1Layout = new javax.swing.GroupLayout(roundedPanel1);
@@ -558,17 +822,13 @@ public class AddMenu extends javax.swing.JFrame {
             .addComponent(roundedPanel2, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
             .addGroup(roundedPanel1Layout.createSequentialGroup()
                 .addContainerGap()
-                .addGroup(roundedPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(jPanel4, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                    .addComponent(jPanel2, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                .addComponent(jPanel2, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                 .addContainerGap())
         );
         roundedPanel1Layout.setVerticalGroup(
             roundedPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(roundedPanel1Layout.createSequentialGroup()
                 .addComponent(roundedPanel2, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(jPanel4, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(jPanel2, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                 .addContainerGap())
@@ -588,192 +848,246 @@ public class AddMenu extends javax.swing.JFrame {
         pack();
     }// </editor-fold>//GEN-END:initComponents
     int x = 0;
-	int y = 0;
+    int y = 0;
     private void roundedPanel2MousePressed(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_roundedPanel2MousePressed
-	    // TODO add your handling code here:
-	    x = evt.getX();
-	    y = evt.getY();
+        // TODO add your handling code here:
+        x = evt.getX();
+        y = evt.getY();
     }//GEN-LAST:event_roundedPanel2MousePressed
 
     private void roundedPanel2MouseDragged(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_roundedPanel2MouseDragged
-	    // TODO add your handling code here:
-	    int xx = evt.getXOnScreen();
-	    int yy = evt.getYOnScreen();
-	    this.setLocation(xx - x, yy - y);
+        // TODO add your handling code here:
+        int xx = evt.getXOnScreen();
+        int yy = evt.getYOnScreen();
+        this.setLocation(xx - x, yy - y);
     }//GEN-LAST:event_roundedPanel2MouseDragged
 
     private void closeLabelMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_closeLabelMouseClicked
-	    // TODO add your handling code here:
-	    this.dispose();
+        // TODO add your handling code here:
+        this.dispose();
     }//GEN-LAST:event_closeLabelMouseClicked
 
     private void closeLabelMouseEntered(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_closeLabelMouseEntered
-	    // TODO add your handling code here:
-	    closeLabel.setOpaque(true);
-	    closeLabel.setBackground(MainTheme.mainColor);
+        // TODO add your handling code here:
+        closeLabel.setOpaque(true);
+        closeLabel.setBackground(MainTheme.mainColor);
     }//GEN-LAST:event_closeLabelMouseEntered
 
     private void closeLabelMouseExited(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_closeLabelMouseExited
-	    // TODO add your handling code here:
-	    closeLabel.setBackground(MainTheme.secondColor);
-	    closeLabel.setOpaque(false);
+        // TODO add your handling code here:
+        closeLabel.setBackground(MainTheme.secondColor);
+        closeLabel.setOpaque(false);
 
     }//GEN-LAST:event_closeLabelMouseExited
 
     private void miniLabelMouseEntered(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_miniLabelMouseEntered
-	    // TODO add your handling code here:
-	    miniLabel.setOpaque(true);
-	    miniLabel.setBackground(MainTheme.mainColor);
+        // TODO add your handling code here:
+        miniLabel.setOpaque(true);
+        miniLabel.setBackground(MainTheme.mainColor);
     }//GEN-LAST:event_miniLabelMouseEntered
 
     private void miniLabelMouseExited(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_miniLabelMouseExited
-	    // TODO add your handling code here:
+        // TODO add your handling code here:
 
-	    miniLabel.setBackground(MainTheme.secondColor);
-	    miniLabel.setOpaque(false);
+        miniLabel.setBackground(MainTheme.secondColor);
+        miniLabel.setOpaque(false);
     }//GEN-LAST:event_miniLabelMouseExited
 
         private void customButton4ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_customButton4ActionPerformed
-		// TODO add your handling code here:
-		add();
+            // TODO add your handling code here:
+            add();
         }//GEN-LAST:event_customButton4ActionPerformed
 
         private void customButton8ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_customButton8ActionPerformed
-		// TODO add your handling code here:
-		addDes();
+            // TODO add your handling code here:
+            addDes();
         }//GEN-LAST:event_customButton8ActionPerformed
-	int i = 0;
-	boolean emailFieldEntred = false;
 
-	/**
-	 * @param args the command line arguments
-	 */
-	public static void main(String args[]) {
-		/* Set the Nimbus look and feel */
-		//<editor-fold defaultstate="collapsed" desc=" Look and feel setting code (optional) ">
-		/* If Nimbus (introduced in Java SE 6) is not available, stay with the default look and feel.
+    private void customButton9ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_customButton9ActionPerformed
+        // TODO add your handling code here:
+    }//GEN-LAST:event_customButton9ActionPerformed
+
+    private void customButton7ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_customButton7ActionPerformed
+        // TODO add your handling code here:
+
+    }//GEN-LAST:event_customButton7ActionPerformed
+
+    private void customButton6ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_customButton6ActionPerformed
+        // TODO add your handling code here:
+        PanelRemover.removeP(jPanel3, jPanel5);
+    }//GEN-LAST:event_customButton6ActionPerformed
+
+    private void customButton10ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_customButton10ActionPerformed
+        // TODO add your handling code here:
+        PanelRemover.removeP(jPanel3, jPanel4);
+    }//GEN-LAST:event_customButton10ActionPerformed
+
+    private void comboBox7ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_comboBox7ActionPerformed
+        // TODO add your handling code here:
+        advancedSearch();
+    }//GEN-LAST:event_comboBox7ActionPerformed
+
+    private void comboBox6ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_comboBox6ActionPerformed
+        // TODO add your handling code here:
+        if (comboBox6.getSelectedItem() != null ) {
+            System.out.println("HEY");
+            advancedSearch();
+        }
+
+    }//GEN-LAST:event_comboBox6ActionPerformed
+
+    private void comboBox5ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_comboBox5ActionPerformed
+        // TODO add your handling code here:
+        if (comboBox5.getSelectedItem() != null) {
+            System.out.println("HEY33");
+            advancedSearch();
+        }
+    }//GEN-LAST:event_comboBox5ActionPerformed
+    int i = 0;
+    boolean emailFieldEntred = false;
+
+    /**
+     * @param args the command line arguments
+     */
+    public static void main(String args[]) {
+        /* Set the Nimbus look and feel */
+        //<editor-fold defaultstate="collapsed" desc=" Look and feel setting code (optional) ">
+        /* If Nimbus (introduced in Java SE 6) is not available, stay with the default look and feel.
          * For details see http://download.oracle.com/javase/tutorial/uiswing/lookandfeel/plaf.html 
-		 */
-		try {
-			for (javax.swing.UIManager.LookAndFeelInfo info : javax.swing.UIManager.getInstalledLookAndFeels()) {
-				if ("Nimbus".equals(info.getName())) {
-					javax.swing.UIManager.setLookAndFeel(info.getClassName());
-					break;
+         */
+        try {
+            for (javax.swing.UIManager.LookAndFeelInfo info : javax.swing.UIManager.getInstalledLookAndFeels()) {
+                if ("Nimbus".equals(info.getName())) {
+                    javax.swing.UIManager.setLookAndFeel(info.getClassName());
+                    break;
 
-				}
-			}
-		} catch (ClassNotFoundException ex) {
-			java.util.logging.Logger.getLogger(AddMenu.class
-				.getName()).log(java.util.logging.Level.SEVERE, null, ex);
+                }
+            }
+        } catch (ClassNotFoundException ex) {
+            java.util.logging.Logger.getLogger(AddMenu.class
+                    .getName()).log(java.util.logging.Level.SEVERE, null, ex);
 
-		} catch (InstantiationException ex) {
-			java.util.logging.Logger.getLogger(AddMenu.class
-				.getName()).log(java.util.logging.Level.SEVERE, null, ex);
+        } catch (InstantiationException ex) {
+            java.util.logging.Logger.getLogger(AddMenu.class
+                    .getName()).log(java.util.logging.Level.SEVERE, null, ex);
 
-		} catch (IllegalAccessException ex) {
-			java.util.logging.Logger.getLogger(AddMenu.class
-				.getName()).log(java.util.logging.Level.SEVERE, null, ex);
+        } catch (IllegalAccessException ex) {
+            java.util.logging.Logger.getLogger(AddMenu.class
+                    .getName()).log(java.util.logging.Level.SEVERE, null, ex);
 
-		} catch (javax.swing.UnsupportedLookAndFeelException ex) {
-			java.util.logging.Logger.getLogger(AddMenu.class
-				.getName()).log(java.util.logging.Level.SEVERE, null, ex);
-		}
-		//</editor-fold>
-		//</editor-fold>
-		//</editor-fold>
-		//</editor-fold>
-		//</editor-fold>
-		//</editor-fold>
-		//</editor-fold>
-		//</editor-fold>
-		//</editor-fold>
-		//</editor-fold>
-		//</editor-fold>
-		//</editor-fold>
-		//</editor-fold>
-		//</editor-fold>
-		//</editor-fold>
-		//</editor-fold>
-		//</editor-fold>
-		//</editor-fold>
-		//</editor-fold>
-		//</editor-fold>
-		//</editor-fold>
-		//</editor-fold>
-		//</editor-fold>
-		//</editor-fold>
-		//</editor-fold>
-		//</editor-fold>
-		//</editor-fold>
-		//</editor-fold>
-		//</editor-fold>
-		//</editor-fold>
-		//</editor-fold>
-		//</editor-fold>
-		//</editor-fold>
-		//</editor-fold>
-		//</editor-fold>
-		//</editor-fold>
-		//</editor-fold>
-		//</editor-fold>
-		//</editor-fold>
-		//</editor-fold>
-		//</editor-fold>
-		//</editor-fold>
-		//</editor-fold>
-		//</editor-fold>
-		//</editor-fold>
-		//</editor-fold>
-		//</editor-fold>
-		//</editor-fold>
-		//</editor-fold>
-		//</editor-fold>
-		//</editor-fold>
-		//</editor-fold>
-		//</editor-fold>
-		//</editor-fold>
-		//</editor-fold>
-		//</editor-fold>
-		//</editor-fold>
-		//</editor-fold>
-		//</editor-fold>
-		//</editor-fold>
-		//</editor-fold>
-		//</editor-fold>
-		//</editor-fold>
-		//</editor-fold>
+        } catch (javax.swing.UnsupportedLookAndFeelException ex) {
+            java.util.logging.Logger.getLogger(AddMenu.class
+                    .getName()).log(java.util.logging.Level.SEVERE, null, ex);
+        }
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
 
-		/* Create and display the form */
-		java.awt.EventQueue.invokeLater(new Runnable() {
-			public void run() {
+        /* Create and display the form */
+        java.awt.EventQueue.invokeLater(new Runnable() {
+            public void run() {
 
-				JFrame jf = new AddMenu();
-				jf.setVisible(true);
+                JFrame jf = new AddMenu();
+                jf.setVisible(true);
 
-			}
-		});
-	}
+            }
+        });
+    }
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JLabel boxLabel;
     private javax.swing.JLabel closeLabel;
     private frameutil.ComboBox<String> comboBox3;
     private frameutil.ComboBox<String> comboBox4;
+    private frameutil.ComboBox<String> comboBox5;
+    private frameutil.ComboBox<String> comboBox6;
+    private frameutil.ComboBox<String> comboBox7;
+    private frameutil.CustomButton customButton10;
+    private frameutil.CustomButton customButton12;
     private frameutil.CustomButton customButton4;
     private frameutil.CustomButton customButton5;
     private frameutil.CustomButton customButton6;
     private frameutil.CustomButton customButton7;
     private frameutil.CustomButton customButton8;
+    private frameutil.CustomButton customButton9;
     private frameutil.CustomTable customTable1;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel10;
     private javax.swing.JLabel jLabel11;
+    private javax.swing.JLabel jLabel12;
+    private javax.swing.JLabel jLabel13;
+    private javax.swing.JLabel jLabel14;
+    private javax.swing.JLabel jLabel15;
+    private javax.swing.JLabel jLabel16;
     private javax.swing.JLabel jLabel7;
     private javax.swing.JLabel jLabel8;
     private javax.swing.JLabel jLabel9;
     private javax.swing.JPanel jPanel1;
     private javax.swing.JPanel jPanel2;
+    private javax.swing.JPanel jPanel3;
     private javax.swing.JPanel jPanel4;
+    private javax.swing.JPanel jPanel5;
     private javax.swing.JScrollPane jScrollPane1;
     private javax.swing.JToggleButton jToggleButton1;
     private javax.swing.JLabel miniLabel;
@@ -781,5 +1095,7 @@ public class AddMenu extends javax.swing.JFrame {
     private RoundedPanel roundedPanel2;
     private frameutil.TextF textF4;
     private frameutil.TextF textF5;
+    private frameutil.TextF textF6;
+    private frameutil.TextF textF7;
     // End of variables declaration//GEN-END:variables
 }
