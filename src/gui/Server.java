@@ -17,6 +17,7 @@ import java.awt.Dimension;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
 import java.awt.RenderingHints;
+import java.awt.event.WindowEvent;
 import java.awt.geom.RoundRectangle2D;
 import java.sql.ResultSet;
 import java.sql.SQLException;
@@ -41,228 +42,273 @@ import model.MySql;
  */
 public class Server extends javax.swing.JFrame {
 
-	/**
-	 * Creates new form NewJFrame
-	 */
-	public Server() {
-		initComponents();
-		this.setLocationRelativeTo(null);
-		this.setResizable(true);
-		this.setVisible(true);
-		setShape(new RoundRectangle2D.Double(0, 0, getWidth(), getHeight(), 7, 7));
+    /**
+     * Creates new form NewJFrame
+     */
+    public Server() {
+        initComponents();
+        this.setLocationRelativeTo(null);
+        this.setResizable(true);
+        this.setVisible(true);
+        setShape(new RoundRectangle2D.Double(0, 0, getWidth(), getHeight(), 7, 7));
 
-		jframeCustmize();
-		this.setBackground(MainTheme.mainColor);
-		roundedPanel1.setBackground(MainTheme.mainColor);
-		roundedPanel2.setBackground(MainTheme.secondColor);
-		jPanel2.setBackground(MainTheme.secondColor);
-		jPanel3.setBackground(MainTheme.secondColor);
-		jPanel4.setBackground(MainTheme.fourthColor);
-		this.setForeground(MainTheme.secondColor);
-		textF1.setEditable(false);
+        jframeCustmize();
+        this.setBackground(MainTheme.mainColor);
+        roundedPanel1.setBackground(MainTheme.mainColor);
+        roundedPanel2.setBackground(MainTheme.secondColor);
+        jPanel2.setBackground(MainTheme.secondColor);
+        jPanel3.setBackground(MainTheme.secondColor);
+        jPanel4.setBackground(MainTheme.fourthColor);
+        this.setForeground(MainTheme.secondColor);
+        textF1.setEditable(false);
 
-		textF3.setEditable(false);
-		loadTable();
-		loadCombos();
-		tableListernRag();
+        textF3.setEditable(false);
+        loadTable();
+        loadCombos();
+        tableListernRag();
 
-	}
-	public String empId;
+    }
 
-	String loadTableQuery;
-	String[] colnames = {"employee_id", "server_id", "employee_name", "server_type_name"};
+    public Server(CustomerOrder co) {
+        this();
+        isOtherFramesInvolved = true;
+        isCustomerOrderInvolved = true;
+        this.co = co;
+        thisserver = this;
 
-	EmployeeT thiset;
-	Server manager;
-	boolean isEditmode;
+    }
+    public String empId;
 
-	private void loadQuery() {
-		ArrayList<String> al = new ArrayList<String>();
-		al.add("server");
-		al.add("employee,server");
-		al.add("server_type,server");
+    String loadTableQuery;
+    String[] colnames = {"employee_id", "server_id", "employee_name", "server_type_name"};
 
-		SearchTable st = new SearchTable(al);
-		this.loadTableQuery = st.getTableQuery();
-		//System.out.println(this.loadTableQuery);
+    EmployeeT thiset;
+    Server manager;
+    Server thisserver;
+    boolean isEditmode;
+    boolean isOtherFramesInvolved;
+    boolean isCustomerOrderInvolved;
+    CustomerOrder co;
 
-	}
+    private void loadQuery() {
+        ArrayList<String> al = new ArrayList<String>();
+        al.add("server");
+        al.add("employee,server");
+        al.add("server_type,server");
 
-	private void loadTable() {
-		loadQuery();
-		String sort = "ORDER BY `employee_name` ASC";
+        SearchTable st = new SearchTable(al);
+        this.loadTableQuery = st.getTableQuery();
+        //System.out.println(this.loadTableQuery);
 
-		StringBuilder stringquerybuild = new StringBuilder();
-		stringquerybuild.append(this.loadTableQuery).toString();
-		stringquerybuild.append(sort).toString();
-		String query = stringquerybuild.toString();
+    }
 
-		LoadTables lt = new LoadTables(customTable1, query, this.colnames);
-	}
+    private void loadTable() {
+        loadQuery();
+        String sort = "ORDER BY `employee_name` ASC";
 
-	private void loadCombos() {
-		LoadSubTypes.loadType(comboBox1, "server_type");
+        StringBuilder stringquerybuild = new StringBuilder();
+        stringquerybuild.append(this.loadTableQuery).toString();
+        stringquerybuild.append(sort).toString();
+        String query = stringquerybuild.toString();
 
-	}
+        LoadTables lt = new LoadTables(customTable1, query, this.colnames);
+    }
 
-	private boolean empCheck() {
-		boolean state = false;
-		ResultSet rs;
-		try {
-			rs = MySql.sq("SELECT * FROM `server` WHERE `employee_id`='" + empId + "'");
-			if (rs.next()) {
-				state = true;
-			}
+    private void loadCombos() {
+        LoadSubTypes.loadType(comboBox1, "server_type");
 
-		} catch (ClassNotFoundException ex) {
-			Logger.getLogger(Server.class.getName()).log(Level.SEVERE, null, ex);
-		} catch (SQLException ex) {
-			Logger.getLogger(Server.class.getName()).log(Level.SEVERE, null, ex);
-		}
-		return state;
-	}
+    }
 
-	public void tableListernRag() {
-		customTable1.getSelectionModel().addListSelectionListener(new ListSelectionListener() {
-			@Override
-			public void valueChanged(ListSelectionEvent e) {
-				int row = customTable1.getSelectedRow();
-				if (row != -1 && isEditmode) {
+    private boolean empCheck() {
+        boolean state = false;
+        ResultSet rs;
+        try {
+            rs = MySql.sq("SELECT * FROM `server` WHERE `employee_id`='" + empId + "'");
+            if (rs.next()) {
+                state = true;
+            }
 
-					try {
-						String id = customTable1.getValueAt(row, 0).toString();
-						empId = id;
-						String name = customTable1.getValueAt(row, 2).toString();
-						String managertype = customTable1.getValueAt(row, 3).toString();
+        } catch (ClassNotFoundException ex) {
+            Logger.getLogger(Server.class.getName()).log(Level.SEVERE, null, ex);
+        } catch (SQLException ex) {
+            Logger.getLogger(Server.class.getName()).log(Level.SEVERE, null, ex);
+        }
+        return state;
+    }
 
-						StringBuilder whereQuery = new StringBuilder(loadTableQuery);
-						whereQuery.append("WHERE `employee`.`employee_id`='" + id + "'");
-						System.out.println(whereQuery);
-						ResultSet rs = MySql.sq(whereQuery.toString());
-						rs.next();
+    public void tableListernRag() {
+        customTable1.getSelectionModel().addListSelectionListener(new ListSelectionListener() {
+            @Override
+            public void valueChanged(ListSelectionEvent e) {
+                int row = customTable1.getSelectedRow();
+                if (row != -1 && isEditmode) {
 
-						String email = rs.getString("employee_email");
-						textF1.setText(name);
+                    try {
 
-						textF3.setText(email);
-						comboBox1.setSelectedItem(managertype);
+                        String id = customTable1.getValueAt(row, 0).toString();
+                        empId = id;
+                        String name = customTable1.getValueAt(row, 2).toString();
+                        String managertype = customTable1.getValueAt(row, 3).toString();
 
-						//isEditmode = false;
-					} catch (ClassNotFoundException ex) {
-						Logger.getLogger(Server.class.getName()).log(Level.SEVERE, null, ex);
-					} catch (SQLException ex) {
-						Logger.getLogger(Server.class.getName()).log(Level.SEVERE, null, ex);
-					}
+                        StringBuilder whereQuery = new StringBuilder(loadTableQuery);
+                        whereQuery.append("WHERE `employee`.`employee_id`='" + id + "'");
+                        System.out.println(whereQuery);
+                        ResultSet rs = MySql.sq(whereQuery.toString());
+                        rs.next();
 
-				}
-			}
+                        String email = rs.getString("employee_email");
 
-		});
+                        textF1.setText(name);
 
-	}
+                        textF3.setText(email);
+                        comboBox1.setSelectedItem(managertype);
 
-	private void addmanger() {
-		if (comboBox1.getSelectedItem().toString().equals("Select server_type")) {
-			Message m = new Message(this, "Select a valid server type", "warning");
+                        //isEditmode = false;
+                    } catch (ClassNotFoundException ex) {
+                        Logger.getLogger(Server.class.getName()).log(Level.SEVERE, null, ex);
+                    } catch (SQLException ex) {
+                        Logger.getLogger(Server.class.getName()).log(Level.SEVERE, null, ex);
+                    }
 
-		} else if (textF1.getText().isEmpty()) {
-			Message m = new Message(this, "Fields are empty", "warning");
-		} else {
+                }
+                if (row != -1 && isCustomerOrderInvolved) {
 
-			String serverType = comboBox1.getSelectedItem().toString();
+                    try {
 
-			if (!empCheck()) {
+                        String id = customTable1.getValueAt(row, 0).toString();
+                        empId = id;
+                        String name = customTable1.getValueAt(row, 2).toString();
+                        String managertype = customTable1.getValueAt(row, 3).toString();
 
-				ResultSet rs;
-				try {
-					rs = MySql.sq("SELECT * FROM `server_type` WHERE `server_type_name`='" + serverType + "'");
-					rs.next();
-					String serverTypeId = rs.getString("server_type_id");
+                        StringBuilder whereQuery = new StringBuilder(loadTableQuery);
+                        whereQuery.append("WHERE `employee`.`employee_id`='" + id + "'");
 
-					ArrayList<String> info = new ArrayList<>();
-					info.add(empId);
-					info.add(serverTypeId);
+                        ResultSet rs = MySql.sq(whereQuery.toString());
+                        rs.next();
 
-					InsertTable it = new InsertTable("server", info);
-					Message m = new Message(this, "Successfully entered ", "warning");
-					textF1.setText("");
+                        String email = rs.getString("employee_email");
 
-					textF3.setText("");
-					loadCombos();
-					loadTable();
-				} catch (ClassNotFoundException ex) {
-					Logger.getLogger(Server.class.getName()).log(Level.SEVERE, null, ex);
-				} catch (SQLException ex) {
-					Logger.getLogger(Server.class.getName()).log(Level.SEVERE, null, ex);
-				}
-			} else {
-				Message m = new Message(this, "This server Already exits ", "warning");
-			}
-		}
+                        co.textF1.setText(name);
 
-	}
+                        co.textF2.setText(id);
+                        co.serverId = id;
+                         thisserver.dispose();
+                        //isEditmode = false;
+                    } catch (ClassNotFoundException ex) {
+                        Logger.getLogger(Server.class.getName()).log(Level.SEVERE, null, ex);
+                    } catch (SQLException ex) {
+                        Logger.getLogger(Server.class.getName()).log(Level.SEVERE, null, ex);
+                    }
 
-	private void updateServer() {
-		if (comboBox1.getSelectedItem().toString().equals("Select server_type")) {
-			Message m = new Message(this, "Select a valid server type", "warning");
+                }
+            }
 
-		} else if (textF1.getText().isEmpty()) {
-			Message m = new Message(this, "Fields are empty", "warning");
-		} else {
+        });
 
-			String serverType = comboBox1.getSelectedItem().toString();
+    }
 
-			if (empCheck()) {
+    private void addmanger() {
+        if (comboBox1.getSelectedItem().toString().equals("Select server_type")) {
+            Message m = new Message(this, "Select a valid server type", "warning");
 
-				ResultSet rs;
-				try {
-					System.out.println(empId);
-					rs = MySql.sq("SELECT * FROM `server_type` WHERE `server_type_name`='" + serverType + "'");
-					rs.next();
-					String serverTypeId = rs.getString("server_type_id");
+        } else if (textF1.getText().isEmpty()) {
+            Message m = new Message(this, "Fields are empty", "warning");
+        } else {
 
-					MySql.iud("UPDATE `server` SET `server_type_id`='" + serverTypeId + "' WHERE `employee_id`='" + empId + "'");
-					Message m = new Message(this, "Successfully updated ", "warning");
-					textF1.setText("");
+            String serverType = comboBox1.getSelectedItem().toString();
 
-					textF3.setText("");
-					loadCombos();
-					loadTable();
-				} catch (ClassNotFoundException ex) {
-					Logger.getLogger(Server.class.getName()).log(Level.SEVERE, null, ex);
-				} catch (SQLException ex) {
-					Logger.getLogger(Server.class.getName()).log(Level.SEVERE, null, ex);
-				}
-			}
-		}
+            if (!empCheck()) {
 
-	}
+                ResultSet rs;
+                try {
+                    rs = MySql.sq("SELECT * FROM `server_type` WHERE `server_type_name`='" + serverType + "'");
+                    rs.next();
+                    String serverTypeId = rs.getString("server_type_id");
 
-	private void jframeCustmize() {
-		closeLabel.setIcon(labelSetIcon("/Icons/close.png", closeLabel.getWidth() - 25, closeLabel.getHeight() - 17));
-		boxLabel.setIcon(labelSetIcon("/Icons/square.png", boxLabel.getWidth() - 23, boxLabel.getHeight() - 17));
-		miniLabel.setIcon(labelSetIcon("/Icons/minus.png", miniLabel.getWidth() - 20, miniLabel.getHeight() - 13));
+                    ArrayList<String> info = new ArrayList<>();
+                    info.add(empId);
+                    info.add(serverTypeId);
 
-		miniLabel.addMouseListener(new java.awt.event.MouseAdapter() {
-			@Override
-			public void mouseClicked(java.awt.event.MouseEvent evt) {
-				setState(JFrame.ICONIFIED);
-			}
-		});
-	}
+                    InsertTable it = new InsertTable("server", info);
+                    Message m = new Message(this, "Successfully entered ", "warning");
+                    textF1.setText("");
 
-	public ImageIcon labelSetIcon(String src, int w, int h) {
-		ImageSizer imgSizer = new ImageSizer();
-		ImageIcon i = imgSizer.overaallResizer(src, w, h);
-		return i;
-	}
+                    textF3.setText("");
+                    loadCombos();
+                    loadTable();
+                } catch (ClassNotFoundException ex) {
+                    Logger.getLogger(Server.class.getName()).log(Level.SEVERE, null, ex);
+                } catch (SQLException ex) {
+                    Logger.getLogger(Server.class.getName()).log(Level.SEVERE, null, ex);
+                }
+            } else {
+                Message m = new Message(this, "This server Already exits ", "warning");
+            }
+        }
 
-	/**
-	 * This method is called from within the constructor to initialize the
-	 * form. WARNING: Do NOT modify this code. The content of this method is
-	 * always regenerated by the Form Editor.
-	 */
-	@SuppressWarnings("unchecked")
+    }
+
+    private void updateServer() {
+        if (comboBox1.getSelectedItem().toString().equals("Select server_type")) {
+            Message m = new Message(this, "Select a valid server type", "warning");
+
+        } else if (textF1.getText().isEmpty()) {
+            Message m = new Message(this, "Fields are empty", "warning");
+        } else {
+
+            String serverType = comboBox1.getSelectedItem().toString();
+
+            if (empCheck()) {
+
+                ResultSet rs;
+                try {
+                    System.out.println(empId);
+                    rs = MySql.sq("SELECT * FROM `server_type` WHERE `server_type_name`='" + serverType + "'");
+                    rs.next();
+                    String serverTypeId = rs.getString("server_type_id");
+
+                    MySql.iud("UPDATE `server` SET `server_type_id`='" + serverTypeId + "' WHERE `employee_id`='" + empId + "'");
+                    Message m = new Message(this, "Successfully updated ", "warning");
+                    textF1.setText("");
+
+                    textF3.setText("");
+                    loadCombos();
+                    loadTable();
+                } catch (ClassNotFoundException ex) {
+                    Logger.getLogger(Server.class.getName()).log(Level.SEVERE, null, ex);
+                } catch (SQLException ex) {
+                    Logger.getLogger(Server.class.getName()).log(Level.SEVERE, null, ex);
+                }
+            }
+        }
+
+    }
+
+    private void jframeCustmize() {
+        closeLabel.setIcon(labelSetIcon("/Icons/close.png", closeLabel.getWidth() - 25, closeLabel.getHeight() - 17));
+        boxLabel.setIcon(labelSetIcon("/Icons/square.png", boxLabel.getWidth() - 23, boxLabel.getHeight() - 17));
+        miniLabel.setIcon(labelSetIcon("/Icons/minus.png", miniLabel.getWidth() - 20, miniLabel.getHeight() - 13));
+
+        miniLabel.addMouseListener(new java.awt.event.MouseAdapter() {
+            @Override
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                setState(JFrame.ICONIFIED);
+            }
+        });
+    }
+
+    public ImageIcon labelSetIcon(String src, int w, int h) {
+        ImageSizer imgSizer = new ImageSizer();
+        ImageIcon i = imgSizer.overaallResizer(src, w, h);
+        return i;
+    }
+
+    /**
+     * This method is called from within the constructor to initialize the form.
+     * WARNING: Do NOT modify this code. The content of this method is always
+     * regenerated by the Form Editor.
+     */
+    @SuppressWarnings("unchecked")
         // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
         private void initComponents() {
 
@@ -602,279 +648,284 @@ public class Server extends javax.swing.JFrame {
                 pack();
         }// </editor-fold>//GEN-END:initComponents
     int x = 0;
-	int y = 0;
+    int y = 0;
     private void roundedPanel2MousePressed(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_roundedPanel2MousePressed
-	    // TODO add your handling code here:
-	    x = evt.getX();
-	    y = evt.getY();
+        // TODO add your handling code here:
+        x = evt.getX();
+        y = evt.getY();
     }//GEN-LAST:event_roundedPanel2MousePressed
 
     private void roundedPanel2MouseDragged(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_roundedPanel2MouseDragged
-	    // TODO add your handling code here:
-	    int xx = evt.getXOnScreen();
-	    int yy = evt.getYOnScreen();
-	    this.setLocation(xx - x, yy - y);
+        // TODO add your handling code here:
+        int xx = evt.getXOnScreen();
+        int yy = evt.getYOnScreen();
+        this.setLocation(xx - x, yy - y);
     }//GEN-LAST:event_roundedPanel2MouseDragged
 
     private void closeLabelMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_closeLabelMouseClicked
-	    // TODO add your handling code here:
-	    System.exit(0);
+        // TODO add your handling code here:
+        if (isOtherFramesInvolved) {
+            this.dispose();
+        } else {
+            System.exit(0);
+        }
+
     }//GEN-LAST:event_closeLabelMouseClicked
 
     private void closeLabelMouseEntered(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_closeLabelMouseEntered
-	    // TODO add your handling code here:
-	    closeLabel.setOpaque(true);
-	    closeLabel.setBackground(MainTheme.mainColor);
+        // TODO add your handling code here:
+        closeLabel.setOpaque(true);
+        closeLabel.setBackground(MainTheme.mainColor);
     }//GEN-LAST:event_closeLabelMouseEntered
 
     private void closeLabelMouseExited(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_closeLabelMouseExited
-	    // TODO add your handling code here:
-	    closeLabel.setBackground(MainTheme.secondColor);
-	    closeLabel.setOpaque(false);
+        // TODO add your handling code here:
+        closeLabel.setBackground(MainTheme.secondColor);
+        closeLabel.setOpaque(false);
 
     }//GEN-LAST:event_closeLabelMouseExited
 
     private void miniLabelMouseEntered(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_miniLabelMouseEntered
-	    // TODO add your handling code here:
-	    miniLabel.setOpaque(true);
-	    miniLabel.setBackground(MainTheme.mainColor);
+        // TODO add your handling code here:
+        miniLabel.setOpaque(true);
+        miniLabel.setBackground(MainTheme.mainColor);
     }//GEN-LAST:event_miniLabelMouseEntered
 
     private void miniLabelMouseExited(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_miniLabelMouseExited
-	    // TODO add your handling code here:
+        // TODO add your handling code here:
 
-	    miniLabel.setBackground(MainTheme.secondColor);
-	    miniLabel.setOpaque(false);
+        miniLabel.setBackground(MainTheme.secondColor);
+        miniLabel.setOpaque(false);
     }//GEN-LAST:event_miniLabelMouseExited
 
         private void customButton1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_customButton1ActionPerformed
-		// TODO add your handling code here:
-		this.setEnabled(false);
-		CreateObject.make(new EmployeeT(this));
+            // TODO add your handling code here:
+            this.setEnabled(false);
+            CreateObject.make(new EmployeeT(this));
 
         }//GEN-LAST:event_customButton1ActionPerformed
 
         private void textF3FocusLost(java.awt.event.FocusEvent evt) {//GEN-FIRST:event_textF3FocusLost
-		// TODO add your handling code here:
+            // TODO add your handling code here:
 
         }//GEN-LAST:event_textF3FocusLost
 
         private void textF3KeyTyped(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_textF3KeyTyped
-		// TODO add your handling code here:
+            // TODO add your handling code here:
 
         }//GEN-LAST:event_textF3KeyTyped
 
         private void customButton3ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_customButton3ActionPerformed
-		// TODO add your handling code here:
+            // TODO add your handling code here:
 
         }//GEN-LAST:event_customButton3ActionPerformed
 
         private void customButton2ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_customButton2ActionPerformed
-		// TODO add your handling code here:
-		addmanger();
+            // TODO add your handling code here:
+            addmanger();
         }//GEN-LAST:event_customButton2ActionPerformed
 
         private void customButton4ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_customButton4ActionPerformed
-		// TODO add your handling code here:
-		isEditmode = true;
-		jPanel6.removeAll();
-		jPanel6.add(customButton5);
-		jPanel6.repaint();
-		jPanel6.revalidate();
+            // TODO add your handling code here:
+            isEditmode = true;
+            jPanel6.removeAll();
+            jPanel6.add(customButton5);
+            jPanel6.repaint();
+            jPanel6.revalidate();
 
-		jPanel4.removeAll();
-		jPanel4.add(customButton6);
-		jPanel4.repaint();
-		jPanel4.revalidate();
+            jPanel4.removeAll();
+            jPanel4.add(customButton6);
+            jPanel4.repaint();
+            jPanel4.revalidate();
         }//GEN-LAST:event_customButton4ActionPerformed
 
         private void customButton5ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_customButton5ActionPerformed
-		// TODO add your handling code here:
-		isEditmode = false;
-		jPanel6.removeAll();
-		jPanel6.add(customButton4);
-		jPanel6.repaint();
-		jPanel6.revalidate();
+            // TODO add your handling code here:
+            isEditmode = false;
+            jPanel6.removeAll();
+            jPanel6.add(customButton4);
+            jPanel6.repaint();
+            jPanel6.revalidate();
 
-		jPanel4.removeAll();
-		jPanel4.add(customButton2);
-		jPanel4.repaint();
-		jPanel4.revalidate();
+            jPanel4.removeAll();
+            jPanel4.add(customButton2);
+            jPanel4.repaint();
+            jPanel4.revalidate();
 
 
         }//GEN-LAST:event_customButton5ActionPerformed
 
         private void customButton6ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_customButton6ActionPerformed
-		// TODO add your handling code here:
-		updateServer();
+            // TODO add your handling code here:
+            updateServer();
 
         }//GEN-LAST:event_customButton6ActionPerformed
-	boolean emailFieldEntred = false;
+    boolean emailFieldEntred = false;
 
-	/**
-	 * @param args the command line arguments
-	 */
-	public static void main(String args[]) {
-		/* Set the Nimbus look and feel */
-		//<editor-fold defaultstate="collapsed" desc=" Look and feel setting code (optional) ">
-		/* If Nimbus (introduced in Java SE 6) is not available, stay with the default look and feel.
+    /**
+     * @param args the command line arguments
+     */
+    public static void main(String args[]) {
+        /* Set the Nimbus look and feel */
+        //<editor-fold defaultstate="collapsed" desc=" Look and feel setting code (optional) ">
+        /* If Nimbus (introduced in Java SE 6) is not available, stay with the default look and feel.
          * For details see http://download.oracle.com/javase/tutorial/uiswing/lookandfeel/plaf.html 
-		 */
-		try {
-			for (javax.swing.UIManager.LookAndFeelInfo info : javax.swing.UIManager.getInstalledLookAndFeels()) {
-				if ("Nimbus".equals(info.getName())) {
-					javax.swing.UIManager.setLookAndFeel(info.getClassName());
-					break;
-				}
-			}
-		} catch (ClassNotFoundException ex) {
-			java.util.logging.Logger.getLogger(Server.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
-		} catch (InstantiationException ex) {
-			java.util.logging.Logger.getLogger(Server.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
-		} catch (IllegalAccessException ex) {
-			java.util.logging.Logger.getLogger(Server.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
-		} catch (javax.swing.UnsupportedLookAndFeelException ex) {
-			java.util.logging.Logger.getLogger(Server.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
-		}
-		//</editor-fold>
-		//</editor-fold>
-		//</editor-fold>
-		//</editor-fold>
-		//</editor-fold>
-		//</editor-fold>
-		//</editor-fold>
-		//</editor-fold>
-		//</editor-fold>
-		//</editor-fold>
-		//</editor-fold>
-		//</editor-fold>
-		//</editor-fold>
-		//</editor-fold>
-		//</editor-fold>
-		//</editor-fold>
-		//</editor-fold>
-		//</editor-fold>
-		//</editor-fold>
-		//</editor-fold>
-		//</editor-fold>
-		//</editor-fold>
-		//</editor-fold>
-		//</editor-fold>
-		//</editor-fold>
-		//</editor-fold>
-		//</editor-fold>
-		//</editor-fold>
-		//</editor-fold>
-		//</editor-fold>
-		//</editor-fold>
-		//</editor-fold>
-		//</editor-fold>
-		//</editor-fold>
-		//</editor-fold>
-		//</editor-fold>
-		//</editor-fold>
-		//</editor-fold>
-		//</editor-fold>
-		//</editor-fold>
-		//</editor-fold>
-		//</editor-fold>
-		//</editor-fold>
-		//</editor-fold>
-		//</editor-fold>
-		//</editor-fold>
-		//</editor-fold>
-		//</editor-fold>
-		//</editor-fold>
-		//</editor-fold>
-		//</editor-fold>
-		//</editor-fold>
-		//</editor-fold>
-		//</editor-fold>
-		//</editor-fold>
-		//</editor-fold>
-		//</editor-fold>
-		//</editor-fold>
-		//</editor-fold>
-		//</editor-fold>
-		//</editor-fold>
-		//</editor-fold>
-		//</editor-fold>
-		//</editor-fold>
-		//</editor-fold>
-		//</editor-fold>
-		//</editor-fold>
-		//</editor-fold>
-		//</editor-fold>
-		//</editor-fold>
-		//</editor-fold>
-		//</editor-fold>
-		//</editor-fold>
-		//</editor-fold>
-		//</editor-fold>
-		//</editor-fold>
-		//</editor-fold>
-		//</editor-fold>
-		//</editor-fold>
-		//</editor-fold>
-		//</editor-fold>
-		//</editor-fold>
-		//</editor-fold>
-		//</editor-fold>
-		//</editor-fold>
-		//</editor-fold>
-		//</editor-fold>
-		//</editor-fold>
-		//</editor-fold>
-		//</editor-fold>
-		//</editor-fold>
-		//</editor-fold>
-		//</editor-fold>
-		//</editor-fold>
-		//</editor-fold>
-		//</editor-fold>
-		//</editor-fold>
-		//</editor-fold>
-		//</editor-fold>
-		//</editor-fold>
-		//</editor-fold>
-		//</editor-fold>
-		//</editor-fold>
-		//</editor-fold>
-		//</editor-fold>
-		//</editor-fold>
-		//</editor-fold>
-		//</editor-fold>
-		//</editor-fold>
-		//</editor-fold>
-		//</editor-fold>
-		//</editor-fold>
-		//</editor-fold>
-		//</editor-fold>
-		//</editor-fold>
-		//</editor-fold>
-		//</editor-fold>
-		//</editor-fold>
-		//</editor-fold>
-		//</editor-fold>
-		//</editor-fold>
-		//</editor-fold>
-		//</editor-fold>
-		//</editor-fold>
-		//</editor-fold>
-		//</editor-fold>
-		//</editor-fold>
-		//</editor-fold>
+         */
+        try {
+            for (javax.swing.UIManager.LookAndFeelInfo info : javax.swing.UIManager.getInstalledLookAndFeels()) {
+                if ("Nimbus".equals(info.getName())) {
+                    javax.swing.UIManager.setLookAndFeel(info.getClassName());
+                    break;
+                }
+            }
+        } catch (ClassNotFoundException ex) {
+            java.util.logging.Logger.getLogger(Server.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
+        } catch (InstantiationException ex) {
+            java.util.logging.Logger.getLogger(Server.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
+        } catch (IllegalAccessException ex) {
+            java.util.logging.Logger.getLogger(Server.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
+        } catch (javax.swing.UnsupportedLookAndFeelException ex) {
+            java.util.logging.Logger.getLogger(Server.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
+        }
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
 
-		/* Create and display the form */
-		java.awt.EventQueue.invokeLater(new Runnable() {
-			public void run() {
+        /* Create and display the form */
+        java.awt.EventQueue.invokeLater(new Runnable() {
+            public void run() {
 
-				JFrame jf = new Server();
-				jf.setVisible(true);
+                JFrame jf = new Server();
+                jf.setVisible(true);
 
-			}
-		});
-	}
+            }
+        });
+    }
 
         // Variables declaration - do not modify//GEN-BEGIN:variables
         private javax.swing.JLabel boxLabel;

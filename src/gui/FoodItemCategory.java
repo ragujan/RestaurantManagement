@@ -221,7 +221,7 @@ public class FoodItemCategory extends javax.swing.JFrame {
         jPanel2 = new javax.swing.JPanel();
         textF1 = new frameutil.TextF();
         jLabel2 = new javax.swing.JLabel();
-        comboBox1 = new frameutil.ComboBox();
+        comboBox1 = new frameutil.ComboBox<>();
         jLabel3 = new javax.swing.JLabel();
         jPanel4 = new javax.swing.JPanel();
         customButton1 = new frameutil.CustomButton();
@@ -608,7 +608,7 @@ public class FoodItemCategory extends javax.swing.JFrame {
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JLabel boxLabel;
     private javax.swing.JLabel closeLabel;
-    private frameutil.ComboBox comboBox1;
+    private frameutil.ComboBox<String> comboBox1;
     private frameutil.CustomButton customButton1;
     private frameutil.CustomButton customButton2;
     private frameutil.CustomTable customTable1;

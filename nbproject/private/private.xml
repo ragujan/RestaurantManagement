@@ -3,19 +3,47 @@
     <editor-bookmarks xmlns="http://www.netbeans.org/ns/editor-bookmarks/2" lastBookmarkId="0"/>
     <open-files xmlns="http://www.netbeans.org/ns/projectui-open-files/2">
         <group>
-            <file>file:/E:/Documents%20-%20Copy/FoodRes4/AppGUI2/src/gui/Server.java</file>
-            <file>file:/E:/Documents%20-%20Copy/FoodRes4/AppGUI2/src/gui/AddMenu.java</file>
-            <file>file:/E:/Documents%20-%20Copy/FoodRes4/AppGUI2/src/gui/Message1.java</file>
-            <file>file:/E:/Documents%20-%20Copy/FoodRes4/AppGUI2/src/gui/Message.java</file>
+            <file>file:/E:/Documents%20-%20Copy/FoodRes4/AppGUI2/src/gui/Bartender.java</file>
+            <file>file:/E:/Documents%20-%20Copy/FoodRes4/AppGUI2/src/Util/LoadTables.java</file>
+            <file>file:/E:/Documents%20-%20Copy/FoodRes4/AppGUI2/src/gui/EmployeeWorkingHours.java</file>
             <file>file:/E:/Documents%20-%20Copy/FoodRes4/AppGUI2/src/gui/AddTypes.java</file>
-            <file>file:/E:/Documents%20-%20Copy/FoodRes4/AppGUI2/src/Util/LoadSubTypes.java</file>
-            <file>file:/E:/Documents%20-%20Copy/FoodRes4/AppGUI2/src/gui/FoodItem.java</file>
-            <file>file:/E:/Documents%20-%20Copy/FoodRes4/AppGUI2/src/gui/Template.java</file>
-            <file>file:/E:/Documents%20-%20Copy/FoodRes4/AppGUI2/src/model/MySql.java</file>
-            <file>file:/E:/Documents%20-%20Copy/FoodRes4/AppGUI2/src/gui/FoodNavi.java</file>
-            <file>file:/E:/Documents%20-%20Copy/FoodRes4/AppGUI2/src/gui/Manager.java</file>
-            <file>file:/E:/Documents%20-%20Copy/FoodRes4/AppGUI2/src/frameutil/DescriptionBox.java</file>
+            <file>file:/E:/Documents%20-%20Copy/FoodRes4/AppGUI2/src/frameutil/OptionMessageLegit.java</file>
+            <file>file:/E:/Documents%20-%20Copy/FoodRes4/AppGUI2/src/gui/AddMenu.java</file>
+            <file>file:/E:/Documents%20-%20Copy/FoodRes4/AppGUI2/src/gui/EmployeeNavi.java</file>
+            <file>file:/E:/Documents%20-%20Copy/FoodRes4/AppGUI2/src/gui/FRNView.java</file>
+            <file>file:/E:/Documents%20-%20Copy/FoodRes4/AppGUI2/src/gui/EmployeeT.java</file>
+            <file>file:/E:/Documents%20-%20Copy/FoodRes4/AppGUI2/src/gui/Message.java</file>
+            <file>file:/E:/Documents%20-%20Copy/FoodRes4/AppGUI2/src/frameutil/DialogCustom.java</file>
+            <file>file:/E:/Documents%20-%20Copy/FoodRes4/AppGUI2/src/gui/Home.java</file>
             <file>file:/E:/Documents%20-%20Copy/FoodRes4/AppGUI2/src/frameutil/TypeList.java</file>
+            <file>file:/E:/Documents%20-%20Copy/FoodRes4/AppGUI2/src/gui/Manager.java</file>
+            <file>file:/E:/Documents%20-%20Copy/FoodRes4/AppGUI2/src/gui/AdminWorks.java</file>
+            <file>file:/E:/Documents%20-%20Copy/FoodRes4/AppGUI2/src/gui/FRNITEMVIEW.java</file>
+            <file>file:/E:/Documents%20-%20Copy/FoodRes4/AppGUI2/src/gui/Server.java</file>
+            <file>file:/E:/Documents%20-%20Copy/FoodRes4/AppGUI2/src/gui/FoodNavi.java</file>
+            <file>file:/E:/Documents%20-%20Copy/FoodRes4/AppGUI2/src/gui/Message1.java</file>
+            <file>file:/E:/Documents%20-%20Copy/FoodRes4/AppGUI2/src/model/MySql.java</file>
+            <file>file:/E:/Documents%20-%20Copy/FoodRes4/AppGUI2/src/Util/TableListenerAbs.java</file>
+            <file>file:/E:/Documents%20-%20Copy/FoodRes4/AppGUI2/src/gui/Supplier.java</file>
+            <file>file:/E:/Documents%20-%20Copy/FoodRes4/AppGUI2/src/gui/FRN.java</file>
+            <file>file:/E:/Documents%20-%20Copy/FoodRes4/AppGUI2/src/gui/CustomerOrder.java</file>
+            <file>file:/E:/Documents%20-%20Copy/FoodRes4/AppGUI2/src/frameutil/DescriptionBox.java</file>
+            <file>file:/E:/Documents%20-%20Copy/FoodRes4/AppGUI2/src/Util/ColorSetter.java</file>
+            <file>file:/E:/Documents%20-%20Copy/FoodRes4/AppGUI2/src/gui/Template.java</file>
+            <file>file:/E:/Documents%20-%20Copy/FoodRes4/AppGUI2/src/gui/Employee.java</file>
+            <file>file:/E:/Documents%20-%20Copy/FoodRes4/AppGUI2/src/frameutil/MainTheme.java</file>
+            <file>file:/E:/Documents%20-%20Copy/FoodRes4/AppGUI2/src/gui/StorageRecord.java</file>
+            <file>file:/E:/Documents%20-%20Copy/FoodRes4/AppGUI2/src/gui/StorageManage.java</file>
+            <file>file:/E:/Documents%20-%20Copy/FoodRes4/AppGUI2/src/Util/LoadSubTypes.java</file>
+            <file>file:/E:/Documents%20-%20Copy/FoodRes4/AppGUI2/src/frameutil/ImageSizer.java</file>
+            <file>file:/E:/Documents%20-%20Copy/FoodRes4/AppGUI2/src/Util/SetEmptyItems.java</file>
+            <file>file:/E:/Documents%20-%20Copy/FoodRes4/AppGUI2/src/gui/FoodItem.java</file>
+            <file>file:/E:/Documents%20-%20Copy/FoodRes4/AppGUI2/src/gui/Dealer.java</file>
+            <file>file:/E:/Documents%20-%20Copy/FoodRes4/AppGUI2/src/Util/SearchTable.java</file>
+            <file>file:/E:/Documents%20-%20Copy/FoodRes4/AppGUI2/src/gui/Cashier.java</file>
+            <file>file:/E:/Documents%20-%20Copy/FoodRes4/AppGUI2/src/gui/FoodItemCategory.java</file>
+            <file>file:/E:/Documents%20-%20Copy/FoodRes4/AppGUI2/src/gui/EmployeeSalary.java</file>
+            <file>file:/E:/Documents%20-%20Copy/FoodRes4/AppGUI2/src/gui/DealerT.java</file>
         </group>
     </open-files>
 </project-private>

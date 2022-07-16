@@ -175,7 +175,7 @@ public class EmployeeT extends javax.swing.JFrame {
 
 	}
 
-	private void loadTable() {
+	public void loadTable() {
 		loadQuery();
 		String sort = "ORDER BY `employee_name` ASC";
 
@@ -873,9 +873,9 @@ public class EmployeeT extends javax.swing.JFrame {
 
         private void customButton2ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_customButton2ActionPerformed
 		// TODO add your handling code here:
-		Employee e = new Employee();
+		Employee e = new Employee(this);
 		e.setVisible(true);
-		this.dispose();
+		
         }//GEN-LAST:event_customButton2ActionPerformed
 
         private void customButton1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_customButton1ActionPerformed

@@ -32,291 +32,302 @@ import model.MySql;
  */
 public class Employee extends javax.swing.JFrame {
 
-	/**
-	 * Creates new form NewJFrame
-	 */
-	public Employee() {
-		initComponents();
-		this.setLocationRelativeTo(null);
-		this.setResizable(true);
-		this.setVisible(true);
-		setShape(new RoundRectangle2D.Double(0, 0, getWidth(), getHeight(), 7, 7));
+    /**
+     * Creates new form NewJFrame
+     */
+    public Employee() {
+        initComponents();
+        this.setLocationRelativeTo(null);
+        this.setResizable(true);
+        this.setVisible(true);
+        setShape(new RoundRectangle2D.Double(0, 0, getWidth(), getHeight(), 7, 7));
 
-		jframeCustmize();
-		this.setBackground(MainTheme.mainColor);
-		roundedPanel1.setBackground(MainTheme.mainColor);
-		roundedPanel2.setBackground(MainTheme.secondColor);
+        jframeCustmize();
+        this.setBackground(MainTheme.mainColor);
+        roundedPanel1.setBackground(MainTheme.mainColor);
+        roundedPanel2.setBackground(MainTheme.secondColor);
 
-		comboBox1.setBackground(MainTheme.thirdColor);
-		comboBox2.setBackground(MainTheme.thirdColor);
+        comboBox1.setBackground(MainTheme.thirdColor);
+        comboBox2.setBackground(MainTheme.thirdColor);
 
-		comboBox4.setBackground(MainTheme.thirdColor);
+        comboBox4.setBackground(MainTheme.thirdColor);
 
-		textF1.setBackground(MainTheme.mainColor);
-		textF2.setBackground(MainTheme.mainColor);
-		textF3.setBackground(MainTheme.mainColor);
-		textF4.setBackground(MainTheme.mainColor);
-		jDateChooser1.setBackground(MainTheme.secondColor);
-		jDateChooser1.setForeground(MainTheme.secondColor);
-		jDateChooser1.setVisible(false);
-		this.setForeground(MainTheme.secondColor);
-		jPanel2.setBackground(MainTheme.secondColor);
-		setDocFilters();
-		loadCombos();
+        textF1.setBackground(MainTheme.mainColor);
+        textF2.setBackground(MainTheme.mainColor);
+        textF3.setBackground(MainTheme.mainColor);
+        textF4.setBackground(MainTheme.mainColor);
+        jDateChooser1.setBackground(MainTheme.secondColor);
+        jDateChooser1.setForeground(MainTheme.secondColor);
+        jDateChooser1.setVisible(false);
+        this.setForeground(MainTheme.secondColor);
+        jPanel2.setBackground(MainTheme.secondColor);
+        setDocFilters();
+        loadCombos();
 
-	}
+    }
 
-	public Employee(EmployeeT et, HashMap<String, String> hm) {
-		this();
-		this.updateId = hm.get("id");
-		textF1.setText(hm.get("name"));
-		textF2.setText(hm.get("contact"));
-		textF3.setText(hm.get("email"));
-		textF4.setText(hm.get("dob"));
-		textF5.setText(hm.get("add1"));
-		textF6.setText(hm.get("add2"));
+    public Employee(EmployeeT et, HashMap<String, String> hm) {
+        this();
+        isOtherFramesInvolved = true;
+        this.updateId = hm.get("id");
+        textF1.setText(hm.get("name"));
+        textF2.setText(hm.get("contact"));
+        textF3.setText(hm.get("email"));
+        textF4.setText(hm.get("dob"));
+        textF5.setText(hm.get("add1"));
+        textF6.setText(hm.get("add2"));
 
-		comboBox1.setSelectedItem(hm.get("gender"));
-		comboBox4.setSelectedItem(hm.get("city"));
-		comboBox2.setSelectedItem(hm.get("type"));
-		jPanel3.removeAll();
-		jPanel3.add(customButton4);
-		jPanel3.repaint();
-		jPanel3.revalidate();
+        comboBox1.setSelectedItem(hm.get("gender"));
+        comboBox4.setSelectedItem(hm.get("city"));
+        comboBox2.setSelectedItem(hm.get("type"));
+        jPanel3.removeAll();
+        jPanel3.add(customButton4);
+        jPanel3.repaint();
+        jPanel3.revalidate();
 
-	}
+    }
 
-	public Employee(Chef c) {
-		this();
-		
+    public Employee(EmployeeT et) {
+        this();
+        isOtherFramesInvolved = true;
+        isEmployeeTInvolved = true;
+        et.setVisible(false);
+        et.setEnabled(false);
+        emplyeet = et;
+    }
 
-	}
+    public Employee(Chef c) {
+        this();
 
-	SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
-	String updateId;
+    }
 
-	private void jframeCustmize() {
-		closeLabel.setIcon(labelSetIcon("/Icons/close.png", closeLabel.getWidth() - 25, closeLabel.getHeight() - 17));
-		boxLabel.setIcon(labelSetIcon("/Icons/square.png", boxLabel.getWidth() - 23, boxLabel.getHeight() - 17));
-		miniLabel.setIcon(labelSetIcon("/Icons/minus.png", miniLabel.getWidth() - 20, miniLabel.getHeight() - 13));
+    SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
+    String updateId;
+    boolean isOtherFramesInvolved = false;
+    boolean isEmployeeTInvolved = false;
+    EmployeeT emplyeet ;
+    private void jframeCustmize() {
+        closeLabel.setIcon(labelSetIcon("/Icons/close.png", closeLabel.getWidth() - 25, closeLabel.getHeight() - 17));
+        boxLabel.setIcon(labelSetIcon("/Icons/square.png", boxLabel.getWidth() - 23, boxLabel.getHeight() - 17));
+        miniLabel.setIcon(labelSetIcon("/Icons/minus.png", miniLabel.getWidth() - 20, miniLabel.getHeight() - 13));
 
-		miniLabel.addMouseListener(new java.awt.event.MouseAdapter() {
-			@Override
-			public void mouseClicked(java.awt.event.MouseEvent evt) {
-				setState(JFrame.ICONIFIED);
-			}
-		});
-	}
+        miniLabel.addMouseListener(new java.awt.event.MouseAdapter() {
+            @Override
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                setState(JFrame.ICONIFIED);
+            }
+        });
+    }
 
-	public ImageIcon labelSetIcon(String src, int w, int h) {
-		ImageSizer imgSizer = new ImageSizer();
-		ImageIcon i = imgSizer.overaallResizer(src, w, h);
-		return i;
-	}
+    public ImageIcon labelSetIcon(String src, int w, int h) {
+        ImageSizer imgSizer = new ImageSizer();
+        ImageIcon i = imgSizer.overaallResizer(src, w, h);
+        return i;
+    }
 
-	private void loadCombos() {
-		LoadSubTypes.loadType(comboBox1, "gender");
-		LoadSubTypes.loadType(comboBox2, "employee_type");
-		LoadSubTypes.loadType(comboBox4, "city");
-	}
+    private void loadCombos() {
+        LoadSubTypes.loadType(comboBox1, "gender");
+        LoadSubTypes.loadType(comboBox2, "employee_type");
+        LoadSubTypes.loadType(comboBox4, "city");
+    }
 
-	private void setDocFilters() {
-		String nameregex = "(([A-Z])([a-z])* ([A-Z])([a-z])*|([A-Z])([a-z])* |([A-Z])([a-z])*)";
-		FilterDocRagRegex name = new FilterDocRagRegex(textF1, nameregex);
+    private void setDocFilters() {
+        String nameregex = "(([A-Z])([a-z])* ([A-Z])([a-z])*|([A-Z])([a-z])* |([A-Z])([a-z])*)";
+        FilterDocRagRegex name = new FilterDocRagRegex(textF1, nameregex);
 
-		String dobRegex = "[0-9][0-9][0-9][0-9]-[0-9][0-9]-[0-9][0-9]";
-		FilterDocRagRegex dob = new FilterDocRagRegex(textF4, dobRegex);
+        String dobRegex = "[0-9][0-9][0-9][0-9]-[0-9][0-9]-[0-9][0-9]";
+        FilterDocRagRegex dob = new FilterDocRagRegex(textF4, dobRegex);
 
-		String contactregex = "((([0][7][24-8][0-9]{7})|([0][7][24-8][0-9]*))|([0][7][24-8])|[0][7]|[0])";
-		FilterDocRagRegex contact = new FilterDocRagRegex(textF2, contactregex, 10);
-	}
+        String contactregex = "((([0][7][24-8][0-9]{7})|([0][7][24-8][0-9]*))|([0][7][24-8])|[0][7]|[0])";
+        FilterDocRagRegex contact = new FilterDocRagRegex(textF2, contactregex, 10);
+    }
 
-	private void contactCheck(String contact) {
+    private void contactCheck(String contact) {
 
-		ResultSet rs;
-		try {
-			rs = MySql.sq("SELECT * FROM `employee` WHERE `employee_contact`='" + contact + "' ");
-			if (rs.next()) {
-				Message m = new Message(this, "this contact is already exits ", "warning");
-				textF2.setText("");
-			}
-		} catch (ClassNotFoundException ex) {
-			Logger.getLogger(Employee.class.getName()).log(Level.SEVERE, null, ex);
-		} catch (SQLException ex) {
-			Logger.getLogger(Employee.class.getName()).log(Level.SEVERE, null, ex);
-		}
+        ResultSet rs;
+        try {
+            rs = MySql.sq("SELECT * FROM `employee` WHERE `employee_contact`='" + contact + "' ");
+            if (rs.next()) {
+                Message m = new Message(this, "this contact is already exits ", "warning");
+                textF2.setText("");
+            }
+        } catch (ClassNotFoundException ex) {
+            Logger.getLogger(Employee.class.getName()).log(Level.SEVERE, null, ex);
+        } catch (SQLException ex) {
+            Logger.getLogger(Employee.class.getName()).log(Level.SEVERE, null, ex);
+        }
 
-	}
+    }
 
-	private void emailCheck(String email) {
+    private void emailCheck(String email) {
 
-		ResultSet rs;
-		try {
-			rs = MySql.sq("SELECT * FROM `employee` WHERE `employee_email`='" + email + "' ");
-			if (rs.next()) {
-				Message m = new Message(this, "this email is already exits ", "warning");
-				textF3.setText("");
-			}
-		} catch (ClassNotFoundException ex) {
-			Logger.getLogger(Employee.class.getName()).log(Level.SEVERE, null, ex);
-		} catch (SQLException ex) {
-			Logger.getLogger(Employee.class.getName()).log(Level.SEVERE, null, ex);
-		}
+        ResultSet rs;
+        try {
+            rs = MySql.sq("SELECT * FROM `employee` WHERE `employee_email`='" + email + "' ");
+            if (rs.next()) {
+                Message m = new Message(this, "this email is already exits ", "warning");
+                textF3.setText("");
+            }
+        } catch (ClassNotFoundException ex) {
+            Logger.getLogger(Employee.class.getName()).log(Level.SEVERE, null, ex);
+        } catch (SQLException ex) {
+            Logger.getLogger(Employee.class.getName()).log(Level.SEVERE, null, ex);
+        }
 
-	}
+    }
 
-	private void insertEmployee() {
-		String name = textF1.getText();
-		String contact = textF2.getText();
-		String email = textF3.getText();
-		String add1 = textF5.getText();
-		String add2 = textF6.getText();
-		String dob = textF4.getText();
-		String city = comboBox4.getSelectedItem().toString();
-		String gender = comboBox1.getSelectedItem().toString();
-		String emptype = comboBox2.getSelectedItem().toString();
+    private void insertEmployee() {
+        String name = textF1.getText();
+        String contact = textF2.getText();
+        String email = textF3.getText();
+        String add1 = textF5.getText();
+        String add2 = textF6.getText();
+        String dob = textF4.getText();
+        String city = comboBox4.getSelectedItem().toString();
+        String gender = comboBox1.getSelectedItem().toString();
+        String emptype = comboBox2.getSelectedItem().toString();
 
-		if (name.isEmpty()) {
-			//JOP.setJOPMessage(this, "name field is empty", "warning", 1);
-			Message m = new Message(this, "name field is empty", "warning");
-		} else if (contact.isEmpty()) {
+        if (name.isEmpty()) {
+            //JOP.setJOPMessage(this, "name field is empty", "warning", 1);
+            Message m = new Message(this, "name field is empty", "warning");
+        } else if (contact.isEmpty()) {
 
-			Message m = new Message(this, "contact field is empty", "warning");
-		} else if (email.isEmpty()) {
+            Message m = new Message(this, "contact field is empty", "warning");
+        } else if (email.isEmpty()) {
 
-			Message m = new Message(this, "email field is empty", "warning");
-		} else if (!BasicValidator.email(email)) {
+            Message m = new Message(this, "email field is empty", "warning");
+        } else if (!BasicValidator.email(email)) {
 
-			Message m = new Message(this, "email is not a valid one", "warning");
-		} else if (dob.isEmpty()) {
+            Message m = new Message(this, "email is not a valid one", "warning");
+        } else if (dob.isEmpty()) {
 
-			Message m = new Message(this, "dob field is empty", "warning");
-		} else if (city.equals("Select city")) {
+            Message m = new Message(this, "dob field is empty", "warning");
+        } else if (city.equals("Select city")) {
 
-			Message m = new Message(this, "please select a valid city", "warning");
-		} else if (gender.equals("Select gender")) {
+            Message m = new Message(this, "please select a valid city", "warning");
+        } else if (gender.equals("Select gender")) {
 
-			Message m = new Message(this, "please select a valid gender", "warning");
-		} else if (add1.isEmpty()) {
+            Message m = new Message(this, "please select a valid gender", "warning");
+        } else if (add1.isEmpty()) {
 
-			Message m = new Message(this, "address field is empty", "warning");
-		} else if (emptype.equals("Select employee_type")) {
+            Message m = new Message(this, "address field is empty", "warning");
+        } else if (emptype.equals("Select employee_type")) {
 
-			Message m = new Message(this, "Select a valid employee type", "warning");
-		} else {
-			try {
-				ResultSet rs = MySql.sq("SELECT * FROM `employee` WHERE `employee_contact`='" + contact + "' OR `employee_email`='" + email + "'");
-				if (rs.next()) {
-					Message m = new Message(this, "address field is empty", "warning");
-				} else {
+            Message m = new Message(this, "Select a valid employee type", "warning");
+        } else {
+            try {
+                ResultSet rs = MySql.sq("SELECT * FROM `employee` WHERE `employee_contact`='" + contact + "' OR `employee_email`='" + email + "'");
+                if (rs.next()) {
+                    Message m = new Message(this, "address field is empty", "warning");
+                } else {
 
-					rs = MySql.sq("SELECT * FROM `city` WHERE `city_name`='" + city + "'");
-					rs.next();
-					String cityid = rs.getString("city_id");
-					ArrayList<String> info = new ArrayList<>();
-					info.add(cityid);
-					info.add(add1);
-					info.add(add2);
-					InsertTable it = new InsertTable("address", info);
-					rs = MySql.sq("SELECT * FROM	address	 WHERE `street_1` ='" + add1 + "' AND `street_2`='" + add2 + "' AND `city_id`='" + cityid + "'");
-					rs.next();
-					String addId = rs.getString("address_id");
+                    rs = MySql.sq("SELECT * FROM `city` WHERE `city_name`='" + city + "'");
+                    rs.next();
+                    String cityid = rs.getString("city_id");
+                    ArrayList<String> info = new ArrayList<>();
+                    info.add(cityid);
+                    info.add(add1);
+                    info.add(add2);
+                    InsertTable it = new InsertTable("address", info);
+                    rs = MySql.sq("SELECT * FROM	address	 WHERE `street_1` ='" + add1 + "' AND `street_2`='" + add2 + "' AND `city_id`='" + cityid + "'");
+                    rs.next();
+                    String addId = rs.getString("address_id");
 
-					//today date
-					String today = sdf.format(new Date());
-					//emp type id
-					rs = MySql.sq("SELECT * FROM `employee_type` WHERE `employee_type_name`='" + emptype + "'");
-					rs.next();
-					String employeeTypeId = rs.getString("employee_type_id");
-					//gender id 
-					rs = MySql.sq("SELECT * FROM `gender` WHERE `gender_name`='" + gender + "'");
-					rs.next();
-					String genderId = rs.getString("gender_id");
-					info.clear();
-					info.add(addId);
-					info.add(dob);
-					info.add(contact);
-					info.add(email);
-					info.add(name);
-					info.add(employeeTypeId);
-					info.add(genderId);
-					info.add(today);
-					it = new InsertTable("employee", info);
-					JComponent[] jp = {textF1, textF2, textF3, textF4, textF5, textF6, comboBox1, comboBox2, comboBox4};
-					SetEmptyItems.emptyItems(jp);
-				}
-			} catch (ClassNotFoundException ex) {
-				Logger.getLogger(Employee.class.getName()).log(Level.SEVERE, null, ex);
-			} catch (SQLException ex) {
-				Logger.getLogger(Employee.class.getName()).log(Level.SEVERE, null, ex);
-			}
+                    //today date
+                    String today = sdf.format(new Date());
+                    //emp type id
+                    rs = MySql.sq("SELECT * FROM `employee_type` WHERE `employee_type_name`='" + emptype + "'");
+                    rs.next();
+                    String employeeTypeId = rs.getString("employee_type_id");
+                    //gender id 
+                    rs = MySql.sq("SELECT * FROM `gender` WHERE `gender_name`='" + gender + "'");
+                    rs.next();
+                    String genderId = rs.getString("gender_id");
+                    info.clear();
+                    info.add(addId);
+                    info.add(dob);
+                    info.add(contact);
+                    info.add(email);
+                    info.add(name);
+                    info.add(employeeTypeId);
+                    info.add(genderId);
+                    info.add(today);
+                    it = new InsertTable("employee", info);
+                    JComponent[] jp = {textF1, textF2, textF3, textF4, textF5, textF6, comboBox1, comboBox2, comboBox4};
+                    SetEmptyItems.emptyItems(jp);
+                }
+            } catch (ClassNotFoundException ex) {
+                Logger.getLogger(Employee.class.getName()).log(Level.SEVERE, null, ex);
+            } catch (SQLException ex) {
+                Logger.getLogger(Employee.class.getName()).log(Level.SEVERE, null, ex);
+            }
 
-		}
-	}
+        }
+    }
 
-	private void updateEmployee() {
-		String name = textF1.getText();
-		String contact = textF2.getText();
-		String email = textF3.getText();
-		String add1 = textF5.getText();
-		String add2 = textF6.getText();
-		String dob = textF4.getText();
-		String city = comboBox4.getSelectedItem().toString();
-		String gender = comboBox1.getSelectedItem().toString();
-		String emptype = comboBox2.getSelectedItem().toString();
+    private void updateEmployee() {
+        String name = textF1.getText();
+        String contact = textF2.getText();
+        String email = textF3.getText();
+        String add1 = textF5.getText();
+        String add2 = textF6.getText();
+        String dob = textF4.getText();
+        String city = comboBox4.getSelectedItem().toString();
+        String gender = comboBox1.getSelectedItem().toString();
+        String emptype = comboBox2.getSelectedItem().toString();
 
-		if (name.isEmpty()) {
-			//JOP.setJOPMessage(this, "name field is empty", "warning", 1);
-			Message m = new Message(this, "name field is empty", "warning");
-		} else if (contact.isEmpty()) {
+        if (name.isEmpty()) {
+            //JOP.setJOPMessage(this, "name field is empty", "warning", 1);
+            Message m = new Message(this, "name field is empty", "warning");
+        } else if (contact.isEmpty()) {
 
-			Message m = new Message(this, "contact field is empty", "warning");
-		} else if (email.isEmpty()) {
+            Message m = new Message(this, "contact field is empty", "warning");
+        } else if (email.isEmpty()) {
 
-			Message m = new Message(this, "email field is empty", "warning");
-		} else if (!BasicValidator.email(email)) {
+            Message m = new Message(this, "email field is empty", "warning");
+        } else if (!BasicValidator.email(email)) {
 
-			Message m = new Message(this, "email is not a valid one", "warning");
-		} else if (dob.isEmpty()) {
+            Message m = new Message(this, "email is not a valid one", "warning");
+        } else if (dob.isEmpty()) {
 
-			Message m = new Message(this, "dob field is empty", "warning");
-		} else if (city.equals("Select city")) {
+            Message m = new Message(this, "dob field is empty", "warning");
+        } else if (city.equals("Select city")) {
 
-			Message m = new Message(this, "please select a valid city", "warning");
-		} else if (gender.equals("Select gender")) {
+            Message m = new Message(this, "please select a valid city", "warning");
+        } else if (gender.equals("Select gender")) {
 
-			Message m = new Message(this, "please select a valid gender", "warning");
-		} else if (add1.isEmpty()) {
+            Message m = new Message(this, "please select a valid gender", "warning");
+        } else if (add1.isEmpty()) {
 
-			Message m = new Message(this, "address field is empty", "warning");
-		} else if (emptype.equals("Select employee_type")) {
+            Message m = new Message(this, "address field is empty", "warning");
+        } else if (emptype.equals("Select employee_type")) {
 
-			Message m = new Message(this, "Select a valid employee type", "warning");
-		} else {
-			ResultSet rs;
-			try {
-				rs = MySql.sq("SELECT * FROM `employee` WHERE `employee_id`='" + updateId + "'");
-				rs.next();
-				String address_id = rs.getString("address_id");
-				String addressUp = "UPDATE `address` set `street_1`='" + add1 + "',`street_2`='" + add2 + "' WHERE `address_id`='" + address_id + "'";
-				MySql.iud(addressUp);
-			} catch (ClassNotFoundException ex) {
-				Logger.getLogger(Employee.class.getName()).log(Level.SEVERE, null, ex);
-			} catch (SQLException ex) {
-				Logger.getLogger(Employee.class.getName()).log(Level.SEVERE, null, ex);
-			}
+            Message m = new Message(this, "Select a valid employee type", "warning");
+        } else {
+            ResultSet rs;
+            try {
+                rs = MySql.sq("SELECT * FROM `employee` WHERE `employee_id`='" + updateId + "'");
+                rs.next();
+                String address_id = rs.getString("address_id");
+                String addressUp = "UPDATE `address` set `street_1`='" + add1 + "',`street_2`='" + add2 + "' WHERE `address_id`='" + address_id + "'";
+                MySql.iud(addressUp);
+            } catch (ClassNotFoundException ex) {
+                Logger.getLogger(Employee.class.getName()).log(Level.SEVERE, null, ex);
+            } catch (SQLException ex) {
+                Logger.getLogger(Employee.class.getName()).log(Level.SEVERE, null, ex);
+            }
 
-			String update = "UPDATE `employee` SET `DOB`='" + dob + "',`employee_name`='" + name + "' WHERE `employee_id`='" + this.updateId + "' ";
-			MySql.iud(update);
-		}
-	}
+            String update = "UPDATE `employee` SET `DOB`='" + dob + "',`employee_name`='" + name + "' WHERE `employee_id`='" + this.updateId + "' ";
+            MySql.iud(update);
+        }
+    }
 
-	/**
-	 * This method is called from within the constructor to initialize the
-	 * form. WARNING: Do NOT modify this code. The content of this method is
-	 * always regenerated by the Form Editor.
-	 */
-	@SuppressWarnings("unchecked")
+    /**
+     * This method is called from within the constructor to initialize the form.
+     * WARNING: Do NOT modify this code. The content of this method is always
+     * regenerated by the Form Editor.
+     */
+    @SuppressWarnings("unchecked")
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
     private void initComponents() {
 
@@ -654,10 +665,10 @@ public class Employee extends javax.swing.JFrame {
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addComponent(comboBox1, javax.swing.GroupLayout.PREFERRED_SIZE, 24, javax.swing.GroupLayout.PREFERRED_SIZE))
                     .addGroup(jPanel2Layout.createSequentialGroup()
-                        .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                            .addComponent(textF4, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                             .addComponent(textF1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                            .addComponent(textF5, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                            .addComponent(textF5, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                            .addComponent(textF4, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
                         .addGap(4, 4, 4)
                         .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING, false)
                             .addGroup(jPanel2Layout.createSequentialGroup()
@@ -711,202 +722,215 @@ public class Employee extends javax.swing.JFrame {
         pack();
     }// </editor-fold>//GEN-END:initComponents
     int x = 0;
-	int y = 0;
+    int y = 0;
     private void roundedPanel2MousePressed(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_roundedPanel2MousePressed
-	    // TODO add your handling code here:
-	    x = evt.getX();
-	    y = evt.getY();
+        // TODO add your handling code here:
+        x = evt.getX();
+        y = evt.getY();
     }//GEN-LAST:event_roundedPanel2MousePressed
 
     private void roundedPanel2MouseDragged(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_roundedPanel2MouseDragged
-	    // TODO add your handling code here:
-	    int xx = evt.getXOnScreen();
-	    int yy = evt.getYOnScreen();
-	    this.setLocation(xx - x, yy - y);
+        // TODO add your handling code here:
+        int xx = evt.getXOnScreen();
+        int yy = evt.getYOnScreen();
+        this.setLocation(xx - x, yy - y);
     }//GEN-LAST:event_roundedPanel2MouseDragged
 
     private void closeLabelMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_closeLabelMouseClicked
-	    // TODO add your handling code here:
-	    System.exit(0);
+        // TODO add your handling code here:
+        if (isOtherFramesInvolved) {
+            this.dispose();
+        } else {
+            System.exit(0);
+        }
+
     }//GEN-LAST:event_closeLabelMouseClicked
 
     private void closeLabelMouseEntered(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_closeLabelMouseEntered
-	    // TODO add your handling code here:
-	    closeLabel.setOpaque(true);
-	    closeLabel.setBackground(MainTheme.mainColor);
+        // TODO add your handling code here:
+        closeLabel.setOpaque(true);
+        closeLabel.setBackground(MainTheme.mainColor);
     }//GEN-LAST:event_closeLabelMouseEntered
 
     private void closeLabelMouseExited(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_closeLabelMouseExited
-	    // TODO add your handling code here:
-	    closeLabel.setBackground(MainTheme.secondColor);
-	    closeLabel.setOpaque(false);
+        // TODO add your handling code here:
+        closeLabel.setBackground(MainTheme.secondColor);
+        closeLabel.setOpaque(false);
 
     }//GEN-LAST:event_closeLabelMouseExited
 
     private void miniLabelMouseEntered(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_miniLabelMouseEntered
-	    // TODO add your handling code here:
-	    miniLabel.setOpaque(true);
-	    miniLabel.setBackground(MainTheme.mainColor);
+        // TODO add your handling code here:
+        miniLabel.setOpaque(true);
+        miniLabel.setBackground(MainTheme.mainColor);
     }//GEN-LAST:event_miniLabelMouseEntered
 
     private void miniLabelMouseExited(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_miniLabelMouseExited
-	    // TODO add your handling code here:
+        // TODO add your handling code here:
 
-	    miniLabel.setBackground(MainTheme.secondColor);
-	    miniLabel.setOpaque(false);
+        miniLabel.setBackground(MainTheme.secondColor);
+        miniLabel.setOpaque(false);
     }//GEN-LAST:event_miniLabelMouseExited
 
         private void jDateChooser1PropertyChange(java.beans.PropertyChangeEvent evt) {//GEN-FIRST:event_jDateChooser1PropertyChange
-		// TODO add your handling code here:
-		SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
-		String d = sdf.format(new Date());
-		if (jDateChooser1.getDate() != null) {
-			SimpleDateFormat years = new SimpleDateFormat("yyyyMMdd");
-			int todayinInt = Integer.parseInt(years.format(new Date()));
-			int bdayinInt = Integer.parseInt(years.format(jDateChooser1.getDate()));
-			int dateDiff = (todayinInt - bdayinInt) / 10000;
-			System.out.println("difference is " + dateDiff);
-			if (!(dateDiff < 14)) {
-				String selectedDate = sdf.format(jDateChooser1.getDate());
-				textF4.setText(sdf.format(jDateChooser1.getDate()).toString());
+            // TODO add your handling code here:
+            SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
+            String d = sdf.format(new Date());
+            if (jDateChooser1.getDate() != null) {
+                SimpleDateFormat years = new SimpleDateFormat("yyyyMMdd");
+                int todayinInt = Integer.parseInt(years.format(new Date()));
+                int bdayinInt = Integer.parseInt(years.format(jDateChooser1.getDate()));
+                int dateDiff = (todayinInt - bdayinInt) / 10000;
+                System.out.println("difference is " + dateDiff);
+                if (!(dateDiff < 14)) {
+                    String selectedDate = sdf.format(jDateChooser1.getDate());
+                    textF4.setText(sdf.format(jDateChooser1.getDate()).toString());
 
-			} else {
-				jDateChooser1.setDate(null);
-				Message m = new Message(this, "Should be atleast age 20", "Warning");
-				//JOP.setJOPMessage(this, "Should be atleast age 20", "Warning", 1);
-			}
+                } else {
+                    jDateChooser1.setDate(null);
+                    Message m = new Message(this, "Should be atleast age 20", "Warning");
+                    //JOP.setJOPMessage(this, "Should be atleast age 20", "Warning", 1);
+                }
 
-		}
+            }
 
         }//GEN-LAST:event_jDateChooser1PropertyChange
-	boolean emailFieldEntred = false;
+    boolean emailFieldEntred = false;
         private void comboBox2ItemStateChanged(java.awt.event.ItemEvent evt) {//GEN-FIRST:event_comboBox2ItemStateChanged
-		// TODO add your handling code here:
+            // TODO add your handling code here:
 
 
         }//GEN-LAST:event_comboBox2ItemStateChanged
 
         private void comboBox4ItemStateChanged(java.awt.event.ItemEvent evt) {//GEN-FIRST:event_comboBox4ItemStateChanged
-		// TODO add your handling code here:
+            // TODO add your handling code here:
         }//GEN-LAST:event_comboBox4ItemStateChanged
 
         private void comboBox4ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_comboBox4ActionPerformed
-		// TODO add your handling code here:
+            // TODO add your handling code here:
         }//GEN-LAST:event_comboBox4ActionPerformed
 
         private void customButton1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_customButton1ActionPerformed
-		// TODO add your handling code here:
-		insertEmployee();
+            // TODO add your handling code here:
+            insertEmployee();
 
         }//GEN-LAST:event_customButton1ActionPerformed
 
         private void textF4MouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_textF4MouseClicked
-		// TODO add your handling code here:
+            // TODO add your handling code here:
 
         }//GEN-LAST:event_textF4MouseClicked
 
         private void textF4FocusGained(java.awt.event.FocusEvent evt) {//GEN-FIRST:event_textF4FocusGained
-		// TODO add your handling code here:
-		jDateChooser1.setVisible(true);
+            // TODO add your handling code here:
+            jDateChooser1.setVisible(true);
 
         }//GEN-LAST:event_textF4FocusGained
 
         private void textF4FocusLost(java.awt.event.FocusEvent evt) {//GEN-FIRST:event_textF4FocusLost
-		// TODO add your handling code here:
-		jDateChooser1.setVisible(false);
+            // TODO add your handling code here:
+            jDateChooser1.setVisible(false);
         }//GEN-LAST:event_textF4FocusLost
 
         private void textF2FocusGained(java.awt.event.FocusEvent evt) {//GEN-FIRST:event_textF2FocusGained
-		// TODO add your handling code here:
+            // TODO add your handling code here:
 
 
         }//GEN-LAST:event_textF2FocusGained
 
         private void textF2FocusLost(java.awt.event.FocusEvent evt) {//GEN-FIRST:event_textF2FocusLost
-		// TODO add your handling code here:
-		contactCheck(textF2.getText());
+            // TODO add your handling code here:
+            contactCheck(textF2.getText());
         }//GEN-LAST:event_textF2FocusLost
 
         private void textF2KeyTyped(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_textF2KeyTyped
-		// TODO add your handling code here:
-		String contact = textF2.getText() + evt.getKeyChar();
-		contactCheck(contact);
+            // TODO add your handling code here:
+            String contact = textF2.getText() + evt.getKeyChar();
+            contactCheck(contact);
         }//GEN-LAST:event_textF2KeyTyped
 
         private void textF3FocusLost(java.awt.event.FocusEvent evt) {//GEN-FIRST:event_textF3FocusLost
-		// TODO add your handling code here:
-		emailCheck(textF3.getText());
+            // TODO add your handling code here:
+            emailCheck(textF3.getText());
         }//GEN-LAST:event_textF3FocusLost
 
         private void textF3KeyTyped(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_textF3KeyTyped
-		// TODO add your handling code here:
-		String email = textF3.getText() + evt.getKeyChar();
-		emailCheck(email);
+            // TODO add your handling code here:
+            String email = textF3.getText() + evt.getKeyChar();
+            emailCheck(email);
         }//GEN-LAST:event_textF3KeyTyped
 
         private void customButton3ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_customButton3ActionPerformed
-		// TODO add your handling code here:
-		new EmployeeT();
-		this.dispose();
+            // TODO add your handling code here:
+            if (isEmployeeTInvolved) {
+                 emplyeet.setEnabled(true);
+                 emplyeet.setVisible(true);
+                 emplyeet.loadTable();
+                 this.dispose();
+            } else {
+                new EmployeeT();
+                this.dispose();
+            }
+
         }//GEN-LAST:event_customButton3ActionPerformed
 
         private void customButton4ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_customButton4ActionPerformed
-		// TODO add your handling code here:
-		updateEmployee();
+            // TODO add your handling code here:
+            updateEmployee();
         }//GEN-LAST:event_customButton4ActionPerformed
 
-	/**
-	 * @param args the command line arguments
-	 */
-	public static void main(String args[]) {
-		/* Set the Nimbus look and feel */
-		//<editor-fold defaultstate="collapsed" desc=" Look and feel setting code (optional) ">
-		/* If Nimbus (introduced in Java SE 6) is not available, stay with the default look and feel.
+    /**
+     * @param args the command line arguments
+     */
+    public static void main(String args[]) {
+        /* Set the Nimbus look and feel */
+        //<editor-fold defaultstate="collapsed" desc=" Look and feel setting code (optional) ">
+        /* If Nimbus (introduced in Java SE 6) is not available, stay with the default look and feel.
          * For details see http://download.oracle.com/javase/tutorial/uiswing/lookandfeel/plaf.html 
-		 */
-		try {
-			for (javax.swing.UIManager.LookAndFeelInfo info : javax.swing.UIManager.getInstalledLookAndFeels()) {
-				if ("Nimbus".equals(info.getName())) {
-					javax.swing.UIManager.setLookAndFeel(info.getClassName());
-					break;
+         */
+        try {
+            for (javax.swing.UIManager.LookAndFeelInfo info : javax.swing.UIManager.getInstalledLookAndFeels()) {
+                if ("Nimbus".equals(info.getName())) {
+                    javax.swing.UIManager.setLookAndFeel(info.getClassName());
+                    break;
 
-				}
-			}
-		} catch (ClassNotFoundException ex) {
-			java.util.logging.Logger.getLogger(Employee.class
-				.getName()).log(java.util.logging.Level.SEVERE, null, ex);
+                }
+            }
+        } catch (ClassNotFoundException ex) {
+            java.util.logging.Logger.getLogger(Employee.class
+                    .getName()).log(java.util.logging.Level.SEVERE, null, ex);
 
-		} catch (InstantiationException ex) {
-			java.util.logging.Logger.getLogger(Employee.class
-				.getName()).log(java.util.logging.Level.SEVERE, null, ex);
+        } catch (InstantiationException ex) {
+            java.util.logging.Logger.getLogger(Employee.class
+                    .getName()).log(java.util.logging.Level.SEVERE, null, ex);
 
-		} catch (IllegalAccessException ex) {
-			java.util.logging.Logger.getLogger(Employee.class
-				.getName()).log(java.util.logging.Level.SEVERE, null, ex);
+        } catch (IllegalAccessException ex) {
+            java.util.logging.Logger.getLogger(Employee.class
+                    .getName()).log(java.util.logging.Level.SEVERE, null, ex);
 
-		} catch (javax.swing.UnsupportedLookAndFeelException ex) {
-			java.util.logging.Logger.getLogger(Employee.class
-				.getName()).log(java.util.logging.Level.SEVERE, null, ex);
-		}
-		//</editor-fold>
-		//</editor-fold>
-		//</editor-fold>
-		//</editor-fold>
-		//</editor-fold>
-		//</editor-fold>
-		//</editor-fold>
-		//</editor-fold>
+        } catch (javax.swing.UnsupportedLookAndFeelException ex) {
+            java.util.logging.Logger.getLogger(Employee.class
+                    .getName()).log(java.util.logging.Level.SEVERE, null, ex);
+        }
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
 
-		/* Create and display the form */
-		java.awt.EventQueue.invokeLater(new Runnable() {
-			public void run() {
+        /* Create and display the form */
+        java.awt.EventQueue.invokeLater(new Runnable() {
+            public void run() {
 
-				JFrame jf = new Employee();
-				jf.setVisible(true);
+                JFrame jf = new Employee();
+                jf.setVisible(true);
 
-			}
-		});
-	}
+            }
+        });
+    }
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JLabel boxLabel;

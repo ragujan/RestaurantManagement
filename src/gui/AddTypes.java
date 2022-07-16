@@ -61,8 +61,8 @@ public class AddTypes extends javax.swing.JFrame {
 
         ColorSetter.setC(jclbl, Color.WHITE, 2);
 
-        JComponent[] jc = {comboBox1, textF1,textF2,textF3};
-        ColorSetter.setC(jc,MainTheme.thirdColor , 1);
+        JComponent[] jc = {comboBox1, textF1, textF2, textF3};
+        ColorSetter.setC(jc, MainTheme.thirdColor, 1);
         jPanel2.setBackground(MainTheme.secondColor);
 
         setDocFilters();
@@ -82,7 +82,7 @@ public class AddTypes extends javax.swing.JFrame {
     }
 
     private void clearFields() {
-        JComponent[] jc = {comboBox1, textF1, textF2};
+        JComponent[] jc = {comboBox1, textF1, textF2,textF3};
         SetEmptyItems.emptyItems(jc);
         loadCombos();
     }
@@ -134,6 +134,45 @@ public class AddTypes extends javax.swing.JFrame {
         }
     }
 
+    private void addCity(String tableName) {
+
+        String typename = textF3.getText();
+
+        if (typename.isEmpty()) {
+            Message m = new Message(this, "Please enter the type name", "Warning");
+        } else {
+            boolean exits = IdCheck.isExits(tableName, ""+tableName+"_name", typename);
+            if (exits) {
+                Message m = new Message(this, "This name already does it exits", "Warning");
+            } else {
+                ArrayList<String> info = new ArrayList<>();
+                info.add(typename);
+
+                InsertTable it = new InsertTable(tableName, info);
+                clearFields();
+            }
+        }
+    }
+
+    private void addTable(String tableName) {
+
+        String typename = textF4.getText();
+
+        if (typename.isEmpty()) {
+            Message m = new Message(this, "Please enter the type name", "Warning");
+        } else {
+            boolean exits = IdCheck.isExits(tableName, ""+tableName+"_name", typename);
+            if (exits) {
+                Message m = new Message(this, "This name already does it exits", "Warning");
+            } else {
+                ArrayList<String> info = new ArrayList<>();
+                info.add(typename);
+
+                InsertTable it = new InsertTable(tableName, info);
+                clearFields();
+            }
+        }
+    }
     private void viewMenuItemCategory() {
 
         TypeList tl = new TypeList(this, "menu_item_category") {
@@ -150,7 +189,38 @@ public class AddTypes extends javax.swing.JFrame {
         tl.setVisible(true);
 
     }
+    private void viewCity() {
 
+        TypeList tl = new TypeList(this, "city") {
+            @Override
+            public void actionConfirmed() {
+
+            }
+
+            @Override
+            public void actionCancelled() {
+
+            }
+        };
+        tl.setVisible(true);
+
+    }
+        private void viewTable() {
+
+        TypeList tl = new TypeList(this, "customer_table") {
+            @Override
+            public void actionConfirmed() {
+
+            }
+
+            @Override
+            public void actionCancelled() {
+
+            }
+        };
+        tl.setVisible(true);
+
+    }
     private void viewType() {
         if (comboBox1.getSelectedItem() != null) {
             if (!comboBox1.getSelectedItem().toString().equals("Select Types")) {
@@ -269,6 +339,10 @@ public class AddTypes extends javax.swing.JFrame {
         textF3 = new frameutil.TextF();
         jLabel4 = new javax.swing.JLabel();
         customButton4 = new frameutil.CustomButton();
+        textF4 = new frameutil.TextF();
+        jLabel5 = new javax.swing.JLabel();
+        customButton8 = new frameutil.CustomButton();
+        customButton9 = new frameutil.CustomButton();
 
         jToggleButton1.setText("jToggleButton1");
 
@@ -426,6 +500,24 @@ public class AddTypes extends javax.swing.JFrame {
             }
         });
 
+        jLabel5.setFont(new java.awt.Font("Segoe UI", 1, 12)); // NOI18N
+        jLabel5.setForeground(new java.awt.Color(255, 255, 255));
+        jLabel5.setText("Tables");
+
+        customButton8.setText("Add Table");
+        customButton8.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                customButton8ActionPerformed(evt);
+            }
+        });
+
+        customButton9.setText("View Table");
+        customButton9.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                customButton9ActionPerformed(evt);
+            }
+        });
+
         javax.swing.GroupLayout jPanel2Layout = new javax.swing.GroupLayout(jPanel2);
         jPanel2.setLayout(jPanel2Layout);
         jPanel2Layout.setHorizontalGroup(
@@ -434,19 +526,14 @@ public class AddTypes extends javax.swing.JFrame {
                 .addContainerGap()
                 .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(jPanel2Layout.createSequentialGroup()
-                        .addComponent(jLabel3, javax.swing.GroupLayout.PREFERRED_SIZE, 160, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addGap(0, 0, Short.MAX_VALUE))
-                    .addGroup(jPanel2Layout.createSequentialGroup()
-                        .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                        .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                             .addComponent(jLabel4, javax.swing.GroupLayout.PREFERRED_SIZE, 160, javax.swing.GroupLayout.PREFERRED_SIZE)
                             .addGroup(jPanel2Layout.createSequentialGroup()
                                 .addComponent(textF3, javax.swing.GroupLayout.PREFERRED_SIZE, 232, javax.swing.GroupLayout.PREFERRED_SIZE)
                                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                                 .addComponent(customButton6, javax.swing.GroupLayout.PREFERRED_SIZE, 143, javax.swing.GroupLayout.PREFERRED_SIZE)
                                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                                .addComponent(customButton7, javax.swing.GroupLayout.PREFERRED_SIZE, 146, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                                .addComponent(customButton4, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                                .addComponent(customButton7, javax.swing.GroupLayout.PREFERRED_SIZE, 146, javax.swing.GroupLayout.PREFERRED_SIZE))
                             .addComponent(jLabel2, javax.swing.GroupLayout.PREFERRED_SIZE, 85, javax.swing.GroupLayout.PREFERRED_SIZE)
                             .addGroup(jPanel2Layout.createSequentialGroup()
                                 .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
@@ -464,7 +551,20 @@ public class AddTypes extends javax.swing.JFrame {
                                 .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                                     .addComponent(customButton5, javax.swing.GroupLayout.PREFERRED_SIZE, 169, javax.swing.GroupLayout.PREFERRED_SIZE)
                                     .addComponent(customButton3, javax.swing.GroupLayout.PREFERRED_SIZE, 169, javax.swing.GroupLayout.PREFERRED_SIZE))))
-                        .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))))
+                        .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                    .addGroup(jPanel2Layout.createSequentialGroup()
+                        .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addComponent(jLabel3, javax.swing.GroupLayout.PREFERRED_SIZE, 160, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addComponent(jLabel5, javax.swing.GroupLayout.PREFERRED_SIZE, 160, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addGroup(jPanel2Layout.createSequentialGroup()
+                                .addComponent(textF4, javax.swing.GroupLayout.PREFERRED_SIZE, 232, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                .addComponent(customButton8, javax.swing.GroupLayout.PREFERRED_SIZE, 143, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                .addComponent(customButton9, javax.swing.GroupLayout.PREFERRED_SIZE, 146, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                .addComponent(customButton4, javax.swing.GroupLayout.PREFERRED_SIZE, 166, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                        .addGap(0, 0, Short.MAX_VALUE))))
         );
         jPanel2Layout.setVerticalGroup(
             jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -490,9 +590,16 @@ public class AddTypes extends javax.swing.JFrame {
                 .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(textF3, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(customButton6, javax.swing.GroupLayout.PREFERRED_SIZE, 25, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(customButton7, javax.swing.GroupLayout.PREFERRED_SIZE, 25, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(customButton7, javax.swing.GroupLayout.PREFERRED_SIZE, 25, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(jLabel5)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(textF4, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(customButton8, javax.swing.GroupLayout.PREFERRED_SIZE, 25, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(customButton9, javax.swing.GroupLayout.PREFERRED_SIZE, 25, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(customButton4, javax.swing.GroupLayout.PREFERRED_SIZE, 25, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addContainerGap(17, Short.MAX_VALUE))
+                .addContainerGap(20, Short.MAX_VALUE))
         );
 
         javax.swing.GroupLayout roundedPanel1Layout = new javax.swing.GroupLayout(roundedPanel1);
@@ -625,11 +732,23 @@ public class AddTypes extends javax.swing.JFrame {
 
     private void customButton6ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_customButton6ActionPerformed
         // TODO add your handling code here:
+        addCity("city");
     }//GEN-LAST:event_customButton6ActionPerformed
 
     private void customButton7ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_customButton7ActionPerformed
         // TODO add your handling code here:
+        viewCity();
     }//GEN-LAST:event_customButton7ActionPerformed
+
+    private void customButton8ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_customButton8ActionPerformed
+        // TODO add your handling code here:
+        addTable("customer_table");
+    }//GEN-LAST:event_customButton8ActionPerformed
+
+    private void customButton9ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_customButton9ActionPerformed
+        // TODO add your handling code here:
+        viewTable();
+    }//GEN-LAST:event_customButton9ActionPerformed
     boolean emailFieldEntred = false;
 
     /**
@@ -752,10 +871,13 @@ public class AddTypes extends javax.swing.JFrame {
     private frameutil.CustomButton customButton5;
     private frameutil.CustomButton customButton6;
     private frameutil.CustomButton customButton7;
+    private frameutil.CustomButton customButton8;
+    private frameutil.CustomButton customButton9;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel2;
     private javax.swing.JLabel jLabel3;
     private javax.swing.JLabel jLabel4;
+    private javax.swing.JLabel jLabel5;
     private javax.swing.JPanel jPanel1;
     private javax.swing.JPanel jPanel2;
     private javax.swing.JToggleButton jToggleButton1;
@@ -765,5 +887,6 @@ public class AddTypes extends javax.swing.JFrame {
     private frameutil.TextF textF1;
     private frameutil.TextF textF2;
     private frameutil.TextF textF3;
+    private frameutil.TextF textF4;
     // End of variables declaration//GEN-END:variables
 }

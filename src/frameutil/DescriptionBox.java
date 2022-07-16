@@ -45,7 +45,11 @@ public abstract class DescriptionBox extends javax.swing.JDialog {
 		this(parent, true);
 		jLabel2.setText(message);
 	}
-        
+        	public DescriptionBox(java.awt.Frame parent, String message,String des) {
+		this(parent, true);
+		jLabel2.setText(message);
+                jTextArea1.setText(des);
+	}
 	public abstract void actionConfirmed();
 
 	public abstract void actionCancelled();

@@ -18,6 +18,7 @@ import frameutil.MainTheme;
 import frameutil.OptionMessageLegit;
 import frameutil.ShortMessageBox;
 import java.awt.Color;
+import java.awt.event.ActionListener;
 import java.awt.geom.RoundRectangle2D;
 import java.sql.ResultSet;
 import java.sql.SQLException;
@@ -52,7 +53,7 @@ public class AddMenu extends javax.swing.JFrame {
         this.setResizable(true);
         this.setVisible(true);
         setShape(new RoundRectangle2D.Double(0, 0, getWidth(), getHeight(), 7, 7));
-
+        
         jframeCustmize();
         this.setBackground(MainTheme.mainColor);
         roundedPanel1.setBackground(MainTheme.mainColor);
@@ -64,86 +65,118 @@ public class AddMenu extends javax.swing.JFrame {
         ColorSetter.setC(jc, MainTheme.thirdColor, 1);
         ColorSetter.setC(jc, Color.WHITE, 2);
         this.setForeground(MainTheme.secondColor);
-
+        
         setDocFilters();
         loadCombos();
         loadTable();
-
+        tableListenerRag();
+        
+    }
+    
+    public AddMenu(DealerT et, HashMap<String, String> hm) {
+        this();
+        this.updateId = hm.get("id");
+        
+    }
+    
+    public AddMenu(Chef c) {
+        this();
+        
+    }
+    
+    public AddMenu(CustomerOrder co) {
+        this();
+        isCustomerOrderInvolved = true;
+        isOtherFramesInvolved = true;
+        thisaddmenu = this;
+        this.co = co;
     }
     SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
     String updateId;
     public String description;
-
-    public AddMenu(DealerT et, HashMap<String, String> hm) {
-        this();
-        this.updateId = hm.get("id");
-
-    }
-
-    public AddMenu(Chef c) {
-        this();
-
-    }
+    String menuId = null;
     String loadTableQuery;
+    String des = null;
+    boolean isUpdateMode;
+    boolean isCustomerOrderInvolved;
+    boolean isOtherFramesInvolved;
+    CustomerOrder co;
+    AddMenu thisaddmenu;
     String[] colnames = {"menuItemId", "menuItemName", "menuItemPrice", "menu_item_category_name", "serving_type_name"};
-
+    
     private void loadQuery() {
         ArrayList<String> al = new ArrayList<String>();
         al.add("mainmenu");
         al.add("menu_item_category,mainmenu");
         al.add("serving_type,mainmenu");
-
+        
         SearchTable st = new SearchTable(al);
         this.loadTableQuery = st.getTableQuery();
-
+        
     }
-
+    
     private void loadTable() {
         loadQuery();
         String sort = "ORDER BY `menuItemName` ASC";
-
+        
         StringBuilder stringquerybuild = new StringBuilder();
         stringquerybuild.append(this.loadTableQuery).toString();
         stringquerybuild.append(sort).toString();
         String query = stringquerybuild.toString();
-
+        
         LoadTables lt = new LoadTables(customTable1, query, this.colnames);
     }
-
+    
     private void loadTable(String loadTableQuery) {
         loadQuery();
         String sort = "ORDER BY `menuItemName` ASC";
-
+        
         StringBuilder stringquerybuild = new StringBuilder();
         stringquerybuild.append(loadTableQuery).toString();
         stringquerybuild.append(sort).toString();
         String query = stringquerybuild.toString();
-
+        
         LoadTables lt = new LoadTables(customTable1, query, this.colnames);
         System.out.println(loadTableQuery);
     }
-
+    
     public void addDes() {
         DescriptionBox db = new DescriptionBox(this, "You have to add description") {
             @Override
             public void actionConfirmed() {
-
+                
                 description = jTextArea1.getText();
                 System.out.println(description);
             }
-
+            
             @Override
             public void actionCancelled() {
             }
         };
         db.setVisible(true);
     }
-
+    
+    public void showDes() {
+        DescriptionBox db = new DescriptionBox(this, "You have to add description", des) {
+            @Override
+            public void actionConfirmed() {
+                
+                description = jTextArea1.getText();
+                System.out.println(description);
+            }
+            
+            @Override
+            public void actionCancelled() {
+            }
+        };
+        db.setVisible(true);
+    }
+    
     public void clearFields() {
-        JComponent[] jc = {textF5, textF4, comboBox3, comboBox4};
+        JComponent[] jc = {textF5, textF4, comboBox3, comboBox4, textF7, textF6, comboBox6, comboBox7, comboBox5};
         SetEmptyItems.emptyItems(jc);
     }
-
+    
     public void add() {
         String name = textF5.getText();
         String servingType = null;
@@ -164,7 +197,7 @@ public class AddMenu extends javax.swing.JFrame {
         } else if (description.length() > 200) {
             Message m = new Message(this, "Menu item description is too long", "Warning");
         } else {
-
+            
             String servingId = GetIdSingle.getId("serving_type", servingType);
             String categoryId = GetIdSingle.getId("menu_item_category", category);
             if (IdCheck.isLikeExits("mainmenu", "menuItemName", name)) {
@@ -177,15 +210,15 @@ public class AddMenu extends javax.swing.JFrame {
                     info.add(servingId);
                     InsertTable it = new InsertTable("mainmenu", info);
                     loadTable();
-
+                    
                 } else if (IdCheck.rowCount == 1) {
                     Message M = new Message(this, "This menu item name already exits", "Warning");
                 } else if (IdCheck.rowCount > 1) {
                     ShortMessageBox m = new ShortMessageBox(this, "This menu item name likely exists do you want to add ") {
-
+                        
                         @Override
                         public void actionConfirmed() {
-
+                            
                             ArrayList<String> info = new ArrayList<>();
                             info.add(categoryId);
                             info.add(description);
@@ -195,23 +228,23 @@ public class AddMenu extends javax.swing.JFrame {
                             InsertTable it = new InsertTable("mainmenu", info);
                             loadTable();
                         }
-
+                        
                         @Override
                         public void actionCancelled() {
-
+                            
                         }
-
+                        
                         @Override
                         public void loadMessage() {
                             loadTableQuery += "WHERE `menuItemName` LIKE '%" + name
                                     + "%'";
-
+                            
                             loadTable(loadTableQuery);
                         }
                     };
                     m.setVisible(true);
                 }
-
+                
             } else {
                 ArrayList<String> info = new ArrayList<>();
                 info.add(categoryId);
@@ -225,9 +258,54 @@ public class AddMenu extends javax.swing.JFrame {
             clearFields();
             loadCombos();
         }
+        
+    }
+    
+    public void update() {
+        String name = textF5.getText();
+        String servingType = null;
+        String category = null;
+        String price = textF4.getText();
+        if (comboBox4.getSelectedItem() != null) {
+            category = comboBox4.getSelectedItem().toString();
+        }
+        if (comboBox3.getSelectedItem() != null) {
+            servingType = comboBox3.getSelectedItem().toString();
+        }
+        if (name.isEmpty()) {
+            Message m = new Message(this, "Please enter the menu item name", "Warning");
+        } else if (price.isEmpty()) {
+            Message m = new Message(this, "Please enter the menu item price ", "Warning");
+        } else if (description == null) {
+            Message m = new Message(this, "Please enter the menu item description", "Warning");
+        } else if (description.isEmpty()) {
+            Message m = new Message(this, "Please enter the menu item description", "Warning");
+        } else if (description.length() > 200) {
+            Message m = new Message(this, "Menu item description is too long", "Warning");
+        } else {
+            String servingId = GetIdSingle.getId("serving_type", servingType);
+            String categoryId = GetIdSingle.getId("menu_item_category", category);
+            MySql.iud("UPDATE `mainmenu` SET `menuItemName`='" + name + "',`menuItemPrice`='" + price + "',`menuItemDescription`='" + description + "' WHERE `menuItemId`='" + menuId + "'");
+            clearFields();
+            loadCombos();
+            loadTable();
+        }
+        
+    }
+    
+    public void clearSearchFields() {
+        ActionListener alCombo5 = comboBox5.getActionListeners()[0];
+        ActionListener alCombo6 = comboBox6.getActionListeners()[0];
+        //   comboBox5.removeActionListener(comboBox5.getActionListeners()[0]);
+        //    comboBox6.removeActionListener(comboBox6.getActionListeners()[0]);
+        clearFields();
+        loadTable();
+        loadCombos();
+        //   comboBox5.addActionListener(alCombo5);
+        //    comboBox6.addActionListener(alCombo6);
 
     }
-
+    
     public void advancedSearch() {
         String name = textF7.getText();
         boolean isNameInvolved = false;
@@ -239,14 +317,14 @@ public class AddMenu extends javax.swing.JFrame {
         if (comboBox5.getSelectedItem() != null) {
             servingType = comboBox5.getSelectedItem().toString();
         }
-
+        
         String sort = comboBox7.getSelectedItem().toString();
-
+        
         StringBuilder stringquerybuild = new StringBuilder();
         StringBuilder whereQueryBuilder = new StringBuilder();
         Vector<String> v = new Vector<String>();
         boolean queriesInvolved = false;
-
+        
         String sortQuery = "";
         String whereQuery = "";
         if (sort.equals("NAME A-Z")) {
@@ -267,49 +345,88 @@ public class AddMenu extends javax.swing.JFrame {
             sortQuery = "ORDER BY `mainmenu`.`menuItemPrice` ASC";
         }
         if (!name.isEmpty()) {
-            v.add("`food_item`.`food_item_name` LIKE '%" + name + "%' ");
+            v.add("`mainmenu`.`menuItemName` LIKE '%" + name + "%' ");
             queriesInvolved = true;
         }
-
+        
         if (!categoryType.equals("Select menu_item_category")) {
             System.out.println(categoryType);
             v.add("`menu_item_category`.`menu_item_category_name` = '" + categoryType + "' ");
             queriesInvolved = true;
-            System.out.println("HO");
-
+            
         }
         if (!servingType.equals("Select serving_type")) {
             v.add(" `serving_type`.`serving_type_name` = '" + servingType + "' ");
             queriesInvolved = true;
-
+            
         }
         if (queriesInvolved) {
             whereQueryBuilder.append("where ");
         }
         for (int i = 0; i < v.size(); i++) {
-            //System.out.println("vectors are " + v.get(i));
-
+            
             whereQueryBuilder.append("");
             whereQueryBuilder.append(v.get(i));
-
+            
             if (i != v.size() - 1) {
                 whereQueryBuilder.append("AND ");
             }
         }
-        //System.out.println("where query is " + whereQueryBuilder);
+        
         stringquerybuild.append(this.loadTableQuery);
         stringquerybuild.append(whereQueryBuilder);
         stringquerybuild.append(sortQuery);
         String query = stringquerybuild.toString();
-        //System.out.println("where query is " + whereQueryBuilder);
+        
         LoadTables lt = new LoadTables(customTable1, query, this.colnames);
     }
-
+    
+    public void tableListenerRag() {
+        TableListenerAbs tlas = new TableListenerAbs(customTable1) {
+            @Override
+            protected void foo(ListSelectionEvent e) {
+                try {
+                    
+                    int row = customTable1.getSelectedRow();
+                    String name = (String) customTable1.getValueAt(row, 1);
+                    String price = (String) customTable1.getValueAt(row, 2);
+                    String category = (String) customTable1.getValueAt(row, 3);
+                    String servingType = (String) customTable1.getValueAt(row, 4);
+                    menuId = (String) customTable1.getValueAt(row, 0);
+                    
+                    ResultSet rs = MySql.sq("SELECT `menuItemDescription` FROM `mainmenu` WHERE `mainmenu`.`menuItemId` = '" + menuId + "'");
+                    rs.next();
+                    des = rs.getString("menuItemDescription");
+                    description = rs.getString("menuItemDescription");
+                    if (isCustomerOrderInvolved) {
+                        co.textF3.setText(menuId);
+                        co.textF4.setText(name);
+                        co.textF6.setText(price);
+                        co.menuItemCategory = category;
+                        thisaddmenu.dispose();
+                    } else {
+                        comboBox3.setSelectedItem(servingType);
+                        comboBox4.setSelectedItem(category);
+                        textF5.setText(name);
+                        textF4.setText(price);
+                        isUpdateMode = true;
+                    }
+                    
+                } catch (ClassNotFoundException ex) {
+                    Logger.getLogger(AddMenu.class.getName()).log(Level.SEVERE, null, ex);
+                } catch (SQLException ex) {
+                    Logger.getLogger(AddMenu.class.getName()).log(Level.SEVERE, null, ex);
+                }
+            }
+        };
+        tlas.tableListenerRag(customTable1);
+    }
+    
     private void jframeCustmize() {
         closeLabel.setIcon(labelSetIcon("/Icons/close.png", closeLabel.getWidth() - 25, closeLabel.getHeight() - 17));
         boxLabel.setIcon(labelSetIcon("/Icons/square.png", boxLabel.getWidth() - 23, boxLabel.getHeight() - 17));
         miniLabel.setIcon(labelSetIcon("/Icons/minus.png", miniLabel.getWidth() - 20, miniLabel.getHeight() - 13));
-
+        
         miniLabel.addMouseListener(new java.awt.event.MouseAdapter() {
             @Override
             public void mouseClicked(java.awt.event.MouseEvent evt) {
@@ -317,58 +434,58 @@ public class AddMenu extends javax.swing.JFrame {
             }
         });
     }
-
+    
     public ImageIcon labelSetIcon(String src, int w, int h) {
         ImageSizer imgSizer = new ImageSizer();
         ImageIcon i = imgSizer.overaallResizer(src, w, h);
         return i;
     }
-
+    
     private void loadCombos() {
         LoadSubTypes.loadType(comboBox4, "menu_item_category");
         LoadSubTypes.loadType(comboBox3, "serving_type");
         LoadSubTypes.loadType(comboBox6, "menu_item_category");
         LoadSubTypes.loadType(comboBox5, "serving_type");
     }
-
+    
     private void setDocFilters() {
         String priceRegex = "^\\d*([,]\\d*)*([.]\\d*)?";
         new FilterDocRagRegex(textF6, priceRegex, 10);
         new FilterDocRagRegex(textF4, priceRegex, 10);
     }
-
+    
     private void contactCheck(String contact) {
-
+        
         ResultSet rs;
         try {
             rs = MySql.sq("SELECT * FROM `dealer` WHERE `dealer_contact`='" + contact + "' ");
             if (rs.next()) {
                 Message m = new Message(this, "this contact is already exits ", "warning");
-
+                
             }
         } catch (ClassNotFoundException ex) {
             Logger.getLogger(AddMenu.class.getName()).log(Level.SEVERE, null, ex);
         } catch (SQLException ex) {
             Logger.getLogger(AddMenu.class.getName()).log(Level.SEVERE, null, ex);
         }
-
+        
     }
-
+    
     private void emailCheck(String email) {
-
+        
         ResultSet rs;
         try {
             rs = MySql.sq("SELECT * FROM `dealer` WHERE `dealer_email`='" + email + "' ");
             if (rs.next()) {
                 Message m = new Message(this, "this email is already exits ", "warning");
-
+                
             }
         } catch (ClassNotFoundException ex) {
             Logger.getLogger(AddMenu.class.getName()).log(Level.SEVERE, null, ex);
         } catch (SQLException ex) {
             Logger.getLogger(AddMenu.class.getName()).log(Level.SEVERE, null, ex);
         }
-
+        
     }
 
     /**
@@ -558,6 +675,17 @@ public class AddMenu extends javax.swing.JFrame {
         jLabel14.setText("Category");
         jLabel14.setToolTipText("");
 
+        textF7.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                textF7ActionPerformed(evt);
+            }
+        });
+        textF7.addKeyListener(new java.awt.event.KeyAdapter() {
+            public void keyTyped(java.awt.event.KeyEvent evt) {
+                textF7KeyTyped(evt);
+            }
+        });
+
         jLabel15.setFont(new java.awt.Font("Yu Gothic", 1, 12)); // NOI18N
         jLabel15.setForeground(new java.awt.Color(255, 255, 255));
         jLabel15.setText("Sort");
@@ -576,6 +704,11 @@ public class AddMenu extends javax.swing.JFrame {
         });
 
         customButton12.setText("Clear");
+        customButton12.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                customButton12ActionPerformed(evt);
+            }
+        });
 
         comboBox7.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "NAME A-Z", "NAME Z-A", "CAT A-Z", "CAT Z-A", "SERVING A-Z", "SERVNG Z-A", "PRICE L-H", "PRICE H-L" }));
         comboBox7.addActionListener(new java.awt.event.ActionListener() {
@@ -864,7 +997,12 @@ public class AddMenu extends javax.swing.JFrame {
 
     private void closeLabelMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_closeLabelMouseClicked
         // TODO add your handling code here:
-        this.dispose();
+        if (isCustomerOrderInvolved) {
+            this.dispose();
+        } else {
+            this.dispose();
+        }
+
     }//GEN-LAST:event_closeLabelMouseClicked
 
     private void closeLabelMouseEntered(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_closeLabelMouseEntered
@@ -900,7 +1038,12 @@ public class AddMenu extends javax.swing.JFrame {
 
         private void customButton8ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_customButton8ActionPerformed
             // TODO add your handling code here:
-            addDes();
+            if (isUpdateMode) {
+                showDes();
+            } else {
+                addDes();
+            }
+
         }//GEN-LAST:event_customButton8ActionPerformed
 
     private void customButton9ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_customButton9ActionPerformed
@@ -909,7 +1052,7 @@ public class AddMenu extends javax.swing.JFrame {
 
     private void customButton7ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_customButton7ActionPerformed
         // TODO add your handling code here:
-
+        update();
     }//GEN-LAST:event_customButton7ActionPerformed
 
     private void customButton6ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_customButton6ActionPerformed
@@ -929,7 +1072,7 @@ public class AddMenu extends javax.swing.JFrame {
 
     private void comboBox6ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_comboBox6ActionPerformed
         // TODO add your handling code here:
-        if (comboBox6.getSelectedItem() != null ) {
+        if (comboBox6.getSelectedItem() != null && !comboBox6.getSelectedItem().toString().equals("Select menu_item_category")) {
             System.out.println("HEY");
             advancedSearch();
         }
@@ -938,11 +1081,25 @@ public class AddMenu extends javax.swing.JFrame {
 
     private void comboBox5ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_comboBox5ActionPerformed
         // TODO add your handling code here:
-        if (comboBox5.getSelectedItem() != null) {
+        if (comboBox5.getSelectedItem() != null && !comboBox5.getSelectedItem().toString().equals("Select serving_type")) {
             System.out.println("HEY33");
             advancedSearch();
         }
     }//GEN-LAST:event_comboBox5ActionPerformed
+
+    private void textF7ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_textF7ActionPerformed
+        // TODO add your handling code here:
+    }//GEN-LAST:event_textF7ActionPerformed
+
+    private void textF7KeyTyped(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_textF7KeyTyped
+        // TODO add your handling code here:
+        advancedSearch();
+    }//GEN-LAST:event_textF7KeyTyped
+
+    private void customButton12ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_customButton12ActionPerformed
+        // TODO add your handling code here:
+        clearSearchFields();
+    }//GEN-LAST:event_customButton12ActionPerformed
     int i = 0;
     boolean emailFieldEntred = false;
 
@@ -960,21 +1117,21 @@ public class AddMenu extends javax.swing.JFrame {
                 if ("Nimbus".equals(info.getName())) {
                     javax.swing.UIManager.setLookAndFeel(info.getClassName());
                     break;
-
+                    
                 }
             }
         } catch (ClassNotFoundException ex) {
             java.util.logging.Logger.getLogger(AddMenu.class
                     .getName()).log(java.util.logging.Level.SEVERE, null, ex);
-
+            
         } catch (InstantiationException ex) {
             java.util.logging.Logger.getLogger(AddMenu.class
                     .getName()).log(java.util.logging.Level.SEVERE, null, ex);
-
+            
         } catch (IllegalAccessException ex) {
             java.util.logging.Logger.getLogger(AddMenu.class
                     .getName()).log(java.util.logging.Level.SEVERE, null, ex);
-
+            
         } catch (javax.swing.UnsupportedLookAndFeelException ex) {
             java.util.logging.Logger.getLogger(AddMenu.class
                     .getName()).log(java.util.logging.Level.SEVERE, null, ex);
@@ -1047,10 +1204,10 @@ public class AddMenu extends javax.swing.JFrame {
         /* Create and display the form */
         java.awt.EventQueue.invokeLater(new Runnable() {
             public void run() {
-
+                
                 JFrame jf = new AddMenu();
                 jf.setVisible(true);
-
+                
             }
         });
     }
