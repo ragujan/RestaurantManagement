@@ -455,39 +455,7 @@ public class AddMenu extends javax.swing.JFrame {
         new FilterDocRagRegex(textF4, priceRegex, 10);
     }
     
-    private void contactCheck(String contact) {
-        
-        ResultSet rs;
-        try {
-            rs = MySql.sq("SELECT * FROM `dealer` WHERE `dealer_contact`='" + contact + "' ");
-            if (rs.next()) {
-                Message m = new Message(this, "this contact is already exits ", "warning");
-                
-            }
-        } catch (ClassNotFoundException ex) {
-            Logger.getLogger(AddMenu.class.getName()).log(Level.SEVERE, null, ex);
-        } catch (SQLException ex) {
-            Logger.getLogger(AddMenu.class.getName()).log(Level.SEVERE, null, ex);
-        }
-        
-    }
-    
-    private void emailCheck(String email) {
-        
-        ResultSet rs;
-        try {
-            rs = MySql.sq("SELECT * FROM `dealer` WHERE `dealer_email`='" + email + "' ");
-            if (rs.next()) {
-                Message m = new Message(this, "this email is already exits ", "warning");
-                
-            }
-        } catch (ClassNotFoundException ex) {
-            Logger.getLogger(AddMenu.class.getName()).log(Level.SEVERE, null, ex);
-        } catch (SQLException ex) {
-            Logger.getLogger(AddMenu.class.getName()).log(Level.SEVERE, null, ex);
-        }
-        
-    }
+
 
     /**
      * This method is called from within the constructor to initialize the form.

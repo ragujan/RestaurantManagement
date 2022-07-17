@@ -1,9 +1,11 @@
 package gui;
 
 import Util.CreateObject;
+import Util.GetIdSingle;
 import Util.LoadTables;
 import Util.SearchTable;
 import Util.TableListenerAbs;
+import frameutil.ChangeStatus;
 import frameutil.RoundedPanel;
 import frameutil.ImageSizer;
 import frameutil.MainTheme;
@@ -13,11 +15,16 @@ import java.sql.SQLException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.Vector;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.swing.ImageIcon;
 import javax.swing.JFrame;
 import javax.swing.event.ListSelectionEvent;
+import javax.swing.text.AbstractDocument;
+import javax.swing.text.AttributeSet;
+import javax.swing.text.BadLocationException;
+import javax.swing.text.DocumentFilter;
 import model.MySql;
 
 /*
@@ -45,10 +52,11 @@ public class OnGoingOrder extends javax.swing.JFrame {
         this.setBackground(MainTheme.mainColor);
         roundedPanel1.setBackground(MainTheme.mainColor);
         roundedPanel2.setBackground(MainTheme.secondColor);
+        jPanel4.setBackground(MainTheme.secondColor);
 
         this.setForeground(MainTheme.secondColor);
 
-        setDocFilters();
+        setDocFilterTextF2();
         loadCombos();
         loadTable();
         tableListenerRag();
@@ -69,6 +77,8 @@ public class OnGoingOrder extends javax.swing.JFrame {
     SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
     OnGoingOrder ogorder;
     String updateId;
+    boolean changeOrder;
+    boolean closeAndReceipt;
     String loadTableQuery;
     String[] colnames = {"customer_order_id", "order_time_date", "employee_name", "order_status_name", "customer_table_name"};
 
@@ -114,8 +124,40 @@ public class OnGoingOrder extends javax.swing.JFrame {
 
     }
 
-    private void setDocFilters() {
+    public void setDocFilterTextF2() {
+        if (textF2 != null) {
 
+            AbstractDocument ab = (AbstractDocument) textF2.getDocument();
+            ab.setDocumentFilter(new DocumentFilter() {
+                String memText;
+
+                @Override
+                public void remove(DocumentFilter.FilterBypass fb, int offset, int length) throws
+                        BadLocationException {
+
+                    fb.remove(offset, length);
+                    advancedSearch(memText);
+                }
+
+                @Override
+                public void insertString(DocumentFilter.FilterBypass fb, int offset, String string,
+                        AttributeSet attr) throws BadLocationException {
+                    fb.insertString(offset, string, attr);
+                }
+
+                @Override
+                public void replace(DocumentFilter.FilterBypass fb, int offset, int length, String text,
+                        AttributeSet attrs) throws BadLocationException {
+                    String jtText = fb.getDocument().getText(0, fb.getDocument().getLength());
+                    String newText = jtText.substring(0, offset) + text;
+                    memText = newText;
+                    System.out.println(newText);
+                    fb.replace(offset, length, text, attrs);
+                    advancedSearch(newText);
+
+                }
+            });
+        }
     }
 
     private void tableListenerRag() {
@@ -123,14 +165,160 @@ public class OnGoingOrder extends javax.swing.JFrame {
             @Override
             protected void foo(ListSelectionEvent e) {
                 int row = customTable1.getSelectedRow();
-                String id = customTable1.getValueAt(row, 0).toString();
-                CreateObject.make(new ViewOrderItems(ogorder, id));
-                customTable1.clearSelection();
-                ogorder.setEnabled(false);
-               
+                String status = customTable1.getValueAt(row, 3).toString();
+                String orderId = customTable1.getValueAt(row, 0).toString();
+
+                if (changeOrder) {
+
+                    CreateObject.make(new ChangeStatus(ogorder, true, status) {
+
+                        @Override
+                        public void actionConfirmed() {
+                            String status = statusBox.getSelectedItem().toString();
+                            String statusID = GetIdSingle.getId("order_status", status);
+                            MySql.iud("UPDATE `customer_order` SET `order_status_id`= '" + statusID + "' WHERE `customer_order_id`='" + orderId + "'");
+                            ogorder.loadTable();
+                        }
+
+                        @Override
+                        public void actionCancelled() {
+                        }
+                    });
+                    customTable1.clearSelection();
+
+                } else if (closeAndReceipt) {
+                    CreateObject.make(new ChangeStatus(ogorder, true, status) {
+
+                        @Override
+                        public void actionConfirmed() {
+
+                        }
+
+                        @Override
+                        public void actionCancelled() {
+                        }
+                    });
+                    customTable1.clearSelection();
+                } else {
+                    String id = customTable1.getValueAt(row, 0).toString();
+                    CreateObject.make(new ViewOrderItems(ogorder, id));
+                    customTable1.clearSelection();
+                    ogorder.setEnabled(false);
+                }
+                changeOrder = false;
+                closeAndReceipt = false;
+
             }
         };
         tblabs.tableListenerRag(customTable1);
+    }
+
+    public void advancedSearch() {
+        String fromId = textF1.getText();
+        String toId = textF2.getText();
+        System.out.println(toId);
+
+        String sort = comboBox1.getSelectedItem().toString();
+
+        StringBuilder stringquerybuild = new StringBuilder();
+        StringBuilder whereQueryBuilder = new StringBuilder();
+        Vector<String> v = new Vector<String>();
+        boolean queriesInvolved = false;
+
+        String sortQuery = "";
+        String whereQuery = "";
+        if (sort.equals("Active")) {
+            sortQuery = " AND `customer_order`.`order_status_id` = '1' ";
+
+        } else if (sort.equals("Delivered")) {
+            sortQuery = " AND `customer_order`.`order_status_id` = '2' ";
+
+        } else if (sort.equals("Closed")) {
+
+            v.add(" AND `customer_order`.`order_status_id` = '3' ");
+
+        } else if (sort.equals("Old")) {
+            sortQuery = " ORDER BY `customer_order`.`order_time_date` DESC ";
+        } else if (sort.equals("New")) {
+            sortQuery = " ORDER BY `customer_order`.`order_time_date` ASC ";
+        }
+        if (!toId.isEmpty() && !fromId.isEmpty()) {
+            v.add(" `customer_order`.`customer_order_id` BETWEEN '" + fromId + "' AND '" + toId + "' ");
+            queriesInvolved = true;
+        }
+
+        if (queriesInvolved) {
+            whereQueryBuilder.append("WHERE ");
+        }
+
+        for (int i = 0; i < v.size(); i++) {
+
+            whereQueryBuilder.append("");
+            whereQueryBuilder.append(v.get(i));
+
+            if (i != v.size() - 1) {
+                whereQueryBuilder.append("AND ");
+            }
+        }
+        stringquerybuild.append(this.loadTableQuery);
+        stringquerybuild.append(whereQueryBuilder);
+        stringquerybuild.append(sortQuery);
+        String query = stringquerybuild.toString();
+
+        LoadTables lt = new LoadTables(customTable1, query, this.colnames);
+    }
+
+    public void advancedSearch(String toId) {
+        String fromId = textF1.getText();
+
+        String sort = comboBox1.getSelectedItem().toString();
+
+        StringBuilder stringquerybuild = new StringBuilder();
+        StringBuilder whereQueryBuilder = new StringBuilder();
+        Vector<String> v = new Vector<String>();
+        boolean queriesInvolved = false;
+
+        String sortQuery = "";
+        String whereQuery = "";
+        if (sort.equals("Active")) {
+            sortQuery = " AND `customer_order`.`order_status_id` = '1' ";
+
+        } else if (sort.equals("Delivered")) {
+            sortQuery = " AND `customer_order`.`order_status_id` = '2' ";
+
+        } else if (sort.equals("Closed")) {
+
+            v.add(" AND `customer_order`.`order_status_id` = '3' ");
+
+        } else if (sort.equals("Old")) {
+            sortQuery = " ORDER BY `customer_order`.`order_time_date` DESC ";
+        } else if (sort.equals("New")) {
+            sortQuery = " ORDER BY `customer_order`.`order_time_date` ASC ";
+        }
+        if (!toId.isEmpty() && !fromId.isEmpty()) {
+            v.add(" `customer_order`.`customer_order_id` BETWEEN '" + fromId + "' AND '" + toId + "' ");
+            queriesInvolved = true;
+        }
+
+        if (queriesInvolved) {
+            whereQueryBuilder.append("WHERE ");
+        }
+
+        for (int i = 0; i < v.size(); i++) {
+
+            whereQueryBuilder.append("");
+            whereQueryBuilder.append(v.get(i));
+
+            if (i != v.size() - 1) {
+                whereQueryBuilder.append("AND ");
+            }
+        }
+        stringquerybuild.append(this.loadTableQuery);
+        stringquerybuild.append(whereQueryBuilder);
+        stringquerybuild.append(sortQuery);
+        String query = stringquerybuild.toString();
+
+        LoadTables lt = new LoadTables(customTable1, query, this.colnames);
     }
 
     private void jframeCustmize() {
@@ -170,6 +358,14 @@ public class OnGoingOrder extends javax.swing.JFrame {
         boxLabel = new javax.swing.JLabel();
         jLabel1 = new javax.swing.JLabel();
         jPanel2 = new javax.swing.JPanel();
+        jPanel4 = new javax.swing.JPanel();
+        comboBox1 = new frameutil.ComboBox();
+        jLabel2 = new javax.swing.JLabel();
+        textF1 = new frameutil.TextF();
+        jLabel3 = new javax.swing.JLabel();
+        textF2 = new frameutil.TextF();
+        customButton1 = new frameutil.CustomButton();
+        customButton2 = new frameutil.CustomButton();
         jPanel3 = new javax.swing.JPanel();
         jScrollPane1 = new javax.swing.JScrollPane();
         customTable1 = new frameutil.CustomTable();
@@ -246,7 +442,7 @@ public class OnGoingOrder extends javax.swing.JFrame {
             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, roundedPanel2Layout.createSequentialGroup()
                 .addContainerGap()
                 .addComponent(jLabel1)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 746, Short.MAX_VALUE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                 .addComponent(jPanel1, javax.swing.GroupLayout.PREFERRED_SIZE, 120, javax.swing.GroupLayout.PREFERRED_SIZE))
         );
         roundedPanel2Layout.setVerticalGroup(
@@ -258,15 +454,107 @@ public class OnGoingOrder extends javax.swing.JFrame {
                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
 
+        comboBox1.setModel(new javax.swing.DefaultComboBoxModel(new String[] { "Active", "Delivered", "Closed", "New", "Old" }));
+        comboBox1.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                comboBox1ActionPerformed(evt);
+            }
+        });
+
+        jLabel2.setFont(new java.awt.Font("Yu Gothic", 1, 12)); // NOI18N
+        jLabel2.setForeground(new java.awt.Color(255, 255, 255));
+        jLabel2.setText("Sort By");
+        jLabel2.setToolTipText("");
+
+        textF1.addKeyListener(new java.awt.event.KeyAdapter() {
+            public void keyTyped(java.awt.event.KeyEvent evt) {
+                textF1KeyTyped(evt);
+            }
+        });
+
+        jLabel3.setFont(new java.awt.Font("Yu Gothic", 1, 12)); // NOI18N
+        jLabel3.setForeground(new java.awt.Color(255, 255, 255));
+        jLabel3.setText("Order Id ");
+        jLabel3.setToolTipText("");
+
+        textF2.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                textF2ActionPerformed(evt);
+            }
+        });
+        textF2.addKeyListener(new java.awt.event.KeyAdapter() {
+            public void keyTyped(java.awt.event.KeyEvent evt) {
+                textF2KeyTyped(evt);
+            }
+        });
+
+        customButton1.setText("Change Status");
+        customButton1.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                customButton1ActionPerformed(evt);
+            }
+        });
+
+        customButton2.setText("close and Receipt");
+        customButton2.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                customButton2ActionPerformed(evt);
+            }
+        });
+
+        javax.swing.GroupLayout jPanel4Layout = new javax.swing.GroupLayout(jPanel4);
+        jPanel4.setLayout(jPanel4Layout);
+        jPanel4Layout.setHorizontalGroup(
+            jPanel4Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel4Layout.createSequentialGroup()
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .addGroup(jPanel4Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addComponent(comboBox1, javax.swing.GroupLayout.PREFERRED_SIZE, 224, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(jLabel2, javax.swing.GroupLayout.PREFERRED_SIZE, 121, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addGroup(jPanel4Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                    .addComponent(jLabel3, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addComponent(textF1, javax.swing.GroupLayout.PREFERRED_SIZE, 121, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(textF2, javax.swing.GroupLayout.PREFERRED_SIZE, 129, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(customButton1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(customButton2, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addContainerGap())
+        );
+        jPanel4Layout.setVerticalGroup(
+            jPanel4Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(jPanel4Layout.createSequentialGroup()
+                .addContainerGap()
+                .addGroup(jPanel4Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(jLabel2)
+                    .addComponent(jLabel3))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addGroup(jPanel4Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(comboBox1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(textF1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(textF2, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(customButton1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(customButton2, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                .addContainerGap())
+        );
+
         javax.swing.GroupLayout jPanel2Layout = new javax.swing.GroupLayout(jPanel2);
         jPanel2.setLayout(jPanel2Layout);
         jPanel2Layout.setHorizontalGroup(
             jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 0, Short.MAX_VALUE)
+            .addGroup(jPanel2Layout.createSequentialGroup()
+                .addContainerGap()
+                .addComponent(jPanel4, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
         jPanel2Layout.setVerticalGroup(
             jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 100, Short.MAX_VALUE)
+            .addGroup(jPanel2Layout.createSequentialGroup()
+                .addContainerGap()
+                .addComponent(jPanel4, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .addContainerGap())
         );
 
         customTable1.setModel(new javax.swing.table.DefaultTableModel(
@@ -291,10 +579,10 @@ public class OnGoingOrder extends javax.swing.JFrame {
         );
         jPanel3Layout.setVerticalGroup(
             jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(jPanel3Layout.createSequentialGroup()
+            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel3Layout.createSequentialGroup()
                 .addContainerGap()
-                .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 286, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 237, Short.MAX_VALUE)
+                .addContainerGap())
         );
 
         javax.swing.GroupLayout roundedPanel1Layout = new javax.swing.GroupLayout(roundedPanel1);
@@ -305,8 +593,10 @@ public class OnGoingOrder extends javax.swing.JFrame {
             .addGroup(roundedPanel1Layout.createSequentialGroup()
                 .addContainerGap()
                 .addGroup(roundedPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(jPanel2, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                    .addComponent(jPanel3, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                    .addComponent(jPanel3, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addGroup(roundedPanel1Layout.createSequentialGroup()
+                        .addComponent(jPanel2, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addGap(0, 0, Short.MAX_VALUE)))
                 .addContainerGap())
         );
         roundedPanel1Layout.setVerticalGroup(
@@ -315,8 +605,8 @@ public class OnGoingOrder extends javax.swing.JFrame {
                 .addComponent(roundedPanel2, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(jPanel2, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(jPanel3, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .addComponent(jPanel3, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addContainerGap())
         );
 
@@ -378,6 +668,42 @@ public class OnGoingOrder extends javax.swing.JFrame {
         miniLabel.setBackground(MainTheme.secondColor);
         miniLabel.setOpaque(false);
     }//GEN-LAST:event_miniLabelMouseExited
+
+    private void comboBox1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_comboBox1ActionPerformed
+        // TODO add your handling code here:
+
+
+    }//GEN-LAST:event_comboBox1ActionPerformed
+
+    private void textF2KeyTyped(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_textF2KeyTyped
+        // TODO add your handling code here:
+        String toID = textF2.getText() + evt.getKeyChar();
+        System.out.println(toID);
+        //advancedSearch(toID);
+    }//GEN-LAST:event_textF2KeyTyped
+
+    private void textF1KeyTyped(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_textF1KeyTyped
+        // TODO add your handling code here:
+
+    }//GEN-LAST:event_textF1KeyTyped
+
+    private void textF2ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_textF2ActionPerformed
+        // TODO add your handling code here:
+
+    }//GEN-LAST:event_textF2ActionPerformed
+
+    private void customButton1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_customButton1ActionPerformed
+        // TODO add your handling code here:
+        changeOrder = true;
+        closeAndReceipt = false;
+
+    }//GEN-LAST:event_customButton1ActionPerformed
+
+    private void customButton2ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_customButton2ActionPerformed
+        // TODO add your handling code here:
+        closeAndReceipt = true;
+        changeOrder = false;
+    }//GEN-LAST:event_customButton2ActionPerformed
     boolean emailFieldEntred = false;
 
     /**
@@ -492,15 +818,23 @@ public class OnGoingOrder extends javax.swing.JFrame {
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JLabel boxLabel;
     private javax.swing.JLabel closeLabel;
+    private frameutil.ComboBox comboBox1;
+    private frameutil.CustomButton customButton1;
+    private frameutil.CustomButton customButton2;
     private frameutil.CustomTable customTable1;
     private javax.swing.JLabel jLabel1;
+    private javax.swing.JLabel jLabel2;
+    private javax.swing.JLabel jLabel3;
     private javax.swing.JPanel jPanel1;
     private javax.swing.JPanel jPanel2;
     private javax.swing.JPanel jPanel3;
+    private javax.swing.JPanel jPanel4;
     private javax.swing.JScrollPane jScrollPane1;
     private javax.swing.JToggleButton jToggleButton1;
     private javax.swing.JLabel miniLabel;
     private RoundedPanel roundedPanel1;
     private RoundedPanel roundedPanel2;
+    private frameutil.TextF textF1;
+    private frameutil.TextF textF2;
     // End of variables declaration//GEN-END:variables
 }
