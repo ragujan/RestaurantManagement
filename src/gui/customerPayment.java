@@ -5,6 +5,8 @@
 package gui;
 
 import Util.LoadSubTypes;
+import Util.LoadTables;
+import Util.SearchTable;
 import frame.*;
 import frameutil.MainTheme;
 import frameutil.MainTheme;
@@ -12,62 +14,135 @@ import frameutil.RoundedPanel;
 import frameutil.RoundedPanel;
 import java.awt.Color;
 import java.awt.geom.RoundRectangle2D;
+import java.util.ArrayList;
+import javax.swing.table.DefaultTableModel;
 
 /**
  *
  * @author Acer
  */
-public abstract class customerPayment extends javax.swing.JDialog {
+public abstract class CustomerPayment extends javax.swing.JDialog {
 
-	/**
-	 * Creates new form NewJDialog
-	 */
-	public customerPayment(java.awt.Frame parent, boolean modal) {
-		super(parent, modal);
-		initComponents();
-		//this.setUndecorated(true);
-		this.setLocationRelativeTo(null);
-		this.setResizable(true);
-		//this.setVisible(true);
-		setShape(new RoundRectangle2D.Double(0, 0, getWidth(), getHeight(), 7, 7));
+    /**
+     * Creates new form NewJDialog
+     */
+    public CustomerPayment(java.awt.Frame parent, boolean modal) {
+        super(parent, modal);
+        initComponents();
+        //this.setUndecorated(true);
+        this.setLocationRelativeTo(null);
+        this.setResizable(true);
+        //this.setVisible(true);
+        setShape(new RoundRectangle2D.Double(0, 0, getWidth(), getHeight(), 7, 7));
 
-		//	jLabel2.setText(message);
-		//jLabel2.setForeground(Color.WHITE);
-		//jLabel1.setText(title);
-		roundedPanel1.setBackground(MainTheme.thirdColor);
-		roundedPanel2.setBackground(MainTheme.fourthColor);
-		jLabel1.setForeground(MainTheme.secondColor);
-		jPanel2.setBackground(MainTheme.secondColor);
-		customButton1.setBackground(MainTheme.secondColor);
-                loadCombos();
-		//	this.setVisible(true);
+        //	jLabel2.setText(message);
+        //jLabel2.setForeground(Color.WHITE);
+        //jLabel1.setText(title);
+        roundedPanel1.setBackground(MainTheme.thirdColor);
+        roundedPanel2.setBackground(MainTheme.secondColor);
+        jLabel1.setForeground(MainTheme.secondColor);
+        jPanel2.setBackground(MainTheme.secondColor);
+        jPanel4.setBackground(MainTheme.secondColor);
+        textF1.setEditable(false);
+        loadCombos();
+        this.loadQuery();
+        loadTableQuery += " INNER JOIN `mainmenu` ON `mainmenu`.`menuItemId`=`customer_ordered_item`.`menuItemId` ";
+        System.out.println(loadTableQuery);
+        loadTable();
+        textF1.setText( getSubTotal());
 
-	}
+    }
 
-	public customerPayment(java.awt.Frame parent, String message) {
-		this(parent, true);
-		
-	}
-        	public customerPayment(java.awt.Frame parent, boolean b,String status) {
-		this(parent, true);
-                statusBox.setSelectedItem(status);
-		
-	}
-        private void loadCombos(){
-            LoadSubTypes.loadType(statusBox, "order_status");
+    public CustomerPayment(java.awt.Frame parent, String orderId) {
+        this(parent, true);
+
+        loadTableQuery += " WHERE `customer_order`.`customer_order_id`='" + orderId + "' ";
+        System.out.println(loadTableQuery);
+        loadTable();
+
+    }
+
+    public CustomerPayment(java.awt.Frame parent, boolean b, String status) {
+        this(parent, true);
+
+    }
+
+    public CustomerPayment(java.awt.Frame parent, DefaultTableModel dftm) {
+        this(parent, true);
+        this.customTable1.setModel(dftm);
+
+    }
+    String loadTableQuery;
+    String[] colnames = {"menuItemId", "menuItemName", "qty", "menuItemPrice", "total"};
+
+    private void loadQuery() {
+        ArrayList<String> al = new ArrayList<String>();
+
+        al.add("customer_ordered_item");
+        al.add("customer_order,customer_ordered_item");
+
+        SearchTable st = new SearchTable(al);
+        this.loadTableQuery = st.getTableQuery();
+
+    }
+
+    private void loadTable() {
+
+        String sort = "ORDER BY `menuItemName` ASC";
+
+        StringBuilder stringquerybuild = new StringBuilder();
+        stringquerybuild.append(this.loadTableQuery).toString();
+        stringquerybuild.append(sort).toString();
+        String query = stringquerybuild.toString();
+
+        LoadTables lt = new LoadTables(customTable1, query, this.colnames);
+    }
+
+    private void loadTable(String loadTableQuery) {
+        loadQuery();
+        String sort = "ORDER BY `menuItemName` ASC";
+
+        StringBuilder stringquerybuild = new StringBuilder();
+        stringquerybuild.append(loadTableQuery).toString();
+        stringquerybuild.append(sort).toString();
+        String query = stringquerybuild.toString();
+
+        LoadTables lt = new LoadTables(customTable1, query, this.colnames);
+        System.out.println(loadTableQuery);
+    }
+
+    private String getSubTotal() {
+        double total = 0;
+        if (customTable1.getRowCount() != 0) {
+            for (int i = 0; i < customTable1.getRowCount(); i++) {
+                total += Double.parseDouble(customTable1.getValueAt(i, 4).toString());
+            }
         }
-	public abstract void actionConfirmed();
+        return Double.toString(total);
+    }
 
-	public abstract void actionCancelled();
-	int x = 0;
-	int y = 0;
+    private void showOrderedItems(String orderId) {
 
-	/**
-	 * This method is called from within the constructor to initialize the
-	 * form. WARNING: Do NOT modify this code. The content of this method is
-	 * always regenerated by the Form Editor.
-	 */
-	@SuppressWarnings("unchecked")
+    }
+
+    private void loadCombos() {
+          LoadSubTypes.loadType(comboBox1, "payment_method");
+    }
+    private void makePayment(){
+        
+    }
+    public abstract void actionConfirmed();
+
+    public abstract void actionCancelled();
+    int x = 0;
+    int y = 0;
+
+    /**
+     * This method is called from within the constructor to initialize the form.
+     * WARNING: Do NOT modify this code. The content of this method is always
+     * regenerated by the Form Editor.
+     */
+    @SuppressWarnings("unchecked")
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
     private void initComponents() {
 
@@ -75,10 +150,15 @@ public abstract class customerPayment extends javax.swing.JDialog {
         roundedPanel2 = new RoundedPanel();
         jLabel1 = new javax.swing.JLabel();
         jPanel2 = new javax.swing.JPanel();
+        textF1 = new frameutil.TextF();
+        jLabel5 = new javax.swing.JLabel();
+        comboBox1 = new frameutil.ComboBox<>();
+        jLabel28 = new javax.swing.JLabel();
         customButton1 = new frameutil.CustomButton();
-        customButton2 = new frameutil.CustomButton();
-        statusBox = new frameutil.ComboBox();
-        jLabel2 = new javax.swing.JLabel();
+        jPanel3 = new javax.swing.JPanel();
+        jScrollPane1 = new javax.swing.JScrollPane();
+        customTable1 = new frameutil.CustomTable();
+        jPanel4 = new javax.swing.JPanel();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
         setUndecorated(true);
@@ -125,23 +205,22 @@ public abstract class customerPayment extends javax.swing.JDialog {
                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
 
-        customButton1.setText("Cancel");
+        jLabel5.setBackground(new java.awt.Color(255, 255, 255));
+        jLabel5.setFont(new java.awt.Font("Segoe UI", 1, 12)); // NOI18N
+        jLabel5.setForeground(new java.awt.Color(255, 255, 255));
+        jLabel5.setText("Total");
+
+        jLabel28.setBackground(new java.awt.Color(255, 255, 255));
+        jLabel28.setFont(new java.awt.Font("Segoe UI", 1, 12)); // NOI18N
+        jLabel28.setForeground(new java.awt.Color(255, 255, 255));
+        jLabel28.setText("Payment Method");
+
+        customButton1.setText("Make Payment");
         customButton1.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 customButton1ActionPerformed(evt);
             }
         });
-
-        customButton2.setText("Change");
-        customButton2.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                customButton2ActionPerformed(evt);
-            }
-        });
-
-        jLabel2.setFont(new java.awt.Font("Segoe UI", 1, 12)); // NOI18N
-        jLabel2.setForeground(new java.awt.Color(255, 255, 255));
-        jLabel2.setText("Change Status");
 
         javax.swing.GroupLayout jPanel2Layout = new javax.swing.GroupLayout(jPanel2);
         jPanel2.setLayout(jPanel2Layout);
@@ -149,29 +228,70 @@ public abstract class customerPayment extends javax.swing.JDialog {
             jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(jPanel2Layout.createSequentialGroup()
                 .addContainerGap()
-                .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
-                    .addComponent(jLabel2, javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(statusBox, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.PREFERRED_SIZE, 199, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
-            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel2Layout.createSequentialGroup()
-                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                .addComponent(customButton2, javax.swing.GroupLayout.PREFERRED_SIZE, 94, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addComponent(textF1, javax.swing.GroupLayout.PREFERRED_SIZE, 169, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(jLabel5, javax.swing.GroupLayout.PREFERRED_SIZE, 59, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(customButton1, javax.swing.GroupLayout.PREFERRED_SIZE, 99, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap())
+                .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addGroup(jPanel2Layout.createSequentialGroup()
+                        .addComponent(jLabel28, javax.swing.GroupLayout.PREFERRED_SIZE, 114, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addGap(0, 0, Short.MAX_VALUE))
+                    .addComponent(comboBox1, javax.swing.GroupLayout.DEFAULT_SIZE, 194, Short.MAX_VALUE))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(customButton1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGap(318, 318, 318))
         );
         jPanel2Layout.setVerticalGroup(
             jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(jPanel2Layout.createSequentialGroup()
                 .addContainerGap()
-                .addComponent(jLabel2)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(statusBox, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(jLabel5)
+                    .addComponent(jLabel28))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(customButton1, javax.swing.GroupLayout.PREFERRED_SIZE, 26, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(customButton2, javax.swing.GroupLayout.PREFERRED_SIZE, 26, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addComponent(textF1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(comboBox1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(customButton1, javax.swing.GroupLayout.PREFERRED_SIZE, 25, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addContainerGap(25, Short.MAX_VALUE))
+        );
+
+        customTable1.setModel(new javax.swing.table.DefaultTableModel(
+            new Object [][] {
+
+            },
+            new String [] {
+                "menuId", "menuItem", "qty", "price", "total"
+            }
+        ));
+        jScrollPane1.setViewportView(customTable1);
+
+        javax.swing.GroupLayout jPanel3Layout = new javax.swing.GroupLayout(jPanel3);
+        jPanel3.setLayout(jPanel3Layout);
+        jPanel3Layout.setHorizontalGroup(
+            jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(jPanel3Layout.createSequentialGroup()
+                .addContainerGap()
+                .addComponent(jScrollPane1)
+                .addContainerGap())
+        );
+        jPanel3Layout.setVerticalGroup(
+            jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(jPanel3Layout.createSequentialGroup()
+                .addContainerGap()
+                .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 294, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+        );
+
+        javax.swing.GroupLayout jPanel4Layout = new javax.swing.GroupLayout(jPanel4);
+        jPanel4.setLayout(jPanel4Layout);
+        jPanel4Layout.setHorizontalGroup(
+            jPanel4Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGap(0, 794, Short.MAX_VALUE)
+        );
+        jPanel4Layout.setVerticalGroup(
+            jPanel4Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGap(0, 62, Short.MAX_VALUE)
         );
 
         javax.swing.GroupLayout roundedPanel1Layout = new javax.swing.GroupLayout(roundedPanel1);
@@ -181,7 +301,10 @@ public abstract class customerPayment extends javax.swing.JDialog {
             .addComponent(roundedPanel2, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
             .addGroup(roundedPanel1Layout.createSequentialGroup()
                 .addContainerGap()
-                .addComponent(jPanel2, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .addGroup(roundedPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addComponent(jPanel2, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addComponent(jPanel3, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addComponent(jPanel4, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
                 .addContainerGap())
         );
         roundedPanel1Layout.setVerticalGroup(
@@ -189,7 +312,11 @@ public abstract class customerPayment extends javax.swing.JDialog {
             .addGroup(roundedPanel1Layout.createSequentialGroup()
                 .addComponent(roundedPanel2, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(jPanel2, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .addComponent(jPanel2, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(jPanel3, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .addComponent(jPanel4, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addContainerGap())
         );
 
@@ -208,95 +335,101 @@ public abstract class customerPayment extends javax.swing.JDialog {
     }// </editor-fold>//GEN-END:initComponents
 
         private void roundedPanel2MouseDragged(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_roundedPanel2MouseDragged
-		// TODO add your handling code here:
-		int xx = evt.getXOnScreen();
-		int yy = evt.getYOnScreen();
-		this.setLocation(xx - x, yy - y);
+            // TODO add your handling code here:
+            int xx = evt.getXOnScreen();
+            int yy = evt.getYOnScreen();
+            this.setLocation(xx - x, yy - y);
         }//GEN-LAST:event_roundedPanel2MouseDragged
 
         private void roundedPanel2MousePressed(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_roundedPanel2MousePressed
-		// TODO add your handling code here:
-		x = evt.getX();
-		y = evt.getY();
+            // TODO add your handling code here:
+            x = evt.getX();
+            y = evt.getY();
         }//GEN-LAST:event_roundedPanel2MousePressed
 
-        private void customButton1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_customButton1ActionPerformed
-		// TODO add your handling code here:
-		actionCancelled();
-		this.dispose();
-        }//GEN-LAST:event_customButton1ActionPerformed
+    private void customButton1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_customButton1ActionPerformed
+        // TODO add your handling code here:
+        makePayment();
+    }//GEN-LAST:event_customButton1ActionPerformed
 
-        private void customButton2ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_customButton2ActionPerformed
-		// TODO add your handling code here:
-		actionConfirmed();
-		this.dispose();
-        }//GEN-LAST:event_customButton2ActionPerformed
-
-	/**
-	 * @param args the command line arguments
-	 */
-	public static void main(String args[]) {
-		/* Set the Nimbus look and feel */
-		//<editor-fold defaultstate="collapsed" desc=" Look and feel setting code (optional) ">
-		/* If Nimbus (introduced in Java SE 6) is not available, stay with the default look and feel.
+    /**
+     * @param args the command line arguments
+     */
+    public static void main(String args[]) {
+        /* Set the Nimbus look and feel */
+        //<editor-fold defaultstate="collapsed" desc=" Look and feel setting code (optional) ">
+        /* If Nimbus (introduced in Java SE 6) is not available, stay with the default look and feel.
          * For details see http://download.oracle.com/javase/tutorial/uiswing/lookandfeel/plaf.html 
-		 */
-		try {
-			for (javax.swing.UIManager.LookAndFeelInfo info : javax.swing.UIManager.getInstalledLookAndFeels()) {
-				if ("Nimbus".equals(info.getName())) {
-					javax.swing.UIManager.setLookAndFeel(info.getClassName());
-					break;
-				}
-			}
-		} catch (ClassNotFoundException ex) {
-			java.util.logging.Logger.getLogger(customerPayment.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
-		} catch (InstantiationException ex) {
-			java.util.logging.Logger.getLogger(customerPayment.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
-		} catch (IllegalAccessException ex) {
-			java.util.logging.Logger.getLogger(customerPayment.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
-		} catch (javax.swing.UnsupportedLookAndFeelException ex) {
-			java.util.logging.Logger.getLogger(customerPayment.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
-		}
-		//</editor-fold>
-		//</editor-fold>
-		//</editor-fold>
-		//</editor-fold>
-		//</editor-fold>
-		//</editor-fold>
-		//</editor-fold>
-		//</editor-fold>
+         */
+        try {
+            for (javax.swing.UIManager.LookAndFeelInfo info : javax.swing.UIManager.getInstalledLookAndFeels()) {
+                if ("Nimbus".equals(info.getName())) {
+                    javax.swing.UIManager.setLookAndFeel(info.getClassName());
+                    break;
+                }
+            }
+        } catch (ClassNotFoundException ex) {
+            java.util.logging.Logger.getLogger(CustomerPayment.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
+        } catch (InstantiationException ex) {
+            java.util.logging.Logger.getLogger(CustomerPayment.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
+        } catch (IllegalAccessException ex) {
+            java.util.logging.Logger.getLogger(CustomerPayment.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
+        } catch (javax.swing.UnsupportedLookAndFeelException ex) {
+            java.util.logging.Logger.getLogger(CustomerPayment.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
+        }
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
 
-		/* Create and display the dialog */
-		java.awt.EventQueue.invokeLater(new Runnable() {
-			public void run() {
-				customerPayment dialog = new customerPayment(new javax.swing.JFrame(), true) {
-					@Override
-					public void actionConfirmed() {
-					}
+        /* Create and display the dialog */
+        java.awt.EventQueue.invokeLater(new Runnable() {
+            public void run() {
+                CustomerPayment dialog = new CustomerPayment(new javax.swing.JFrame(), true) {
+                    @Override
+                    public void actionConfirmed() {
+                    }
 
-					@Override
-					public void actionCancelled() {
-					}
-				};
-				dialog.addWindowListener(new java.awt.event.WindowAdapter() {
-					@Override
-					public void windowClosing(java.awt.event.WindowEvent e) {
-						System.exit(0);
-					}
-				});
-				dialog.setVisible(true);
-			}
-		});
-	}
+                    @Override
+                    public void actionCancelled() {
+                    }
+                };
+                dialog.addWindowListener(new java.awt.event.WindowAdapter() {
+                    @Override
+                    public void windowClosing(java.awt.event.WindowEvent e) {
+                        System.exit(0);
+                    }
+                });
+                dialog.setVisible(true);
+            }
+        });
+    }
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
+    private frameutil.ComboBox<String> comboBox1;
     private frameutil.CustomButton customButton1;
-    private frameutil.CustomButton customButton2;
+    private frameutil.CustomTable customTable1;
     private javax.swing.JLabel jLabel1;
-    private javax.swing.JLabel jLabel2;
+    private javax.swing.JLabel jLabel28;
+    private javax.swing.JLabel jLabel5;
     private javax.swing.JPanel jPanel2;
+    private javax.swing.JPanel jPanel3;
+    private javax.swing.JPanel jPanel4;
+    private javax.swing.JScrollPane jScrollPane1;
     private RoundedPanel roundedPanel1;
     private RoundedPanel roundedPanel2;
-    public frameutil.ComboBox statusBox;
+    private frameutil.TextF textF1;
     // End of variables declaration//GEN-END:variables
 }

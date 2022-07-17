@@ -21,6 +21,7 @@ import java.util.logging.Logger;
 import javax.swing.ImageIcon;
 import javax.swing.JFrame;
 import javax.swing.event.ListSelectionEvent;
+import javax.swing.table.DefaultTableModel;
 import javax.swing.text.AbstractDocument;
 import javax.swing.text.AttributeSet;
 import javax.swing.text.BadLocationException;
@@ -187,7 +188,7 @@ public class OnGoingOrder extends javax.swing.JFrame {
                     customTable1.clearSelection();
 
                 } else if (closeAndReceipt) {
-                    CreateObject.make(new ChangeStatus(ogorder, true, status) {
+                    CreateObject.make(new CustomerPayment(ogorder,orderId) {
 
                         @Override
                         public void actionConfirmed() {
