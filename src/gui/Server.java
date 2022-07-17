@@ -192,6 +192,7 @@ public class Server extends javax.swing.JFrame {
 
                         co.textF2.setText(id);
                         co.serverId = id;
+                        co.serverName = name;
                          thisserver.dispose();
                         //isEditmode = false;
                     } catch (ClassNotFoundException ex) {

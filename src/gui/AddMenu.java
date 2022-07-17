@@ -95,13 +95,14 @@ public class AddMenu extends javax.swing.JFrame {
     String updateId;
     public String description;
     String menuId = null;
-    String loadTableQuery;
+    
     String des = null;
     boolean isUpdateMode;
     boolean isCustomerOrderInvolved;
     boolean isOtherFramesInvolved;
     CustomerOrder co;
     AddMenu thisaddmenu;
+    String loadTableQuery;
     String[] colnames = {"menuItemId", "menuItemName", "menuItemPrice", "menu_item_category_name", "serving_type_name"};
     
     private void loadQuery() {
