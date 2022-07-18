@@ -9,6 +9,8 @@ import frameutil.MainTheme;
 import frameutil.RoundedPanel;
 import java.awt.Color;
 import java.awt.geom.RoundRectangle2D;
+import javax.swing.JDialog;
+import javax.swing.JFrame;
 
 /**
  *
@@ -44,7 +46,10 @@ public abstract class OptionMessageLegit extends javax.swing.JDialog {
 		this(parent, true);
 		jLabel2.setText(message);
 	}
-
+	public OptionMessageLegit(JDialog jd, String message) {
+		this(new JFrame(), true);
+		jLabel2.setText(message);
+	}
 	public abstract void actionConfirmed();
 
 	public abstract void actionCancelled();

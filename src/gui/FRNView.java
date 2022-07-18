@@ -1,5 +1,7 @@
 package gui;
 
+import gui.employee.Chef;
+import gui.employee.Supplier;
 import Util.ColorSetter;
 import Util.CreateObject;
 import Util.LoadTables;

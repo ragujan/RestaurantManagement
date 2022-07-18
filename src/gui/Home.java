@@ -1,5 +1,7 @@
 package gui;
 
+import gui.employee.Chef;
+import gui.employee.Supplier;
 import Util.CreateObject;
 import frameutil.RoundedPanel;
 import frameutil.ImageSizer;

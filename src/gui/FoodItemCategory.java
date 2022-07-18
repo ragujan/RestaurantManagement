@@ -1,5 +1,6 @@
 package gui;
 
+import gui.employee.Chef;
 import Util.ColorSetter;
 import Util.GetIdSingle;
 import Util.IdCheck;

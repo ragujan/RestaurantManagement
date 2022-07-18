@@ -75,7 +75,7 @@ public abstract class ChangeStatus extends javax.swing.JDialog {
         jPanel2 = new javax.swing.JPanel();
         customButton1 = new frameutil.CustomButton();
         customButton2 = new frameutil.CustomButton();
-        statusBox = new frameutil.ComboBox();
+        statusBox = new frameutil.ComboBox<>();
         jLabel2 = new javax.swing.JLabel();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
@@ -291,6 +291,6 @@ public abstract class ChangeStatus extends javax.swing.JDialog {
     private javax.swing.JPanel jPanel2;
     private RoundedPanel roundedPanel1;
     private RoundedPanel roundedPanel2;
-    public frameutil.ComboBox statusBox;
+    public frameutil.ComboBox<String> statusBox;
     // End of variables declaration//GEN-END:variables
 }

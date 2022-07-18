@@ -1,5 +1,6 @@
 package gui;
 
+import gui.employee.Chef;
 import Util.CreateObject;
 import Util.GetIdSingle;
 import Util.LoadTables;
@@ -96,7 +97,7 @@ public class OnGoingOrder extends javax.swing.JFrame {
 
     }
 
-    private void loadTable() {
+    public void loadTable() {
         loadQuery();
         String sort = "ORDER BY `order_time_date` ASC";
 
@@ -108,7 +109,7 @@ public class OnGoingOrder extends javax.swing.JFrame {
         LoadTables lt = new LoadTables(customTable1, query, this.colnames);
     }
 
-    private void loadTable(String loadTableQuery) {
+    public void loadTable(String loadTableQuery) {
         loadQuery();
         String sort = "ORDER BY `menuItemName` ASC";
 
@@ -188,18 +189,21 @@ public class OnGoingOrder extends javax.swing.JFrame {
                     customTable1.clearSelection();
 
                 } else if (closeAndReceipt) {
-                    CreateObject.make(new CustomerPayment(ogorder,orderId) {
+                    if (!status.equals("closed")) {
 
-                        @Override
-                        public void actionConfirmed() {
+                        CreateObject.make(new CustomerPayment(ogorder, orderId) {
 
-                        }
+                            @Override
+                            public void actionConfirmed() {
 
-                        @Override
-                        public void actionCancelled() {
-                        }
-                    });
-                    customTable1.clearSelection();
+                            }
+
+                            @Override
+                            public void actionCancelled() {
+                            }
+                        });
+                        customTable1.clearSelection();
+                    }
                 } else {
                     String id = customTable1.getValueAt(row, 0).toString();
                     CreateObject.make(new ViewOrderItems(ogorder, id));
@@ -672,15 +676,17 @@ public class OnGoingOrder extends javax.swing.JFrame {
 
     private void comboBox1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_comboBox1ActionPerformed
         // TODO add your handling code here:
-
+        if (comboBox1.getSelectedItem() != null) {
+            advancedSearch();
+        }
 
     }//GEN-LAST:event_comboBox1ActionPerformed
 
     private void textF2KeyTyped(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_textF2KeyTyped
         // TODO add your handling code here:
         String toID = textF2.getText() + evt.getKeyChar();
-        System.out.println(toID);
-        //advancedSearch(toID);
+
+        advancedSearch(toID);
     }//GEN-LAST:event_textF2KeyTyped
 
     private void textF1KeyTyped(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_textF1KeyTyped

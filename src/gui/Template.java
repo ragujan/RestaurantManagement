@@ -1,5 +1,6 @@
 package gui;
 
+import gui.employee.Chef;
 import frameutil.RoundedPanel;
 import frameutil.ImageSizer;
 import frameutil.MainTheme;

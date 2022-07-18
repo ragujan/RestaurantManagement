@@ -1,5 +1,7 @@
 package gui;
 
+import gui.employee.Chef;
+import gui.employee.Server;
 import Util.CreateObject;
 import Util.FilterDocRagRegex;
 import Util.GetIdSingle;
@@ -275,13 +277,11 @@ public class CustomerOrder extends javax.swing.JFrame {
 
     private void addToOrder() {
         SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
-        System.out.println(comboBox4.getSelectedItem().toString());
         String tableId = GetIdSingle.getId("customer_table", comboBox4.getSelectedItem().toString());
-        System.out.println("table id is " + tableId);
         StringBuilder uid = new StringBuilder(UUID.randomUUID().toString() + String.valueOf(System.currentTimeMillis()));
         String subTotal = textF7.getText();
         ResultSet rs;
-        System.out.println(textF2.getText());
+        
         try {
             rs = MySql.sq("SELECT * FROM `server` WHERE `employee_id`='" + serverId + "'");
             if (rs.next()) {
@@ -290,7 +290,7 @@ public class CustomerOrder extends javax.swing.JFrame {
                 ArrayList<String> info = new ArrayList<>();
 
                 info.add(tableId);
-                 info.add("1");
+                info.add("1");
                 info.add(today);
                 info.add(serverId);
                 info.add(subTotal);
@@ -309,10 +309,9 @@ public class CustomerOrder extends javax.swing.JFrame {
                 rs = MySql.sq("SELECT * FROM `customer_order` WHERE `unique_id`='" + uidStr + "'");
                 rs.next();
                 String customerOrderedId = rs.getString("customer_order_id");
-                System.out.println(customerOrderedId);
+               
                 for (int i = 0; i < customTable1.getRowCount(); i++) {
-                    System.out.println("HEY ROW ROW");
-                    System.out.println(customerOrderedId);
+         
                     String menuItemid = customTable1.getValueAt(i, 0).toString();
                     String qty = customTable1.getValueAt(i, 4).toString();
                     info.add(customerOrderedId);
@@ -336,11 +335,7 @@ public class CustomerOrder extends javax.swing.JFrame {
             Logger.getLogger(CustomerOrder.class.getName()).log(Level.SEVERE, null, ex);
         }
 
-        if (customTable1.getRowCount() != 0) {
-            for (int i = 0; i < customTable1.getRowCount(); i++) {
-
-            }
-        }
+     
     }
 
     private void loadCombos() {
@@ -372,39 +367,7 @@ public class CustomerOrder extends javax.swing.JFrame {
         return i;
     }
 
-    private void contactCheck(String contact) {
 
-        ResultSet rs;
-        try {
-            rs = MySql.sq("SELECT * FROM `dealer` WHERE `dealer_contact`='" + contact + "' ");
-            if (rs.next()) {
-                Message m = new Message(this, "this contact is already exits ", "warning");
-
-            }
-        } catch (ClassNotFoundException ex) {
-            Logger.getLogger(CustomerOrder.class.getName()).log(Level.SEVERE, null, ex);
-        } catch (SQLException ex) {
-            Logger.getLogger(CustomerOrder.class.getName()).log(Level.SEVERE, null, ex);
-        }
-
-    }
-
-    private void emailCheck(String email) {
-
-        ResultSet rs;
-        try {
-            rs = MySql.sq("SELECT * FROM `dealer` WHERE `dealer_email`='" + email + "' ");
-            if (rs.next()) {
-                Message m = new Message(this, "this email is already exits ", "warning");
-
-            }
-        } catch (ClassNotFoundException ex) {
-            Logger.getLogger(CustomerOrder.class.getName()).log(Level.SEVERE, null, ex);
-        } catch (SQLException ex) {
-            Logger.getLogger(CustomerOrder.class.getName()).log(Level.SEVERE, null, ex);
-        }
-
-    }
 
     /**
      * This method is called from within the constructor to initialize the form.

@@ -1,5 +1,6 @@
 package gui;
 
+import gui.employee.Chef;
 import Util.BasicValidator;
 import Util.FilterDocRagRegex;
 import Util.InsertTable;

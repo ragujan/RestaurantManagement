@@ -1,5 +1,7 @@
 package gui;
 
+import gui.employee.Manager;
+import gui.employee.Supplier;
 import Util.CreateObject;
 import Util.FilterDocRagRegex;
 import Util.GetIdSingle;

@@ -1,5 +1,14 @@
 package gui;
 
+import gui.employee.Bartender;
+import gui.employee.Cashier;
+import gui.employee.Chef;
+import gui.employee.Cleaner;
+import gui.employee.Manager;
+import gui.employee.Supplier;
+import gui.employee.EmployeeWorkingHours;
+import gui.employee.EmployeeSalary;
+import gui.employee.Server;
 import Util.LoadSubTypes;
 import Util.LoadTables;
 import Util.SearchTable;
