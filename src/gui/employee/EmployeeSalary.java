@@ -14,10 +14,12 @@ import frameutil.RoundedPanel;
 import frameutil.ImageSizer;
 import frameutil.MainTheme;
 import gui.EmployeeNavi;
+import gui.FRN;
 import gui.Message;
 import java.awt.Color;
 import java.awt.event.ItemListener;
 import java.awt.geom.RoundRectangle2D;
+import java.io.InputStream;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.text.SimpleDateFormat;
@@ -30,9 +32,19 @@ import java.util.logging.Logger;
 import javax.swing.ImageIcon;
 import javax.swing.JComponent;
 import javax.swing.JFrame;
+import javax.swing.JTable;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
+import javax.swing.table.TableModel;
 import model.MySql;
+import net.sf.jasperreports.engine.JREmptyDataSource;
+import net.sf.jasperreports.engine.JRException;
+import net.sf.jasperreports.engine.JasperCompileManager;
+import net.sf.jasperreports.engine.JasperFillManager;
+import net.sf.jasperreports.engine.JasperPrint;
+import net.sf.jasperreports.engine.JasperReport;
+import net.sf.jasperreports.engine.data.JRTableModelDataSource;
+import net.sf.jasperreports.view.JasperViewer;
 
 /*
  * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
@@ -66,16 +78,20 @@ public class EmployeeSalary extends javax.swing.JFrame {
         setValidadions();
         this.tableListernRag();
         this.thiset = this;
-        jPanel5.setBackground(MainTheme.thirdColor);
+      
         textF4.setBackground(MainTheme.secondColor);
         textF5.setBackground(MainTheme.secondColor);
         textF4.setForeground(MainTheme.fourthColor);
         textF5.setForeground(MainTheme.fourthColor);
         jPanel7.setBackground(MainTheme.secondColor);
         jDateChooser1.setVisible(false);
+        textF12.setEditable(false);
+        textF12.setBackground(MainTheme.secondColor);
         jDateChooser2.setVisible(false);
         jDateChooser1.setBackground(MainTheme.secondColor);
         jDateChooser2.setBackground(MainTheme.secondColor);
+                employeeMenuBar1.foo(this);
+
     }
 
     public EmployeeSalary(Chef c) {
@@ -140,7 +156,7 @@ public class EmployeeSalary extends javax.swing.JFrame {
 
     public EmployeeSalary(EmployeeNavi c) {
         this();
-        
+
     }
     String loadTableQuery;
     String[] colnames = {"employee_id", "employee_name", "employee_type_name", "employee_email", "paid_amount", "bonus", "paid_date"};
@@ -158,6 +174,14 @@ public class EmployeeSalary extends javax.swing.JFrame {
     Cleaner cleaner;
     Bartender bartender;
     Cashier cashier;
+    public String managerType;
+    public String empName;
+    public String empType;
+    public String empSubType;
+
+    String searchText;
+    String seachcontact;
+    String searchemail;
 
     private void loadQuery() {
         ArrayList<String> al = new ArrayList<String>();
@@ -188,9 +212,6 @@ public class EmployeeSalary extends javax.swing.JFrame {
 
         LoadTables lt = new LoadTables(customTable2, query, this.colnames);
     }
-    String searchText;
-    String seachcontact;
-    String searchemail;
 
     private void clearFields() {
         JComponent[] jp = {textF1, textF2, textF3, textF10, textF11, textF4, textF5, textF6, textF7, textF8, textF9, comboBox1};
@@ -385,7 +406,7 @@ public class EmployeeSalary extends javax.swing.JFrame {
         String amount = textF4.getText();
         String bonus = textF5.getText();
         String empId = textF8.getText();
-
+        String uniqueId = Long.toString(System.currentTimeMillis());
         if (name.equals("none")) {
             Message m = new Message(this, "Please a Select an Employee", "Warning");
         } else if (amount.isEmpty()) {
@@ -400,8 +421,19 @@ public class EmployeeSalary extends javax.swing.JFrame {
             info.add(empId);
             info.add(amount);
             info.add(date);
-
+            info.add(uniqueId);
             InsertTable it = new InsertTable("employee_salary", info);
+
+            Vector<String> v = new Vector<String>();
+            v.add(uniqueId);
+            v.add(date);
+            v.add(empId);
+            v.add(empName);
+            v.add(empType);
+
+            v.add(amount);
+            v.add(bonus);
+            printGRN(customTable2, v);
             clearFields();
             loadTable();
         }
@@ -528,6 +560,35 @@ public class EmployeeSalary extends javax.swing.JFrame {
 
     }
 
+    private void printGRN(JTable jt, Vector<String> v) {
+
+        try {
+            TableModel tm1 = jt.getModel();
+            //String jasperPath = "src//reportXML//customerOrder.jrxml";
+            InputStream jasperPathStream = getClass().getResourceAsStream("/reportXML/employeeSalary.jrxml");
+            JasperReport jr = JasperCompileManager.compileReport(jasperPathStream);
+            HashMap<String, Object> hm = new HashMap<String, Object>();
+            hm.put("UniqueID", v.get(0).toString());
+            hm.put("Time", v.get(1).toString());
+            hm.put("EmployeeID", v.get(2).toString());
+            hm.put("Employee", v.get(3).toString());
+            hm.put("EmpType", v.get(4).toString());
+            hm.put("PaidAmount", v.get(5).toString());
+            hm.put("Bonus", v.get(6).toString());
+            TableModel tm = jt.getModel();
+            JRTableModelDataSource jrtmds = new JRTableModelDataSource(tm);
+            //   JasperPrint jp = JasperFillManager.fillReport(jr, hm,jrtmds);
+            JREmptyDataSource jreds = new JREmptyDataSource();
+            JasperPrint jp = JasperFillManager.fillReport(jr, hm, jreds);
+            //     JasperViewer.viewReport(jp, false);
+            JasperViewer jv = new JasperViewer(jp, false);
+            jv.setVisible(true);
+        } catch (JRException ex) {
+            Logger.getLogger(FRN.class.getName()).log(Level.SEVERE, null, ex);
+        }
+
+    }
+
     /**
      * This method is called from within the constructor to initialize the form.
      * WARNING: Do NOT modify this code. The content of this method is always
@@ -549,7 +610,6 @@ public class EmployeeSalary extends javax.swing.JFrame {
         customTable2 = new frameutil.CustomTable();
         jPanel3 = new javax.swing.JPanel();
         customButton1 = new frameutil.CustomButton();
-        jPanel5 = new javax.swing.JPanel();
         jPanel7 = new javax.swing.JPanel();
         jPanel8 = new javax.swing.JPanel();
         jLabel12 = new javax.swing.JLabel();
@@ -565,6 +625,8 @@ public class EmployeeSalary extends javax.swing.JFrame {
         jLabel15 = new javax.swing.JLabel();
         textF5 = new frameutil.TextF();
         jLabel8 = new javax.swing.JLabel();
+        textF12 = new frameutil.TextF();
+        jLabel17 = new javax.swing.JLabel();
         jPanel9 = new javax.swing.JPanel();
         textF1 = new frameutil.TextF();
         textF2 = new frameutil.TextF();
@@ -586,6 +648,7 @@ public class EmployeeSalary extends javax.swing.JFrame {
         jPanel11 = new javax.swing.JPanel();
         customButton3 = new frameutil.CustomButton();
         customButton5 = new frameutil.CustomButton();
+        employeeMenuBar1 = new frameutil.EmployeeMenuBar();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
         setUndecorated(true);
@@ -699,7 +762,7 @@ public class EmployeeSalary extends javax.swing.JFrame {
             jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(jPanel2Layout.createSequentialGroup()
                 .addContainerGap()
-                .addComponent(jScrollPane2, javax.swing.GroupLayout.PREFERRED_SIZE, 173, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addComponent(jScrollPane2, javax.swing.GroupLayout.PREFERRED_SIZE, 267, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
 
@@ -713,17 +776,6 @@ public class EmployeeSalary extends javax.swing.JFrame {
             }
         });
         jPanel3.add(customButton1, "card2");
-
-        javax.swing.GroupLayout jPanel5Layout = new javax.swing.GroupLayout(jPanel5);
-        jPanel5.setLayout(jPanel5Layout);
-        jPanel5Layout.setHorizontalGroup(
-            jPanel5Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 0, Short.MAX_VALUE)
-        );
-        jPanel5Layout.setVerticalGroup(
-            jPanel5Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 98, Short.MAX_VALUE)
-        );
 
         jPanel7.setLayout(new java.awt.CardLayout());
 
@@ -766,6 +818,10 @@ public class EmployeeSalary extends javax.swing.JFrame {
         jLabel8.setForeground(new java.awt.Color(255, 255, 255));
         jLabel8.setText("Name");
 
+        jLabel17.setFont(new java.awt.Font("Segoe UI", 1, 12)); // NOI18N
+        jLabel17.setForeground(new java.awt.Color(255, 255, 255));
+        jLabel17.setText("Working Hours");
+
         javax.swing.GroupLayout jPanel8Layout = new javax.swing.GroupLayout(jPanel8);
         jPanel8.setLayout(jPanel8Layout);
         jPanel8Layout.setHorizontalGroup(
@@ -790,8 +846,11 @@ public class EmployeeSalary extends javax.swing.JFrame {
                     .addComponent(textF4, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                     .addComponent(jLabel16))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(customButton2, javax.swing.GroupLayout.PREFERRED_SIZE, 96, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap(279, Short.MAX_VALUE))
+                .addGroup(jPanel8Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addComponent(customButton2, javax.swing.GroupLayout.PREFERRED_SIZE, 96, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(textF12, javax.swing.GroupLayout.PREFERRED_SIZE, 187, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(jLabel17))
+                .addContainerGap(188, Short.MAX_VALUE))
         );
         jPanel8Layout.setVerticalGroup(
             jPanel8Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -800,12 +859,15 @@ public class EmployeeSalary extends javax.swing.JFrame {
                 .addGroup(jPanel8Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(jLabel16)
                     .addComponent(jLabel14)
-                    .addComponent(jLabel10))
+                    .addComponent(jLabel10)
+                    .addComponent(jLabel17))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addGroup(jPanel8Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(textF8, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(textF7, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(textF4, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addGroup(jPanel8Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addComponent(textF8, javax.swing.GroupLayout.PREFERRED_SIZE, 24, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addGroup(jPanel8Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                        .addComponent(textF7, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addComponent(textF4, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addComponent(textF12, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addGroup(jPanel8Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(jLabel8)
@@ -1019,7 +1081,7 @@ public class EmployeeSalary extends javax.swing.JFrame {
                         .addGroup(jPanel9Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
                             .addComponent(jDateChooser2, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                             .addComponent(textF11, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))))
-                .addContainerGap(19, Short.MAX_VALUE))
+                .addContainerGap(7, Short.MAX_VALUE))
         );
 
         jPanel7.add(jPanel9, "card3");
@@ -1052,15 +1114,14 @@ public class EmployeeSalary extends javax.swing.JFrame {
                 .addContainerGap()
                 .addGroup(roundedPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addComponent(jPanel2, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                    .addComponent(jPanel5, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                     .addGroup(roundedPanel1Layout.createSequentialGroup()
-                        .addGroup(roundedPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                        .addGroup(roundedPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
                             .addGroup(roundedPanel1Layout.createSequentialGroup()
-                                .addGap(6, 6, 6)
                                 .addComponent(jPanel3, javax.swing.GroupLayout.PREFERRED_SIZE, 117, javax.swing.GroupLayout.PREFERRED_SIZE)
                                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                                .addComponent(jPanel11, javax.swing.GroupLayout.PREFERRED_SIZE, 117, javax.swing.GroupLayout.PREFERRED_SIZE))
-                            .addComponent(jPanel7, javax.swing.GroupLayout.PREFERRED_SIZE, 880, javax.swing.GroupLayout.PREFERRED_SIZE))
+                                .addComponent(jPanel11, javax.swing.GroupLayout.PREFERRED_SIZE, 123, javax.swing.GroupLayout.PREFERRED_SIZE))
+                            .addComponent(jPanel7, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                            .addComponent(employeeMenuBar1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
                         .addGap(0, 0, Short.MAX_VALUE)))
                 .addContainerGap())
         );
@@ -1068,6 +1129,8 @@ public class EmployeeSalary extends javax.swing.JFrame {
             roundedPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(roundedPanel1Layout.createSequentialGroup()
                 .addComponent(roundedPanel2, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGap(2, 2, 2)
+                .addComponent(employeeMenuBar1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addGroup(roundedPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
                     .addComponent(jPanel3, javax.swing.GroupLayout.PREFERRED_SIZE, 32, javax.swing.GroupLayout.PREFERRED_SIZE)
@@ -1076,8 +1139,6 @@ public class EmployeeSalary extends javax.swing.JFrame {
                 .addComponent(jPanel7, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(jPanel2, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(jPanel5, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addContainerGap())
         );
 
@@ -1379,6 +1440,7 @@ public class EmployeeSalary extends javax.swing.JFrame {
     private frameutil.CustomButton customButton4;
     private frameutil.CustomButton customButton5;
     private frameutil.CustomTable customTable2;
+    private frameutil.EmployeeMenuBar employeeMenuBar1;
     private com.toedter.calendar.JDateChooser jDateChooser1;
     private com.toedter.calendar.JDateChooser jDateChooser2;
     private javax.swing.JLabel jLabel1;
@@ -1387,6 +1449,7 @@ public class EmployeeSalary extends javax.swing.JFrame {
     public javax.swing.JLabel jLabel14;
     public javax.swing.JLabel jLabel15;
     public javax.swing.JLabel jLabel16;
+    public javax.swing.JLabel jLabel17;
     private javax.swing.JLabel jLabel2;
     private javax.swing.JLabel jLabel3;
     private javax.swing.JLabel jLabel4;
@@ -1399,7 +1462,6 @@ public class EmployeeSalary extends javax.swing.JFrame {
     private javax.swing.JPanel jPanel2;
     private javax.swing.JPanel jPanel3;
     private javax.swing.JPanel jPanel4;
-    private javax.swing.JPanel jPanel5;
     private javax.swing.JPanel jPanel7;
     private javax.swing.JPanel jPanel8;
     private javax.swing.JPanel jPanel9;
@@ -1410,6 +1472,7 @@ public class EmployeeSalary extends javax.swing.JFrame {
     private frameutil.TextF textF1;
     private frameutil.TextF textF10;
     private frameutil.TextF textF11;
+    public frameutil.TextF textF12;
     private frameutil.TextF textF2;
     private frameutil.TextF textF3;
     private frameutil.TextF textF4;

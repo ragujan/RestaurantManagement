@@ -54,7 +54,7 @@ public class EmployeeNavi extends javax.swing.JDialog {
         jPanel2.setBackground(MainTheme.fourthColor);
 
         jframeCustmize();
-
+        menuBar1.foo(this);
         //	this.setVisible(true);
     }
 
@@ -107,6 +107,7 @@ public class EmployeeNavi extends javax.swing.JDialog {
         jLabel9 = new javax.swing.JLabel();
         jLabel10 = new javax.swing.JLabel();
         customButton10 = new frameutil.CustomButton();
+        menuBar1 = new frameutil.MenuBar();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
         setUndecorated(true);
@@ -138,6 +139,11 @@ public class EmployeeNavi extends javax.swing.JDialog {
 
         closeLabel.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
         closeLabel.setPreferredSize(new java.awt.Dimension(30, 20));
+        closeLabel.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                closeLabelMouseClicked(evt);
+            }
+        });
 
         javax.swing.GroupLayout roundedPanel2Layout = new javax.swing.GroupLayout(roundedPanel2);
         roundedPanel2.setLayout(roundedPanel2Layout);
@@ -263,7 +269,7 @@ public class EmployeeNavi extends javax.swing.JDialog {
                             .addComponent(customButton8, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                             .addComponent(customButton3, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                             .addComponent(customButton10, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))))
-                .addContainerGap(552, Short.MAX_VALUE))
+                .addContainerGap(9, Short.MAX_VALUE))
         );
         jPanel2Layout.setVerticalGroup(
             jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -292,7 +298,7 @@ public class EmployeeNavi extends javax.swing.JDialog {
                 .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(customButton5, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(customButton6, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addContainerGap(166, Short.MAX_VALUE))
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
 
         javax.swing.GroupLayout roundedPanel1Layout = new javax.swing.GroupLayout(roundedPanel1);
@@ -302,13 +308,17 @@ public class EmployeeNavi extends javax.swing.JDialog {
             .addComponent(roundedPanel2, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
             .addGroup(roundedPanel1Layout.createSequentialGroup()
                 .addContainerGap()
-                .addComponent(jPanel2, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .addGroup(roundedPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addComponent(jPanel2, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addComponent(menuBar1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
                 .addContainerGap())
         );
         roundedPanel1Layout.setVerticalGroup(
             roundedPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(roundedPanel1Layout.createSequentialGroup()
                 .addComponent(roundedPanel2, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGap(5, 5, 5)
+                .addComponent(menuBar1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(jPanel2, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                 .addContainerGap())
@@ -404,9 +414,20 @@ public class EmployeeNavi extends javax.swing.JDialog {
 
     private void customButton10ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_customButton10ActionPerformed
         // TODO add your handling code here:
-         this.dispatchEvent(new WindowEvent(this, WindowEvent.WINDOW_CLOSING));
+        this.dispatchEvent(new WindowEvent(this, WindowEvent.WINDOW_CLOSING));
         CreateObject.make(new Chef());
     }//GEN-LAST:event_customButton10ActionPerformed
+
+    private void closeLabelMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_closeLabelMouseClicked
+        // TODO add your handling code here:
+        // this.dispatchEvent(new WindowEvent(this, WindowEvent.WINDOW_CLOSING));
+        if (otherFramesInvolved) {
+            dispose();
+
+        } else {
+            System.exit(0);
+        }
+    }//GEN-LAST:event_closeLabelMouseClicked
     private void jframeCustmize() {
 
         closeLabel.setIcon(labelSetIcon("/Icons/close.png", closeLabel.getWidth() - 22, closeLabel.getHeight() - 14));
@@ -414,18 +435,16 @@ public class EmployeeNavi extends javax.swing.JDialog {
         closeLabel.addMouseListener(new java.awt.event.MouseAdapter() {
             @Override
             public void mouseClicked(java.awt.event.MouseEvent evt) {
-                if (otherFramesInvolved) {
-                    dispose();
-                } else {
-                    System.exit(0);
-                }
+
             }
 
+            @Override
             public void mouseEntered(java.awt.event.MouseEvent evt) {
                 closeLabel.setOpaque(true);
                 closeLabel.setBackground(MainTheme.mainColor);
             }
 
+            @Override
             public void mouseExited(java.awt.event.MouseEvent evt) {
 
                 closeLabel.setBackground(MainTheme.secondColor);
@@ -501,6 +520,7 @@ public class EmployeeNavi extends javax.swing.JDialog {
     private javax.swing.JLabel jLabel10;
     private javax.swing.JLabel jLabel9;
     private javax.swing.JPanel jPanel2;
+    private frameutil.MenuBar menuBar1;
     private RoundedPanel roundedPanel1;
     private RoundedPanel roundedPanel2;
     // End of variables declaration//GEN-END:variables

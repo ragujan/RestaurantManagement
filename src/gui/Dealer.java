@@ -40,268 +40,267 @@ import model.MySql;
  */
 public class Dealer extends javax.swing.JFrame {
 
-	/**
-	 * Creates new form NewJFrame
-	 */
-	public Dealer() {
-		initComponents();
-		this.setLocationRelativeTo(null);
-		this.setResizable(true);
-		this.setVisible(true);
-		setShape(new RoundRectangle2D.Double(0, 0, getWidth(), getHeight(), 7, 7));
+    /**
+     * Creates new form NewJFrame
+     */
+    public Dealer() {
+        initComponents();
+        this.setLocationRelativeTo(null);
+        this.setResizable(true);
+        this.setVisible(true);
+        setShape(new RoundRectangle2D.Double(0, 0, getWidth(), getHeight(), 7, 7));
 
-		jframeCustmize();
-		this.setBackground(MainTheme.mainColor);
-		roundedPanel1.setBackground(MainTheme.mainColor);
-		roundedPanel2.setBackground(MainTheme.secondColor);
+        jframeCustmize();
+        this.setBackground(MainTheme.mainColor);
+        roundedPanel1.setBackground(MainTheme.mainColor);
+        roundedPanel2.setBackground(MainTheme.secondColor);
 
-		comboBox2.setBackground(MainTheme.thirdColor);
+        comboBox2.setBackground(MainTheme.thirdColor);
 
-		comboBox4.setBackground(MainTheme.thirdColor);
+        comboBox4.setBackground(MainTheme.thirdColor);
 
-		textF1.setBackground(MainTheme.mainColor);
-		textF2.setBackground(MainTheme.mainColor);
-		textF3.setBackground(MainTheme.mainColor);
+        textF1.setBackground(MainTheme.mainColor);
+        textF2.setBackground(MainTheme.mainColor);
+        textF3.setBackground(MainTheme.mainColor);
 
-		this.setForeground(MainTheme.secondColor);
-		jPanel2.setBackground(MainTheme.secondColor);
-		setDocFilters();
-		loadCombos();
+        this.setForeground(MainTheme.secondColor);
+        jPanel2.setBackground(MainTheme.secondColor);
+        setDocFilters();
+        loadCombos();
+        menuBar1.foo(this);
+    }
 
-	}
+    public Dealer(DealerT et, HashMap<String, String> hm) {
+        this();
+        this.updateId = hm.get("id");
+        textF1.setText(hm.get("name"));
+        textF2.setText(hm.get("contact"));
+        textF3.setText(hm.get("email"));
 
-	public Dealer(DealerT et, HashMap<String, String> hm) {
-		this();
-		this.updateId = hm.get("id");
-		textF1.setText(hm.get("name"));
-		textF2.setText(hm.get("contact"));
-		textF3.setText(hm.get("email"));
+        textF5.setText(hm.get("add1"));
+        textF6.setText(hm.get("add2"));
 
-		textF5.setText(hm.get("add1"));
-		textF6.setText(hm.get("add2"));
+        comboBox4.setSelectedItem(hm.get("city"));
+        comboBox2.setSelectedItem(hm.get("type"));
+        jPanel3.removeAll();
+        jPanel3.add(customButton4);
+        jPanel3.repaint();
+        jPanel3.revalidate();
 
-		comboBox4.setSelectedItem(hm.get("city"));
-		comboBox2.setSelectedItem(hm.get("type"));
-		jPanel3.removeAll();
-		jPanel3.add(customButton4);
-		jPanel3.repaint();
-		jPanel3.revalidate();
+    }
 
-	}
+    public Dealer(Chef c) {
+        this();
 
-	public Dealer(Chef c) {
-		this();
+    }
 
-	}
+    SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
+    String updateId;
 
+    private void jframeCustmize() {
+        closeLabel.setIcon(labelSetIcon("/Icons/close.png", closeLabel.getWidth() - 25, closeLabel.getHeight() - 17));
+        boxLabel.setIcon(labelSetIcon("/Icons/square.png", boxLabel.getWidth() - 23, boxLabel.getHeight() - 17));
+        miniLabel.setIcon(labelSetIcon("/Icons/minus.png", miniLabel.getWidth() - 20, miniLabel.getHeight() - 13));
 
-	SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
-	String updateId;
+        miniLabel.addMouseListener(new java.awt.event.MouseAdapter() {
+            @Override
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                setState(JFrame.ICONIFIED);
+            }
+        });
+    }
 
-	private void jframeCustmize() {
-		closeLabel.setIcon(labelSetIcon("/Icons/close.png", closeLabel.getWidth() - 25, closeLabel.getHeight() - 17));
-		boxLabel.setIcon(labelSetIcon("/Icons/square.png", boxLabel.getWidth() - 23, boxLabel.getHeight() - 17));
-		miniLabel.setIcon(labelSetIcon("/Icons/minus.png", miniLabel.getWidth() - 20, miniLabel.getHeight() - 13));
+    public ImageIcon labelSetIcon(String src, int w, int h) {
+        ImageSizer imgSizer = new ImageSizer();
+        ImageIcon i = imgSizer.overaallResizer(src, w, h);
+        return i;
+    }
 
-		miniLabel.addMouseListener(new java.awt.event.MouseAdapter() {
-			@Override
-			public void mouseClicked(java.awt.event.MouseEvent evt) {
-				setState(JFrame.ICONIFIED);
-			}
-		});
-	}
+    private void loadCombos() {
 
-	public ImageIcon labelSetIcon(String src, int w, int h) {
-		ImageSizer imgSizer = new ImageSizer();
-		ImageIcon i = imgSizer.overaallResizer(src, w, h);
-		return i;
-	}
+        LoadSubTypes.loadType(comboBox2, "dealer_type");
+        LoadSubTypes.loadType(comboBox4, "city");
+    }
 
-	private void loadCombos() {
+    private void setDocFilters() {
+        String nameregex = "(([A-Z][a-z]*[ ]|[A-Z][a-z]*)*)";
+        FilterDocRagRegex name = new FilterDocRagRegex(textF1, nameregex);
 
-		LoadSubTypes.loadType(comboBox2, "dealer_type");
-		LoadSubTypes.loadType(comboBox4, "city");
-	}
+        String contactregex = "((([0][7][24-8][0-9]{7})|([0][7][24-8][0-9]*))|([0][7][24-8])|[0][7]|[0])";
+        FilterDocRagRegex contact = new FilterDocRagRegex(textF2, contactregex, 10);
+    }
 
-	private void setDocFilters() {
-		String nameregex = "(([A-Z][a-z]*[ ]|[A-Z][a-z]*)*)";
-		FilterDocRagRegex name = new FilterDocRagRegex(textF1, nameregex);
+    private void contactCheck(String contact) {
 
-		String contactregex = "((([0][7][24-8][0-9]{7})|([0][7][24-8][0-9]*))|([0][7][24-8])|[0][7]|[0])";
-		FilterDocRagRegex contact = new FilterDocRagRegex(textF2, contactregex, 10);
-	}
+        ResultSet rs;
+        try {
+            rs = MySql.sq("SELECT * FROM `dealer` WHERE `dealer_contact`='" + contact + "' ");
+            if (rs.next()) {
+                Message m = new Message(this, "this contact is already exits ", "warning");
+                textF2.setText("");
+            }
+        } catch (ClassNotFoundException ex) {
+            Logger.getLogger(Dealer.class.getName()).log(Level.SEVERE, null, ex);
+        } catch (SQLException ex) {
+            Logger.getLogger(Dealer.class.getName()).log(Level.SEVERE, null, ex);
+        }
 
-	private void contactCheck(String contact) {
+    }
 
-		ResultSet rs;
-		try {
-			rs = MySql.sq("SELECT * FROM `dealer` WHERE `dealer_contact`='" + contact + "' ");
-			if (rs.next()) {
-				Message m = new Message(this, "this contact is already exits ", "warning");
-				textF2.setText("");
-			}
-		} catch (ClassNotFoundException ex) {
-			Logger.getLogger(Dealer.class.getName()).log(Level.SEVERE, null, ex);
-		} catch (SQLException ex) {
-			Logger.getLogger(Dealer.class.getName()).log(Level.SEVERE, null, ex);
-		}
+    private void emailCheck(String email) {
 
-	}
+        ResultSet rs;
+        try {
+            rs = MySql.sq("SELECT * FROM `dealer` WHERE `dealer_email`='" + email + "' ");
+            if (rs.next()) {
+                Message m = new Message(this, "this email is already exits ", "warning");
+                textF3.setText("");
+            }
+        } catch (ClassNotFoundException ex) {
+            Logger.getLogger(Dealer.class.getName()).log(Level.SEVERE, null, ex);
+        } catch (SQLException ex) {
+            Logger.getLogger(Dealer.class.getName()).log(Level.SEVERE, null, ex);
+        }
 
-	private void emailCheck(String email) {
+    }
 
-		ResultSet rs;
-		try {
-			rs = MySql.sq("SELECT * FROM `dealer` WHERE `dealer_email`='" + email + "' ");
-			if (rs.next()) {
-				Message m = new Message(this, "this email is already exits ", "warning");
-				textF3.setText("");
-			}
-		} catch (ClassNotFoundException ex) {
-			Logger.getLogger(Dealer.class.getName()).log(Level.SEVERE, null, ex);
-		} catch (SQLException ex) {
-			Logger.getLogger(Dealer.class.getName()).log(Level.SEVERE, null, ex);
-		}
+    private void insertEmployee() {
+        String name = textF1.getText();
+        String contact = textF2.getText();
+        String email = textF3.getText();
+        String add1 = textF5.getText();
+        String add2 = textF6.getText();
 
-	}
+        String city = comboBox4.getSelectedItem().toString();
 
-	private void insertEmployee() {
-		String name = textF1.getText();
-		String contact = textF2.getText();
-		String email = textF3.getText();
-		String add1 = textF5.getText();
-		String add2 = textF6.getText();
+        String emptype = comboBox2.getSelectedItem().toString();
 
-		String city = comboBox4.getSelectedItem().toString();
+        if (name.isEmpty()) {
+            //JOP.setJOPMessage(this, "name field is empty", "warning", 1);
+            Message m = new Message(this, "name field is empty", "warning");
+        } else if (contact.isEmpty()) {
 
-		String emptype = comboBox2.getSelectedItem().toString();
+            Message m = new Message(this, "contact field is empty", "warning");
+        } else if (email.isEmpty()) {
 
-		if (name.isEmpty()) {
-			//JOP.setJOPMessage(this, "name field is empty", "warning", 1);
-			Message m = new Message(this, "name field is empty", "warning");
-		} else if (contact.isEmpty()) {
+            Message m = new Message(this, "email field is empty", "warning");
+        } else if (!BasicValidator.email(email)) {
 
-			Message m = new Message(this, "contact field is empty", "warning");
-		} else if (email.isEmpty()) {
+            Message m = new Message(this, "email is not a valid one", "warning");
+        } else if (city.equals("Select city")) {
 
-			Message m = new Message(this, "email field is empty", "warning");
-		} else if (!BasicValidator.email(email)) {
+            Message m = new Message(this, "please select a valid city", "warning");
+        } else if (add1.isEmpty()) {
 
-			Message m = new Message(this, "email is not a valid one", "warning");
-		} else if (city.equals("Select city")) {
+            Message m = new Message(this, "address field is empty", "warning");
+        } else if (emptype.equals("Select dealer_type")) {
 
-			Message m = new Message(this, "please select a valid city", "warning");
-		} else if (add1.isEmpty()) {
+            Message m = new Message(this, "Select a valid dealer type", "warning");
+        } else {
+            try {
+                ResultSet rs = MySql.sq("SELECT * FROM `dealer` WHERE `dealer_contact`='" + contact + "' OR `dealer_email`='" + email + "'");
+                if (rs.next()) {
+                    Message m = new Message(this, "address field is empty", "warning");
+                } else {
 
-			Message m = new Message(this, "address field is empty", "warning");
-		} else if (emptype.equals("Select dealer_type")) {
+                    rs = MySql.sq("SELECT * FROM `city` WHERE `city_name`='" + city + "'");
+                    rs.next();
+                    String cityid = rs.getString("city_id");
+                    ArrayList<String> info = new ArrayList<>();
+                    info.add(cityid);
+                    info.add(add1);
+                    info.add(add2);
+                    InsertTable it = new InsertTable("dealer_address", info);
+                    rs = MySql.sq("SELECT * FROM	`dealer_address`	 WHERE `street_1` ='" + add1 + "' AND `street_2`='" + add2 + "' AND `city_id`='" + cityid + "'");
+                    rs.next();
+                    String addId = rs.getString("dealer_address_id");
 
-			Message m = new Message(this, "Select a valid dealer type", "warning");
-		} else {
-			try {
-				ResultSet rs = MySql.sq("SELECT * FROM `dealer` WHERE `dealer_contact`='" + contact + "' OR `dealer_email`='" + email + "'");
-				if (rs.next()) {
-					Message m = new Message(this, "address field is empty", "warning");
-				} else {
+                    //today date
+                    String today = sdf.format(new Date());
+                    //emp type id
+                    rs = MySql.sq("SELECT * FROM `dealer_type` WHERE `dealer_type_name`='" + emptype + "'");
+                    rs.next();
+                    String dealerTypeId = rs.getString("dealer_type_id");
+                    //gender id 
 
-					rs = MySql.sq("SELECT * FROM `city` WHERE `city_name`='" + city + "'");
-					rs.next();
-					String cityid = rs.getString("city_id");
-					ArrayList<String> info = new ArrayList<>();
-					info.add(cityid);
-					info.add(add1);
-					info.add(add2);
-					InsertTable it = new InsertTable("dealer_address", info);
-					rs = MySql.sq("SELECT * FROM	`dealer_address`	 WHERE `street_1` ='" + add1 + "' AND `street_2`='" + add2 + "' AND `city_id`='" + cityid + "'");
-					rs.next();
-					String addId = rs.getString("dealer_address_id");
+                    info.clear();
+                    info.add(addId);
 
-					//today date
-					String today = sdf.format(new Date());
-					//emp type id
-					rs = MySql.sq("SELECT * FROM `dealer_type` WHERE `dealer_type_name`='" + emptype + "'");
-					rs.next();
-					String dealerTypeId = rs.getString("dealer_type_id");
-					//gender id 
+                    info.add(contact);
+                    info.add(email);
+                    info.add(name);
+                    info.add(dealerTypeId);
 
-					info.clear();
-					info.add(addId);
+                    it = new InsertTable("dealer", info);
+                    JComponent[] jp = {textF1, textF2, textF3, textF5, textF6, comboBox2, comboBox4};
+                    SetEmptyItems.emptyItems(jp);
+                }
+            } catch (ClassNotFoundException ex) {
+                Logger.getLogger(Dealer.class.getName()).log(Level.SEVERE, null, ex);
+            } catch (SQLException ex) {
+                Logger.getLogger(Dealer.class.getName()).log(Level.SEVERE, null, ex);
+            }
 
-					info.add(contact);
-					info.add(email);
-					info.add(name);
-					info.add(dealerTypeId);
+        }
+    }
 
-					it = new InsertTable("dealer", info);
-					JComponent[] jp = {textF1, textF2, textF3, textF5, textF6, comboBox2, comboBox4};
-					SetEmptyItems.emptyItems(jp);
-				}
-			} catch (ClassNotFoundException ex) {
-				Logger.getLogger(Dealer.class.getName()).log(Level.SEVERE, null, ex);
-			} catch (SQLException ex) {
-				Logger.getLogger(Dealer.class.getName()).log(Level.SEVERE, null, ex);
-			}
+    private void updateEmployee() {
+        String name = textF1.getText();
+        String contact = textF2.getText();
+        String email = textF3.getText();
+        String add1 = textF5.getText();
+        String add2 = textF6.getText();
 
-		}
-	}
+        String city = comboBox4.getSelectedItem().toString();
 
-	private void updateEmployee() {
-		String name = textF1.getText();
-		String contact = textF2.getText();
-		String email = textF3.getText();
-		String add1 = textF5.getText();
-		String add2 = textF6.getText();
+        String emptype = comboBox2.getSelectedItem().toString();
 
-		String city = comboBox4.getSelectedItem().toString();
+        if (name.isEmpty()) {
+            //JOP.setJOPMessage(this, "name field is empty", "warning", 1);
+            Message m = new Message(this, "name field is empty", "warning");
+        } else if (contact.isEmpty()) {
 
-		String emptype = comboBox2.getSelectedItem().toString();
+            Message m = new Message(this, "contact field is empty", "warning");
+        } else if (email.isEmpty()) {
 
-		if (name.isEmpty()) {
-			//JOP.setJOPMessage(this, "name field is empty", "warning", 1);
-			Message m = new Message(this, "name field is empty", "warning");
-		} else if (contact.isEmpty()) {
+            Message m = new Message(this, "email field is empty", "warning");
+        } else if (!BasicValidator.email(email)) {
 
-			Message m = new Message(this, "contact field is empty", "warning");
-		} else if (email.isEmpty()) {
+            Message m = new Message(this, "email is not a valid one", "warning");
+        } else if (city.equals("Select city")) {
 
-			Message m = new Message(this, "email field is empty", "warning");
-		} else if (!BasicValidator.email(email)) {
+            Message m = new Message(this, "please select a valid city", "warning");
+        } else if (add1.isEmpty()) {
 
-			Message m = new Message(this, "email is not a valid one", "warning");
-		} else if (city.equals("Select city")) {
+            Message m = new Message(this, "address field is empty", "warning");
+        } else if (emptype.equals("Select dealer_type")) {
 
-			Message m = new Message(this, "please select a valid city", "warning");
-		} else if (add1.isEmpty()) {
+            Message m = new Message(this, "Select a valid dealer type", "warning");
+        } else {
+            ResultSet rs;
+            try {
+                rs = MySql.sq("SELECT * FROM `dealer` WHERE `dealer_id`='" + updateId + "'");
+                rs.next();
+                String address_id = rs.getString("dealer_address_id");
+                String addressUp = "UPDATE `dealer_address` set `street_1`='" + add1 + "',`street_2`='" + add2 + "' WHERE `dealer_address_id`='" + address_id + "'";
+                MySql.iud(addressUp);
+            } catch (ClassNotFoundException ex) {
+                Logger.getLogger(Dealer.class.getName()).log(Level.SEVERE, null, ex);
+            } catch (SQLException ex) {
+                Logger.getLogger(Dealer.class.getName()).log(Level.SEVERE, null, ex);
+            }
 
-			Message m = new Message(this, "address field is empty", "warning");
-		} else if (emptype.equals("Select dealer_type")) {
+            String update = "UPDATE `dealer` SET `dealer_name`='" + name + "' WHERE `dealer_id`='" + this.updateId + "' ";
+            MySql.iud(update);
+        }
+    }
 
-			Message m = new Message(this, "Select a valid dealer type", "warning");
-		} else {
-			ResultSet rs;
-			try {
-				rs = MySql.sq("SELECT * FROM `dealer` WHERE `dealer_id`='" + updateId + "'");
-				rs.next();
-				String address_id = rs.getString("dealer_address_id");
-				String addressUp = "UPDATE `dealer_address` set `street_1`='" + add1 + "',`street_2`='" + add2 + "' WHERE `dealer_address_id`='" + address_id + "'";
-				MySql.iud(addressUp);
-			} catch (ClassNotFoundException ex) {
-				Logger.getLogger(Dealer.class.getName()).log(Level.SEVERE, null, ex);
-			} catch (SQLException ex) {
-				Logger.getLogger(Dealer.class.getName()).log(Level.SEVERE, null, ex);
-			}
-
-			String update = "UPDATE `dealer` SET `dealer_name`='" + name + "' WHERE `dealer_id`='" + this.updateId + "' ";
-			MySql.iud(update);
-		}
-	}
-
-	/**
-	 * This method is called from within the constructor to initialize the
-	 * form. WARNING: Do NOT modify this code. The content of this method is
-	 * always regenerated by the Form Editor.
-	 */
-	@SuppressWarnings("unchecked")
+    /**
+     * This method is called from within the constructor to initialize the form.
+     * WARNING: Do NOT modify this code. The content of this method is always
+     * regenerated by the Form Editor.
+     */
+    @SuppressWarnings("unchecked")
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
     private void initComponents() {
 
@@ -332,6 +331,7 @@ public class Dealer extends javax.swing.JFrame {
         jPanel3 = new javax.swing.JPanel();
         customButton1 = new frameutil.CustomButton();
         customButton4 = new frameutil.CustomButton();
+        menuBar1 = new frameutil.MenuBar();
 
         jToggleButton1.setText("jToggleButton1");
 
@@ -565,23 +565,19 @@ public class Dealer extends javax.swing.JFrame {
                         .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                             .addComponent(comboBox2, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                             .addComponent(textF5, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                            .addComponent(textF1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                        .addGap(0, 0, 0)))
+                            .addComponent(textF1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))))
+                .addGap(6, 6, 6)
+                .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(jLabel8)
+                    .addComponent(jLabel3))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addComponent(jPanel3, javax.swing.GroupLayout.PREFERRED_SIZE, 0, Short.MAX_VALUE)
                     .addGroup(jPanel2Layout.createSequentialGroup()
-                        .addGap(0, 0, Short.MAX_VALUE)
-                        .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING, false)
-                            .addGroup(jPanel2Layout.createSequentialGroup()
-                                .addComponent(jLabel3)
-                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                                .addComponent(textF2, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                            .addGroup(jPanel2Layout.createSequentialGroup()
-                                .addComponent(jLabel8)
-                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                                .addComponent(textF6, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))))
-                    .addGroup(jPanel2Layout.createSequentialGroup()
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                        .addComponent(jPanel3, javax.swing.GroupLayout.PREFERRED_SIZE, 24, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                        .addComponent(textF2, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addGap(0, 0, Short.MAX_VALUE))
+                    .addComponent(textF6, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(jLabel4)
                     .addComponent(jLabel10))
@@ -600,13 +596,17 @@ public class Dealer extends javax.swing.JFrame {
             .addComponent(roundedPanel2, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
             .addGroup(roundedPanel1Layout.createSequentialGroup()
                 .addContainerGap()
-                .addComponent(jPanel2, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .addGroup(roundedPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addComponent(jPanel2, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addComponent(menuBar1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
                 .addContainerGap())
         );
         roundedPanel1Layout.setVerticalGroup(
             roundedPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(roundedPanel1Layout.createSequentialGroup()
                 .addComponent(roundedPanel2, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGap(2, 2, 2)
+                .addComponent(menuBar1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(jPanel2, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
@@ -626,170 +626,170 @@ public class Dealer extends javax.swing.JFrame {
         pack();
     }// </editor-fold>//GEN-END:initComponents
     int x = 0;
-	int y = 0;
+    int y = 0;
     private void roundedPanel2MousePressed(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_roundedPanel2MousePressed
-	    // TODO add your handling code here:
-	    x = evt.getX();
-	    y = evt.getY();
+        // TODO add your handling code here:
+        x = evt.getX();
+        y = evt.getY();
     }//GEN-LAST:event_roundedPanel2MousePressed
 
     private void roundedPanel2MouseDragged(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_roundedPanel2MouseDragged
-	    // TODO add your handling code here:
-	    int xx = evt.getXOnScreen();
-	    int yy = evt.getYOnScreen();
-	    this.setLocation(xx - x, yy - y);
+        // TODO add your handling code here:
+        int xx = evt.getXOnScreen();
+        int yy = evt.getYOnScreen();
+        this.setLocation(xx - x, yy - y);
     }//GEN-LAST:event_roundedPanel2MouseDragged
 
     private void closeLabelMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_closeLabelMouseClicked
-	    // TODO add your handling code here:
-	    this.dispose();
+        // TODO add your handling code here:
+        this.dispose();
     }//GEN-LAST:event_closeLabelMouseClicked
 
     private void closeLabelMouseEntered(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_closeLabelMouseEntered
-	    // TODO add your handling code here:
-	    closeLabel.setOpaque(true);
-	    closeLabel.setBackground(MainTheme.mainColor);
+        // TODO add your handling code here:
+        closeLabel.setOpaque(true);
+        closeLabel.setBackground(MainTheme.mainColor);
     }//GEN-LAST:event_closeLabelMouseEntered
 
     private void closeLabelMouseExited(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_closeLabelMouseExited
-	    // TODO add your handling code here:
-	    closeLabel.setBackground(MainTheme.secondColor);
-	    closeLabel.setOpaque(false);
+        // TODO add your handling code here:
+        closeLabel.setBackground(MainTheme.secondColor);
+        closeLabel.setOpaque(false);
 
     }//GEN-LAST:event_closeLabelMouseExited
 
     private void miniLabelMouseEntered(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_miniLabelMouseEntered
-	    // TODO add your handling code here:
-	    miniLabel.setOpaque(true);
-	    miniLabel.setBackground(MainTheme.mainColor);
+        // TODO add your handling code here:
+        miniLabel.setOpaque(true);
+        miniLabel.setBackground(MainTheme.mainColor);
     }//GEN-LAST:event_miniLabelMouseEntered
 
     private void miniLabelMouseExited(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_miniLabelMouseExited
-	    // TODO add your handling code here:
+        // TODO add your handling code here:
 
-	    miniLabel.setBackground(MainTheme.secondColor);
-	    miniLabel.setOpaque(false);
+        miniLabel.setBackground(MainTheme.secondColor);
+        miniLabel.setOpaque(false);
     }//GEN-LAST:event_miniLabelMouseExited
-	boolean emailFieldEntred = false;
+    boolean emailFieldEntred = false;
         private void comboBox2ItemStateChanged(java.awt.event.ItemEvent evt) {//GEN-FIRST:event_comboBox2ItemStateChanged
-		// TODO add your handling code here:
+            // TODO add your handling code here:
 
 
         }//GEN-LAST:event_comboBox2ItemStateChanged
 
         private void comboBox4ItemStateChanged(java.awt.event.ItemEvent evt) {//GEN-FIRST:event_comboBox4ItemStateChanged
-		// TODO add your handling code here:
+            // TODO add your handling code here:
         }//GEN-LAST:event_comboBox4ItemStateChanged
 
         private void comboBox4ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_comboBox4ActionPerformed
-		// TODO add your handling code here:
+            // TODO add your handling code here:
         }//GEN-LAST:event_comboBox4ActionPerformed
 
         private void customButton1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_customButton1ActionPerformed
-		// TODO add your handling code here:
-		insertEmployee();
+            // TODO add your handling code here:
+            insertEmployee();
 
         }//GEN-LAST:event_customButton1ActionPerformed
 
         private void textF2FocusGained(java.awt.event.FocusEvent evt) {//GEN-FIRST:event_textF2FocusGained
-		// TODO add your handling code here:
+            // TODO add your handling code here:
 
 
         }//GEN-LAST:event_textF2FocusGained
 
         private void textF2FocusLost(java.awt.event.FocusEvent evt) {//GEN-FIRST:event_textF2FocusLost
-		// TODO add your handling code here:
-		contactCheck(textF2.getText());
+            // TODO add your handling code here:
+            contactCheck(textF2.getText());
         }//GEN-LAST:event_textF2FocusLost
 
         private void textF2KeyTyped(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_textF2KeyTyped
-		// TODO add your handling code here:
-		String contact = textF2.getText() + evt.getKeyChar();
-		contactCheck(contact);
+            // TODO add your handling code here:
+            String contact = textF2.getText() + evt.getKeyChar();
+            contactCheck(contact);
         }//GEN-LAST:event_textF2KeyTyped
 
         private void textF3FocusLost(java.awt.event.FocusEvent evt) {//GEN-FIRST:event_textF3FocusLost
-		// TODO add your handling code here:
-		emailCheck(textF3.getText());
+            // TODO add your handling code here:
+            emailCheck(textF3.getText());
         }//GEN-LAST:event_textF3FocusLost
 
         private void textF3KeyTyped(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_textF3KeyTyped
-		// TODO add your handling code here:
-		String email = textF3.getText() + evt.getKeyChar();
-		emailCheck(email);
+            // TODO add your handling code here:
+            String email = textF3.getText() + evt.getKeyChar();
+            emailCheck(email);
         }//GEN-LAST:event_textF3KeyTyped
 
         private void customButton3ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_customButton3ActionPerformed
-		// TODO add your handling code here:
-		new DealerT();
-		this.dispose();
+            // TODO add your handling code here:
+            new DealerT();
+            this.dispose();
         }//GEN-LAST:event_customButton3ActionPerformed
 
         private void customButton4ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_customButton4ActionPerformed
-		// TODO add your handling code here:
-		updateEmployee();
+            // TODO add your handling code here:
+            updateEmployee();
         }//GEN-LAST:event_customButton4ActionPerformed
 
-	/**
-	 * @param args the command line arguments
-	 */
-	public static void main(String args[]) {
-		/* Set the Nimbus look and feel */
-		//<editor-fold defaultstate="collapsed" desc=" Look and feel setting code (optional) ">
-		/* If Nimbus (introduced in Java SE 6) is not available, stay with the default look and feel.
+    /**
+     * @param args the command line arguments
+     */
+    public static void main(String args[]) {
+        /* Set the Nimbus look and feel */
+        //<editor-fold defaultstate="collapsed" desc=" Look and feel setting code (optional) ">
+        /* If Nimbus (introduced in Java SE 6) is not available, stay with the default look and feel.
          * For details see http://download.oracle.com/javase/tutorial/uiswing/lookandfeel/plaf.html 
-		 */
-		try {
-			for (javax.swing.UIManager.LookAndFeelInfo info : javax.swing.UIManager.getInstalledLookAndFeels()) {
-				if ("Nimbus".equals(info.getName())) {
-					javax.swing.UIManager.setLookAndFeel(info.getClassName());
-					break;
+         */
+        try {
+            for (javax.swing.UIManager.LookAndFeelInfo info : javax.swing.UIManager.getInstalledLookAndFeels()) {
+                if ("Nimbus".equals(info.getName())) {
+                    javax.swing.UIManager.setLookAndFeel(info.getClassName());
+                    break;
 
-				}
-			}
-		} catch (ClassNotFoundException ex) {
-			java.util.logging.Logger.getLogger(Dealer.class
-				.getName()).log(java.util.logging.Level.SEVERE, null, ex);
+                }
+            }
+        } catch (ClassNotFoundException ex) {
+            java.util.logging.Logger.getLogger(Dealer.class
+                    .getName()).log(java.util.logging.Level.SEVERE, null, ex);
 
-		} catch (InstantiationException ex) {
-			java.util.logging.Logger.getLogger(Dealer.class
-				.getName()).log(java.util.logging.Level.SEVERE, null, ex);
+        } catch (InstantiationException ex) {
+            java.util.logging.Logger.getLogger(Dealer.class
+                    .getName()).log(java.util.logging.Level.SEVERE, null, ex);
 
-		} catch (IllegalAccessException ex) {
-			java.util.logging.Logger.getLogger(Dealer.class
-				.getName()).log(java.util.logging.Level.SEVERE, null, ex);
+        } catch (IllegalAccessException ex) {
+            java.util.logging.Logger.getLogger(Dealer.class
+                    .getName()).log(java.util.logging.Level.SEVERE, null, ex);
 
-		} catch (javax.swing.UnsupportedLookAndFeelException ex) {
-			java.util.logging.Logger.getLogger(Dealer.class
-				.getName()).log(java.util.logging.Level.SEVERE, null, ex);
-		}
-		//</editor-fold>
-		//</editor-fold>
-		//</editor-fold>
-		//</editor-fold>
-		//</editor-fold>
-		//</editor-fold>
-		//</editor-fold>
-		//</editor-fold>
-		//</editor-fold>
-		//</editor-fold>
-		//</editor-fold>
-		//</editor-fold>
-		//</editor-fold>
-		//</editor-fold>
-		//</editor-fold>
-		//</editor-fold>
+        } catch (javax.swing.UnsupportedLookAndFeelException ex) {
+            java.util.logging.Logger.getLogger(Dealer.class
+                    .getName()).log(java.util.logging.Level.SEVERE, null, ex);
+        }
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
 
-		/* Create and display the form */
-		java.awt.EventQueue.invokeLater(new Runnable() {
-			public void run() {
+        /* Create and display the form */
+        java.awt.EventQueue.invokeLater(new Runnable() {
+            public void run() {
 
-				JFrame jf = new Dealer();
-				jf.setVisible(true);
+                JFrame jf = new Dealer();
+                jf.setVisible(true);
 
-			}
-		});
-	}
+            }
+        });
+    }
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JLabel boxLabel;
@@ -811,6 +811,7 @@ public class Dealer extends javax.swing.JFrame {
     private javax.swing.JPanel jPanel2;
     private javax.swing.JPanel jPanel3;
     private javax.swing.JToggleButton jToggleButton1;
+    private frameutil.MenuBar menuBar1;
     private javax.swing.JLabel miniLabel;
     private RoundedPanel roundedPanel1;
     private RoundedPanel roundedPanel2;

@@ -37,7 +37,7 @@ import model.MySql;
  *
  * @author acer
  */
-public class FoodItemCategory extends javax.swing.JFrame {
+class FoodItemCategory extends javax.swing.JFrame {
 
     /**
      * Creates new form NewJFrame
@@ -64,7 +64,7 @@ public class FoodItemCategory extends javax.swing.JFrame {
         loadCombos();
         loadTable();
         tableListenerRag();
-
+        foodMenuBar1.foo(this);
     }
 
     public FoodItemCategory(DealerT et, HashMap<String, String> hm) {
@@ -78,6 +78,18 @@ public class FoodItemCategory extends javax.swing.JFrame {
 
     }
 
+    public FoodItemCategory(FoodItem fi) {
+        this();
+        fi.setEnabled(false);
+        isFoodItemInvolved = true;
+        isOtherFramesInvolved = true;
+        this.fi = fi;
+        this.fic = this;
+    }
+    boolean isOtherFramesInvolved;
+    boolean isFoodItemInvolved;
+    FoodItemCategory fic;
+    FoodItem fi;
     SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
     String updateId;
     String loadTableQuery;
@@ -160,9 +172,17 @@ public class FoodItemCategory extends javax.swing.JFrame {
                 String name = (String) customTable1.getValueAt(row, 1);
                 String dealerType = (String) customTable1.getValueAt(row, 2);
                 foodItemCategoryID = (String) customTable1.getValueAt(row, 0);
-                textF1.setText(name);
-                comboBox1.setSelectedItem(dealerType);
-                PanelRemover.removeP(jPanel4, customButton2);
+                if (isFoodItemInvolved) {
+                    fi.comboBox1.setSelectedItem(name);
+                    fi.setEnabled(true);
+
+                    fic.dispose();
+                } else {
+
+                    textF1.setText(name);
+                    comboBox1.setSelectedItem(dealerType);
+                    PanelRemover.removeP(jPanel4, customButton2);
+                }
             }
         };
         tlas.tableListenerRag(customTable1);
@@ -230,6 +250,7 @@ public class FoodItemCategory extends javax.swing.JFrame {
         jPanel3 = new javax.swing.JPanel();
         jScrollPane1 = new javax.swing.JScrollPane();
         customTable1 = new frameutil.CustomTable();
+        foodMenuBar1 = new frameutil.FoodMenuBar();
 
         jToggleButton1.setText("jToggleButton1");
 
@@ -356,7 +377,7 @@ public class FoodItemCategory extends javax.swing.JFrame {
                     .addComponent(jLabel2, javax.swing.GroupLayout.PREFERRED_SIZE, 180, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(jPanel4, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                .addContainerGap(30, Short.MAX_VALUE))
         );
         jPanel2Layout.setVerticalGroup(
             jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -365,13 +386,13 @@ public class FoodItemCategory extends javax.swing.JFrame {
                 .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(jLabel2)
                     .addComponent(jLabel3))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                .addGap(18, 18, 18)
                 .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
                     .addComponent(jPanel4, javax.swing.GroupLayout.PREFERRED_SIZE, 0, Short.MAX_VALUE)
-                    .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                        .addComponent(comboBox1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addComponent(textF1, javax.swing.GroupLayout.PREFERRED_SIZE, 25, javax.swing.GroupLayout.PREFERRED_SIZE)))
-                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                    .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                        .addComponent(textF1, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.PREFERRED_SIZE, 25, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addComponent(comboBox1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                .addContainerGap())
         );
 
         customTable1.setModel(new javax.swing.table.DefaultTableModel(
@@ -413,7 +434,8 @@ public class FoodItemCategory extends javax.swing.JFrame {
                 .addContainerGap()
                 .addGroup(roundedPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addComponent(jPanel2, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                    .addComponent(jPanel3, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                    .addComponent(jPanel3, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addComponent(foodMenuBar1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
                 .addContainerGap())
         );
         roundedPanel1Layout.setVerticalGroup(
@@ -421,6 +443,8 @@ public class FoodItemCategory extends javax.swing.JFrame {
             .addGroup(roundedPanel1Layout.createSequentialGroup()
                 .addComponent(roundedPanel2, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(foodMenuBar1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                 .addComponent(jPanel2, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(jPanel3, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
@@ -431,7 +455,9 @@ public class FoodItemCategory extends javax.swing.JFrame {
         getContentPane().setLayout(layout);
         layout.setHorizontalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addComponent(roundedPanel1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+            .addGroup(layout.createSequentialGroup()
+                .addComponent(roundedPanel1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGap(0, 0, Short.MAX_VALUE))
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -457,7 +483,16 @@ public class FoodItemCategory extends javax.swing.JFrame {
 
     private void closeLabelMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_closeLabelMouseClicked
         // TODO add your handling code here:
-        this.dispose();
+        if (isOtherFramesInvolved) {
+
+            fi.setEnabled(true);
+
+            fic.dispose();
+
+        } else {
+            this.dispose();
+        }
+
     }//GEN-LAST:event_closeLabelMouseClicked
 
     private void closeLabelMouseEntered(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_closeLabelMouseEntered
@@ -613,6 +648,7 @@ public class FoodItemCategory extends javax.swing.JFrame {
     private frameutil.CustomButton customButton1;
     private frameutil.CustomButton customButton2;
     private frameutil.CustomTable customTable1;
+    private frameutil.FoodMenuBar foodMenuBar1;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel2;
     private javax.swing.JLabel jLabel3;

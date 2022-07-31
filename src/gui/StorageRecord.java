@@ -42,31 +42,40 @@ public class StorageRecord extends javax.swing.JFrame {
         this.setResizable(true);
         this.setVisible(true);
         setShape(new RoundRectangle2D.Double(0, 0, getWidth(), getHeight(), 7, 7));
-        
+
         jframeCustmize();
         this.setBackground(MainTheme.mainColor);
         roundedPanel1.setBackground(MainTheme.mainColor);
         roundedPanel2.setBackground(MainTheme.secondColor);
-        
+
         JComponent[] jc = {comboBox1};
         JComponent[] jp = {jPanel2};
         ColorSetter.setC(jc, MainTheme.fourthColor, 1);
         ColorSetter.setC(jc, MainTheme.secondColor, 2);
-        
+
         ColorSetter.setC(jp, MainTheme.secondColor, 1);
         this.setForeground(MainTheme.secondColor);
-        
+
         setDocFilters();
         loadCombos();
         loadTable();
-        
+        foodMenuBar1.foo(this);
     }
+
+    public StorageRecord(AdvancedAnalytics aa, String stringQuery) {
+        this();
+        this.aa = aa;
+        isAdvancedAnalysticsInvolved = true;
+        loadTable(stringQuery);
+    }
+    AdvancedAnalytics aa;
+    boolean isAdvancedAnalysticsInvolved = false;
     public String supplierID;
     public String FRNId;
     FRNView frnview;
     String loadTableQuery;
     String[] colnames = {"food_storage_id", "food_item_id", "food_item_name", "food_item_category_name", "mfd", "exp", "qty", "buying_price"};
-    
+
     private void loadQuery() {
         ArrayList<String> al = new ArrayList<String>();
         al.add("food_receive_item");
@@ -77,21 +86,26 @@ public class StorageRecord extends javax.swing.JFrame {
         //	al.add("employee_type,employee");
         SearchTable st = new SearchTable(al);
         this.loadTableQuery = st.getTableQuery();
-        
+
     }
-    
+
     private void loadTable() {
         loadQuery();
         String sort = "ORDER BY `food_storage`.`food_storage_id` ASC";
-        
+
         StringBuilder stringquerybuild = new StringBuilder();
         stringquerybuild.append(this.loadTableQuery).toString();
         stringquerybuild.append(sort).toString();
         String query = stringquerybuild.toString();
-        
+
         LoadTables lt = new LoadTables(customTable1, query, this.colnames);
     }
-    
+
+    private void loadTable(String stringQuery) {
+
+        LoadTables lt = new LoadTables(customTable1, stringQuery, this.colnames);
+    }
+
     public void advancedSearch() {
         String name = textF1.getText();
         boolean isNameInvolved = false;
@@ -99,18 +113,18 @@ public class StorageRecord extends javax.swing.JFrame {
         if (comboBox1.getSelectedItem() != null) {
             categoryType = comboBox1.getSelectedItem().toString();
         }
-        
+
         boolean isContactIvolved = false;
-        
+
         boolean isEmailInvolved = false;
         String sort = comboBox2.getSelectedItem().toString();
         String emptype = comboBox1.getSelectedItem().toString();
-        
+
         StringBuilder stringquerybuild = new StringBuilder();
         StringBuilder whereQueryBuilder = new StringBuilder();
         Vector<String> v = new Vector<String>();
         boolean queriesInvolved = false;
-        
+
         String sortQuery = "";
         String whereQuery = "";
         if (sort.equals("Newest")) {
@@ -130,7 +144,7 @@ public class StorageRecord extends javax.swing.JFrame {
             v.add("`food_item`.`food_item_name` LIKE '%" + name + "%' ");
             queriesInvolved = true;
         }
-        
+
         if (!categoryType.equals("Select food_item_category")) {
             v.add("`food_item_category`.`food_item_category_name` = '" + categoryType + "' ");
             queriesInvolved = true;
@@ -144,7 +158,7 @@ public class StorageRecord extends javax.swing.JFrame {
 
             whereQueryBuilder.append("");
             whereQueryBuilder.append(v.get(i));
-            
+
             if (i != v.size() - 1) {
                 whereQueryBuilder.append("AND ");
             }
@@ -157,26 +171,26 @@ public class StorageRecord extends javax.swing.JFrame {
         //System.out.println("where query is " + whereQueryBuilder);
         LoadTables lt = new LoadTables(customTable1, query, this.colnames);
     }
-    
+
     public StorageRecord(DealerT et, HashMap<String, String> hm) {
         this();
         this.updateId = hm.get("id");
-        
+
     }
-    
+
     public StorageRecord(Chef c) {
         this();
-        
+
     }
-    
+
     SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
     String updateId;
-    
+
     private void jframeCustmize() {
         closeLabel.setIcon(labelSetIcon("/Icons/close.png", closeLabel.getWidth() - 25, closeLabel.getHeight() - 17));
         boxLabel.setIcon(labelSetIcon("/Icons/square.png", boxLabel.getWidth() - 23, boxLabel.getHeight() - 17));
         miniLabel.setIcon(labelSetIcon("/Icons/minus.png", miniLabel.getWidth() - 20, miniLabel.getHeight() - 13));
-        
+
         miniLabel.addMouseListener(new java.awt.event.MouseAdapter() {
             @Override
             public void mouseClicked(java.awt.event.MouseEvent evt) {
@@ -184,53 +198,53 @@ public class StorageRecord extends javax.swing.JFrame {
             }
         });
     }
-    
+
     public ImageIcon labelSetIcon(String src, int w, int h) {
         ImageSizer imgSizer = new ImageSizer();
         ImageIcon i = imgSizer.overaallResizer(src, w, h);
         return i;
     }
-    
+
     private void loadCombos() {
         LoadSubTypes.loadType(comboBox1, "food_item_category");
     }
-    
+
     private void setDocFilters() {
-        
+
     }
-    
+
     private void contactCheck(String contact) {
-        
+
         ResultSet rs;
         try {
             rs = MySql.sq("SELECT * FROM `dealer` WHERE `dealer_contact`='" + contact + "' ");
             if (rs.next()) {
                 Message m = new Message(this, "this contact is already exits ", "warning");
-                
+
             }
         } catch (ClassNotFoundException ex) {
             Logger.getLogger(StorageRecord.class.getName()).log(Level.SEVERE, null, ex);
         } catch (SQLException ex) {
             Logger.getLogger(StorageRecord.class.getName()).log(Level.SEVERE, null, ex);
         }
-        
+
     }
-    
+
     private void emailCheck(String email) {
-        
+
         ResultSet rs;
         try {
             rs = MySql.sq("SELECT * FROM `dealer` WHERE `dealer_email`='" + email + "' ");
             if (rs.next()) {
                 Message m = new Message(this, "this email is already exits ", "warning");
-                
+
             }
         } catch (ClassNotFoundException ex) {
             Logger.getLogger(StorageRecord.class.getName()).log(Level.SEVERE, null, ex);
         } catch (SQLException ex) {
             Logger.getLogger(StorageRecord.class.getName()).log(Level.SEVERE, null, ex);
         }
-        
+
     }
 
     /**
@@ -261,6 +275,7 @@ public class StorageRecord extends javax.swing.JFrame {
         jPanel3 = new javax.swing.JPanel();
         jScrollPane2 = new javax.swing.JScrollPane();
         customTable1 = new frameutil.CustomTable();
+        foodMenuBar1 = new frameutil.FoodMenuBar();
 
         jToggleButton1.setText("jToggleButton1");
 
@@ -458,7 +473,7 @@ public class StorageRecord extends javax.swing.JFrame {
             .addGroup(jPanel3Layout.createSequentialGroup()
                 .addContainerGap()
                 .addComponent(jScrollPane2, javax.swing.GroupLayout.PREFERRED_SIZE, 188, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap(87, Short.MAX_VALUE))
+                .addContainerGap(81, Short.MAX_VALUE))
         );
 
         javax.swing.GroupLayout roundedPanel1Layout = new javax.swing.GroupLayout(roundedPanel1);
@@ -470,7 +485,8 @@ public class StorageRecord extends javax.swing.JFrame {
                 .addContainerGap()
                 .addGroup(roundedPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addComponent(jPanel2, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                    .addComponent(jPanel3, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                    .addComponent(jPanel3, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addComponent(foodMenuBar1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
                 .addContainerGap())
         );
         roundedPanel1Layout.setVerticalGroup(
@@ -478,6 +494,8 @@ public class StorageRecord extends javax.swing.JFrame {
             .addGroup(roundedPanel1Layout.createSequentialGroup()
                 .addComponent(roundedPanel2, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(foodMenuBar1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGap(5, 5, 5)
                 .addComponent(jPanel2, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(jPanel3, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
@@ -556,7 +574,7 @@ public class StorageRecord extends javax.swing.JFrame {
 
         private void comboBox1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_comboBox1ActionPerformed
             // TODO add your handling code here:
-            
+
             if (comboBox1.getSelectedItem() != null && !(comboBox1.getSelectedItem().toString().equals("Select food_item_category"))) {
                 advancedSearch();
             }
@@ -587,21 +605,21 @@ public class StorageRecord extends javax.swing.JFrame {
                 if ("Nimbus".equals(info.getName())) {
                     javax.swing.UIManager.setLookAndFeel(info.getClassName());
                     break;
-                    
+
                 }
             }
         } catch (ClassNotFoundException ex) {
             java.util.logging.Logger.getLogger(StorageRecord.class
                     .getName()).log(java.util.logging.Level.SEVERE, null, ex);
-            
+
         } catch (InstantiationException ex) {
             java.util.logging.Logger.getLogger(StorageRecord.class
                     .getName()).log(java.util.logging.Level.SEVERE, null, ex);
-            
+
         } catch (IllegalAccessException ex) {
             java.util.logging.Logger.getLogger(StorageRecord.class
                     .getName()).log(java.util.logging.Level.SEVERE, null, ex);
-            
+
         } catch (javax.swing.UnsupportedLookAndFeelException ex) {
             java.util.logging.Logger.getLogger(StorageRecord.class
                     .getName()).log(java.util.logging.Level.SEVERE, null, ex);
@@ -738,10 +756,10 @@ public class StorageRecord extends javax.swing.JFrame {
         /* Create and display the form */
         java.awt.EventQueue.invokeLater(new Runnable() {
             public void run() {
-                
+
                 JFrame jf = new StorageRecord();
                 jf.setVisible(true);
-                
+
             }
         });
     }
@@ -753,6 +771,7 @@ public class StorageRecord extends javax.swing.JFrame {
     private frameutil.ComboBox<String> comboBox2;
     private frameutil.CustomButton customButton1;
     private frameutil.CustomTable customTable1;
+    private frameutil.FoodMenuBar foodMenuBar1;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel2;
     private javax.swing.JLabel jLabel3;

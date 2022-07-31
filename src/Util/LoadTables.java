@@ -34,6 +34,11 @@ public class LoadTables {
         loadTable(jt, query, colnames, blah);
     }
 
+    public LoadTables(JTable jt, String query, String[] colnames, int priceCol, int qtyRow) {
+
+        loadTable(jt, query, colnames, priceCol, qtyRow);
+    }
+
     public void loadTable(JTable jt, String query, String[] colnames) {
 
         jtableColCount = jt.getColumnCount();
@@ -76,6 +81,38 @@ public class LoadTables {
                     for (int i = 0; i < jtableColCount; i++) {
                         if (i == colnames.length - 1) {
                             v.add(Double.toString(Double.parseDouble(rs.getString(colnames[2])) * Double.parseDouble(rs.getString(colnames[3]))));
+                            System.out.println(colnames[i]);
+                        } else {
+                            v.add(rs.getString(colnames[i]));
+                        }
+
+                    }
+                    dftm.addRow(v);
+                }
+                jt.setModel(dftm);
+            }
+
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
+    public void loadTable(JTable jt, String query, String[] colnames, int priceCol, int qtyRow) {
+
+        jtableColCount = jt.getColumnCount();
+
+        DefaultTableModel dftm = (DefaultTableModel) jt.getModel();
+        dftm.setRowCount(0);
+        try {
+            ResultSet rs = MySql.sq(query);
+            ResultSet checkRs = MySql.sq(query);
+            if (checkRs.next()) {
+
+                while (rs.next()) {
+                    Vector<String> v = new Vector<String>();
+                    for (int i = 0; i < jtableColCount; i++) {
+                        if (i == colnames.length - 1) {
+                            v.add(Double.toString(Double.parseDouble(rs.getString(colnames[priceCol])) * Double.parseDouble(rs.getString(colnames[qtyRow]))));
                             System.out.println(colnames[i]);
                         } else {
                             v.add(rs.getString(colnames[i]));

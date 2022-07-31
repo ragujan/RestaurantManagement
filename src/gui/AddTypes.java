@@ -47,49 +47,56 @@ public class AddTypes extends javax.swing.JFrame {
         this.setResizable(true);
         this.setVisible(true);
         setShape(new RoundRectangle2D.Double(0, 0, getWidth(), getHeight(), 7, 7));
-
+        
         jframeCustmize();
         this.setBackground(MainTheme.mainColor);
         roundedPanel1.setBackground(MainTheme.mainColor);
         roundedPanel2.setBackground(MainTheme.secondColor);
-
+        
         this.setForeground(MainTheme.secondColor);
         textF1.setBackground(MainTheme.thirdColor);
         textF2.setBackground(MainTheme.thirdColor);
         customButton1.setBackground(MainTheme.thirdColor);
-
+        
         JComponent[] jclbl = {jLabel2, jLabel3, jLabel4};
-
+        
         ColorSetter.setC(jclbl, Color.WHITE, 2);
-
+        
         JComponent[] jc = {comboBox1, textF1, textF2, textF3};
         ColorSetter.setC(jc, MainTheme.thirdColor, 1);
         jPanel2.setBackground(MainTheme.secondColor);
-
+        
         setDocFilters();
         loadCombos();
-
+        menuBar1.foo(this);
+        
     }
-
+    
     public AddTypes(DealerT et, HashMap<String, String> hm) {
         this();
         this.updateId = hm.get("id");
+        
+    }
 
+    public AddTypes(FoodItem fi) {
+        this();
+        fi.setEnabled(false);
+        fi.setVisible(false);
     }
 
     public AddTypes(Chef c) {
         this();
-
+        
     }
-
+    
     private void clearFields() {
-        JComponent[] jc = {comboBox1, textF1, textF2,textF3};
+        JComponent[] jc = {comboBox1, textF1, textF2, textF3};
         SetEmptyItems.emptyItems(jc);
         loadCombos();
     }
     SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
     String updateId;
-
+    
     public void addTypeName() {
         String type = null;
         String typename = textF1.getText();
@@ -107,18 +114,18 @@ public class AddTypes extends javax.swing.JFrame {
             } else {
                 ArrayList<String> info = new ArrayList<>();
                 info.add(typename);
-
+                
                 InsertTable it = new InsertTable(type, info);
                 clearFields();
             }
         }
-
+        
     }
-
+    
     private void addMenuItemCategory(String tableName) {
-
+        
         String typename = textF2.getText();
-
+        
         if (typename.isEmpty()) {
             Message m = new Message(this, "Please enter the type name", "Warning");
         } else {
@@ -128,100 +135,104 @@ public class AddTypes extends javax.swing.JFrame {
             } else {
                 ArrayList<String> info = new ArrayList<>();
                 info.add(typename);
-
+                
                 InsertTable it = new InsertTable(tableName, info);
                 clearFields();
             }
         }
     }
-
+    
     private void addCity(String tableName) {
-
+        
         String typename = textF3.getText();
-
+        
         if (typename.isEmpty()) {
             Message m = new Message(this, "Please enter the type name", "Warning");
         } else {
-            boolean exits = IdCheck.isExits(tableName, ""+tableName+"_name", typename);
+            boolean exits = IdCheck.isExits(tableName, "" + tableName + "_name", typename);
             if (exits) {
                 Message m = new Message(this, "This name already does it exits", "Warning");
             } else {
                 ArrayList<String> info = new ArrayList<>();
                 info.add(typename);
-
+                
                 InsertTable it = new InsertTable(tableName, info);
                 clearFields();
             }
         }
     }
-
+    
     private void addTable(String tableName) {
-
+        
         String typename = textF4.getText();
-
+        
         if (typename.isEmpty()) {
             Message m = new Message(this, "Please enter the type name", "Warning");
         } else {
-            boolean exits = IdCheck.isExits(tableName, ""+tableName+"_name", typename);
+            boolean exits = IdCheck.isExits(tableName, "" + tableName + "_name", typename);
             if (exits) {
                 Message m = new Message(this, "This name already does it exits", "Warning");
             } else {
                 ArrayList<String> info = new ArrayList<>();
                 info.add(typename);
-
+                
                 InsertTable it = new InsertTable(tableName, info);
                 clearFields();
             }
         }
     }
+    
     private void viewMenuItemCategory() {
-
+        
         TypeList tl = new TypeList(this, "menu_item_category") {
             @Override
             public void actionConfirmed() {
-
+                
             }
-
+            
             @Override
             public void actionCancelled() {
-
+                
             }
         };
         tl.setVisible(true);
-
+        
     }
+    
     private void viewCity() {
-
+        
         TypeList tl = new TypeList(this, "city") {
             @Override
             public void actionConfirmed() {
-
+                
             }
-
+            
             @Override
             public void actionCancelled() {
-
+                
             }
         };
         tl.setVisible(true);
-
+        
     }
-        private void viewTable() {
-
+    
+    private void viewTable() {
+        
         TypeList tl = new TypeList(this, "customer_table") {
             @Override
             public void actionConfirmed() {
-
+                
             }
-
+            
             @Override
             public void actionCancelled() {
-
+                
             }
         };
         tl.setVisible(true);
-
+        
     }
+    
     private void viewType() {
         if (comboBox1.getSelectedItem() != null) {
             if (!comboBox1.getSelectedItem().toString().equals("Select Types")) {
@@ -229,27 +240,27 @@ public class AddTypes extends javax.swing.JFrame {
                 TypeList tl = new TypeList(this, comboBox1.getSelectedItem().toString()) {
                     @Override
                     public void actionConfirmed() {
-
+                        
                     }
-
+                    
                     @Override
                     public void actionCancelled() {
-
+                        
                     }
                 };
                 tl.setVisible(true);
             }
-
+            
         } else {
-
+            
         }
     }
-
+    
     private void jframeCustmize() {
         closeLabel.setIcon(labelSetIcon("/Icons/close.png", closeLabel.getWidth() - 25, closeLabel.getHeight() - 17));
-        boxLabel.setIcon(labelSetIcon("/Icons/home.png", boxLabel.getWidth() - 20, boxLabel.getHeight() - 14));
+        boxLabel.setIcon(labelSetIcon("/Icons/square.png", boxLabel.getWidth() - 20, boxLabel.getHeight() - 14));
         miniLabel.setIcon(labelSetIcon("/Icons/minus.png", miniLabel.getWidth() - 20, miniLabel.getHeight() - 13));
-
+        
         miniLabel.addMouseListener(new java.awt.event.MouseAdapter() {
             @Override
             public void mouseClicked(java.awt.event.MouseEvent evt) {
@@ -257,55 +268,55 @@ public class AddTypes extends javax.swing.JFrame {
             }
         });
     }
-
+    
     public ImageIcon labelSetIcon(String src, int w, int h) {
         ImageSizer imgSizer = new ImageSizer();
         ImageIcon i = imgSizer.overaallResizer(src, w, h);
         return i;
     }
-
+    
     private void loadCombos() {
-
+        
         LoadSubTypes.loadSubTypeTables(comboBox1);
-
+        
     }
-
+    
     private void setDocFilters() {
-
+        
     }
-
+    
     private void contactCheck(String contact) {
-
+        
         ResultSet rs;
         try {
             rs = MySql.sq("SELECT * FROM `dealer` WHERE `dealer_contact`='" + contact + "' ");
             if (rs.next()) {
                 Message m = new Message(this, "this contact is already exits ", "warning");
-
+                
             }
         } catch (ClassNotFoundException ex) {
             Logger.getLogger(AddTypes.class.getName()).log(Level.SEVERE, null, ex);
         } catch (SQLException ex) {
             Logger.getLogger(AddTypes.class.getName()).log(Level.SEVERE, null, ex);
         }
-
+        
     }
-
+    
     private void emailCheck(String email) {
-
+        
         ResultSet rs;
         try {
             rs = MySql.sq("SELECT * FROM `dealer` WHERE `dealer_email`='" + email + "' ");
             if (rs.next()) {
                 Message m = new Message(this, "this email is already exits ", "warning");
-
+                
             }
         } catch (ClassNotFoundException ex) {
             Logger.getLogger(AddTypes.class.getName()).log(Level.SEVERE, null, ex);
         } catch (SQLException ex) {
             Logger.getLogger(AddTypes.class.getName()).log(Level.SEVERE, null, ex);
         }
-
+        
     }
 
     /**
@@ -344,6 +355,7 @@ public class AddTypes extends javax.swing.JFrame {
         jLabel5 = new javax.swing.JLabel();
         customButton8 = new frameutil.CustomButton();
         customButton9 = new frameutil.CustomButton();
+        menuBar1 = new frameutil.MenuBar();
 
         jToggleButton1.setText("jToggleButton1");
 
@@ -428,7 +440,7 @@ public class AddTypes extends javax.swing.JFrame {
             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, roundedPanel2Layout.createSequentialGroup()
                 .addContainerGap()
                 .addComponent(jLabel1)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 580, Short.MAX_VALUE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                 .addComponent(jPanel1, javax.swing.GroupLayout.PREFERRED_SIZE, 120, javax.swing.GroupLayout.PREFERRED_SIZE))
         );
         roundedPanel2Layout.setVerticalGroup(
@@ -526,46 +538,41 @@ public class AddTypes extends javax.swing.JFrame {
             .addGroup(jPanel2Layout.createSequentialGroup()
                 .addContainerGap()
                 .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addComponent(jLabel4, javax.swing.GroupLayout.PREFERRED_SIZE, 160, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addGroup(jPanel2Layout.createSequentialGroup()
-                        .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addComponent(jLabel4, javax.swing.GroupLayout.PREFERRED_SIZE, 160, javax.swing.GroupLayout.PREFERRED_SIZE)
-                            .addGroup(jPanel2Layout.createSequentialGroup()
-                                .addComponent(textF3, javax.swing.GroupLayout.PREFERRED_SIZE, 232, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                                .addComponent(customButton6, javax.swing.GroupLayout.PREFERRED_SIZE, 143, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                                .addComponent(customButton7, javax.swing.GroupLayout.PREFERRED_SIZE, 146, javax.swing.GroupLayout.PREFERRED_SIZE))
-                            .addComponent(jLabel2, javax.swing.GroupLayout.PREFERRED_SIZE, 85, javax.swing.GroupLayout.PREFERRED_SIZE)
-                            .addGroup(jPanel2Layout.createSequentialGroup()
-                                .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                                    .addGroup(jPanel2Layout.createSequentialGroup()
-                                        .addComponent(comboBox1, javax.swing.GroupLayout.PREFERRED_SIZE, 166, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                                        .addComponent(textF1, javax.swing.GroupLayout.PREFERRED_SIZE, 209, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                                        .addComponent(customButton1, javax.swing.GroupLayout.PREFERRED_SIZE, 143, javax.swing.GroupLayout.PREFERRED_SIZE))
-                                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel2Layout.createSequentialGroup()
-                                        .addComponent(textF2, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                                        .addComponent(customButton2, javax.swing.GroupLayout.PREFERRED_SIZE, 143, javax.swing.GroupLayout.PREFERRED_SIZE)))
-                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                                .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                                    .addComponent(customButton5, javax.swing.GroupLayout.PREFERRED_SIZE, 169, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                    .addComponent(customButton3, javax.swing.GroupLayout.PREFERRED_SIZE, 169, javax.swing.GroupLayout.PREFERRED_SIZE))))
-                        .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                        .addComponent(textF3, javax.swing.GroupLayout.PREFERRED_SIZE, 232, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(customButton6, javax.swing.GroupLayout.PREFERRED_SIZE, 143, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(customButton7, javax.swing.GroupLayout.PREFERRED_SIZE, 146, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addComponent(jLabel2, javax.swing.GroupLayout.PREFERRED_SIZE, 85, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addGroup(jPanel2Layout.createSequentialGroup()
-                        .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addComponent(jLabel3, javax.swing.GroupLayout.PREFERRED_SIZE, 160, javax.swing.GroupLayout.PREFERRED_SIZE)
-                            .addComponent(jLabel5, javax.swing.GroupLayout.PREFERRED_SIZE, 160, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
                             .addGroup(jPanel2Layout.createSequentialGroup()
-                                .addComponent(textF4, javax.swing.GroupLayout.PREFERRED_SIZE, 232, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                .addComponent(comboBox1, javax.swing.GroupLayout.PREFERRED_SIZE, 166, javax.swing.GroupLayout.PREFERRED_SIZE)
                                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                                .addComponent(customButton8, javax.swing.GroupLayout.PREFERRED_SIZE, 143, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                .addComponent(textF1, javax.swing.GroupLayout.PREFERRED_SIZE, 209, javax.swing.GroupLayout.PREFERRED_SIZE)
                                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                                .addComponent(customButton9, javax.swing.GroupLayout.PREFERRED_SIZE, 146, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                .addComponent(customButton1, javax.swing.GroupLayout.PREFERRED_SIZE, 143, javax.swing.GroupLayout.PREFERRED_SIZE))
+                            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel2Layout.createSequentialGroup()
+                                .addComponent(textF2, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                                .addComponent(customButton4, javax.swing.GroupLayout.PREFERRED_SIZE, 166, javax.swing.GroupLayout.PREFERRED_SIZE)))
-                        .addGap(0, 0, Short.MAX_VALUE))))
+                                .addComponent(customButton2, javax.swing.GroupLayout.PREFERRED_SIZE, 143, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addComponent(customButton5, javax.swing.GroupLayout.PREFERRED_SIZE, 169, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addComponent(customButton3, javax.swing.GroupLayout.PREFERRED_SIZE, 169, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                    .addComponent(jLabel3, javax.swing.GroupLayout.PREFERRED_SIZE, 160, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(jLabel5, javax.swing.GroupLayout.PREFERRED_SIZE, 160, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addGroup(jPanel2Layout.createSequentialGroup()
+                        .addComponent(textF4, javax.swing.GroupLayout.PREFERRED_SIZE, 232, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(customButton8, javax.swing.GroupLayout.PREFERRED_SIZE, 143, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(customButton9, javax.swing.GroupLayout.PREFERRED_SIZE, 146, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(customButton4, javax.swing.GroupLayout.PREFERRED_SIZE, 166, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
         jPanel2Layout.setVerticalGroup(
             jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -600,7 +607,7 @@ public class AddTypes extends javax.swing.JFrame {
                     .addComponent(customButton8, javax.swing.GroupLayout.PREFERRED_SIZE, 25, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(customButton9, javax.swing.GroupLayout.PREFERRED_SIZE, 25, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(customButton4, javax.swing.GroupLayout.PREFERRED_SIZE, 25, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addContainerGap(20, Short.MAX_VALUE))
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
 
         javax.swing.GroupLayout roundedPanel1Layout = new javax.swing.GroupLayout(roundedPanel1);
@@ -610,13 +617,17 @@ public class AddTypes extends javax.swing.JFrame {
             .addComponent(roundedPanel2, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
             .addGroup(roundedPanel1Layout.createSequentialGroup()
                 .addContainerGap()
-                .addComponent(jPanel2, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGroup(roundedPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addComponent(jPanel2, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(menuBar1, javax.swing.GroupLayout.PREFERRED_SIZE, 717, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
         roundedPanel1Layout.setVerticalGroup(
             roundedPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(roundedPanel1Layout.createSequentialGroup()
                 .addComponent(roundedPanel2, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGap(2, 2, 2)
+                .addComponent(menuBar1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(jPanel2, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
@@ -688,7 +699,7 @@ public class AddTypes extends javax.swing.JFrame {
 
     private void customButton3ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_customButton3ActionPerformed
         viewType();
-
+        
 
     }//GEN-LAST:event_customButton3ActionPerformed
 
@@ -709,28 +720,6 @@ public class AddTypes extends javax.swing.JFrame {
         viewMenuItemCategory();
     }//GEN-LAST:event_customButton5ActionPerformed
 
-    private void boxLabelMouseEntered(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_boxLabelMouseEntered
-        // TODO add your handling code here:
-        boxLabel.setOpaque(true);
-        boxLabel.setBackground(MainTheme.mainColor);
-    }//GEN-LAST:event_boxLabelMouseEntered
-
-    private void boxLabelMouseExited(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_boxLabelMouseExited
-        // TODO add your handling code here:
-
-        //boxLabel.setBackground(MainTheme.mainColor);
-        //boxLabel.setOpaque(false);
-        boxLabel.setBackground(MainTheme.secondColor);
-        boxLabel.setOpaque(false);
-    }//GEN-LAST:event_boxLabelMouseExited
-
-    private void boxLabelMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_boxLabelMouseClicked
-        // TODO add your handling code here:
-        Home h = new Home();
-        h.setVisible(true);
-        this.dispose();
-    }//GEN-LAST:event_boxLabelMouseClicked
-
     private void customButton6ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_customButton6ActionPerformed
         // TODO add your handling code here:
         addCity("city");
@@ -750,6 +739,26 @@ public class AddTypes extends javax.swing.JFrame {
         // TODO add your handling code here:
         viewTable();
     }//GEN-LAST:event_customButton9ActionPerformed
+
+    private void boxLabelMouseExited(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_boxLabelMouseExited
+        // TODO add your handling code here:
+
+        //boxLabel.setBackground(MainTheme.mainColor);
+        //boxLabel.setOpaque(false);
+        boxLabel.setBackground(MainTheme.secondColor);
+        boxLabel.setOpaque(false);
+    }//GEN-LAST:event_boxLabelMouseExited
+
+    private void boxLabelMouseEntered(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_boxLabelMouseEntered
+        // TODO add your handling code here:
+        boxLabel.setOpaque(true);
+        boxLabel.setBackground(MainTheme.mainColor);
+    }//GEN-LAST:event_boxLabelMouseEntered
+
+    private void boxLabelMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_boxLabelMouseClicked
+        // TODO add your handling code here:
+        
+    }//GEN-LAST:event_boxLabelMouseClicked
     boolean emailFieldEntred = false;
 
     /**
@@ -766,21 +775,21 @@ public class AddTypes extends javax.swing.JFrame {
                 if ("Nimbus".equals(info.getName())) {
                     javax.swing.UIManager.setLookAndFeel(info.getClassName());
                     break;
-
+                    
                 }
             }
         } catch (ClassNotFoundException ex) {
             java.util.logging.Logger.getLogger(AddTypes.class
                     .getName()).log(java.util.logging.Level.SEVERE, null, ex);
-
+            
         } catch (InstantiationException ex) {
             java.util.logging.Logger.getLogger(AddTypes.class
                     .getName()).log(java.util.logging.Level.SEVERE, null, ex);
-
+            
         } catch (IllegalAccessException ex) {
             java.util.logging.Logger.getLogger(AddTypes.class
                     .getName()).log(java.util.logging.Level.SEVERE, null, ex);
-
+            
         } catch (javax.swing.UnsupportedLookAndFeelException ex) {
             java.util.logging.Logger.getLogger(AddTypes.class
                     .getName()).log(java.util.logging.Level.SEVERE, null, ex);
@@ -853,10 +862,10 @@ public class AddTypes extends javax.swing.JFrame {
         /* Create and display the form */
         java.awt.EventQueue.invokeLater(new Runnable() {
             public void run() {
-
+                
                 JFrame jf = new AddTypes();
                 jf.setVisible(true);
-
+                
             }
         });
     }
@@ -882,6 +891,7 @@ public class AddTypes extends javax.swing.JFrame {
     private javax.swing.JPanel jPanel1;
     private javax.swing.JPanel jPanel2;
     private javax.swing.JToggleButton jToggleButton1;
+    private frameutil.MenuBar menuBar1;
     private javax.swing.JLabel miniLabel;
     private RoundedPanel roundedPanel1;
     private RoundedPanel roundedPanel2;

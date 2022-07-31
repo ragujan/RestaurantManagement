@@ -1,5 +1,3 @@
-package testtrash;
-
 /*
  * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
  * Click nbfs://nbhost/SystemFileSystem/Templates/Classes/Class.java to edit this template
@@ -9,7 +7,6 @@ package testtrash;
  *
  * @author acer
  */
-import testtrash.ScrollBarCustom;
 import java.awt.Color;
 import java.awt.Component;
 import java.awt.Dimension;

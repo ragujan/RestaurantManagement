@@ -66,6 +66,7 @@ public class Employee extends javax.swing.JFrame {
         setDocFilters();
         loadCombos();
 
+        employeeMenuBar1.foo(this);
     }
 
     public Employee(EmployeeT et, HashMap<String, String> hm) {
@@ -107,7 +108,8 @@ public class Employee extends javax.swing.JFrame {
     String updateId;
     boolean isOtherFramesInvolved = false;
     boolean isEmployeeTInvolved = false;
-    EmployeeT emplyeet ;
+    EmployeeT emplyeet;
+
     private void jframeCustmize() {
         closeLabel.setIcon(labelSetIcon("/Icons/close.png", closeLabel.getWidth() - 25, closeLabel.getHeight() - 17));
         boxLabel.setIcon(labelSetIcon("/Icons/square.png", boxLabel.getWidth() - 23, boxLabel.getHeight() - 17));
@@ -341,7 +343,6 @@ public class Employee extends javax.swing.JFrame {
         miniLabel = new javax.swing.JLabel();
         boxLabel = new javax.swing.JLabel();
         jLabel1 = new javax.swing.JLabel();
-        jLabel11 = new javax.swing.JLabel();
         jPanel2 = new javax.swing.JPanel();
         jLabel2 = new javax.swing.JLabel();
         jLabel3 = new javax.swing.JLabel();
@@ -366,6 +367,7 @@ public class Employee extends javax.swing.JFrame {
         jPanel3 = new javax.swing.JPanel();
         customButton1 = new frameutil.CustomButton();
         customButton4 = new frameutil.CustomButton();
+        employeeMenuBar1 = new frameutil.EmployeeMenuBar();
 
         jToggleButton1.setText("jToggleButton1");
 
@@ -432,11 +434,6 @@ public class Employee extends javax.swing.JFrame {
         jLabel1.setText("RAG");
         jLabel1.setToolTipText("");
 
-        jLabel11.setFont(new java.awt.Font("Yu Gothic", 1, 12)); // NOI18N
-        jLabel11.setForeground(new java.awt.Color(255, 255, 255));
-        jLabel11.setText("Employee");
-        jLabel11.setToolTipText("");
-
         javax.swing.GroupLayout roundedPanel2Layout = new javax.swing.GroupLayout(roundedPanel2);
         roundedPanel2.setLayout(roundedPanel2Layout);
         roundedPanel2Layout.setHorizontalGroup(
@@ -444,8 +441,6 @@ public class Employee extends javax.swing.JFrame {
             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, roundedPanel2Layout.createSequentialGroup()
                 .addContainerGap()
                 .addComponent(jLabel1)
-                .addGap(18, 18, 18)
-                .addComponent(jLabel11, javax.swing.GroupLayout.PREFERRED_SIZE, 87, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                 .addComponent(jPanel1, javax.swing.GroupLayout.PREFERRED_SIZE, 120, javax.swing.GroupLayout.PREFERRED_SIZE))
         );
@@ -454,9 +449,7 @@ public class Employee extends javax.swing.JFrame {
             .addComponent(jPanel1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
             .addGroup(roundedPanel2Layout.createSequentialGroup()
                 .addContainerGap()
-                .addGroup(roundedPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(jLabel1)
-                    .addComponent(jLabel11))
+                .addComponent(jLabel1)
                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
 
@@ -698,7 +691,9 @@ public class Employee extends javax.swing.JFrame {
             .addComponent(roundedPanel2, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
             .addGroup(roundedPanel1Layout.createSequentialGroup()
                 .addContainerGap()
-                .addComponent(jPanel2, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .addGroup(roundedPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addComponent(jPanel2, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addComponent(employeeMenuBar1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
                 .addContainerGap())
         );
         roundedPanel1Layout.setVerticalGroup(
@@ -706,6 +701,8 @@ public class Employee extends javax.swing.JFrame {
             .addGroup(roundedPanel1Layout.createSequentialGroup()
                 .addComponent(roundedPanel2, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(employeeMenuBar1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGap(5, 5, 5)
                 .addComponent(jPanel2, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
@@ -865,10 +862,10 @@ public class Employee extends javax.swing.JFrame {
         private void customButton3ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_customButton3ActionPerformed
             // TODO add your handling code here:
             if (isEmployeeTInvolved) {
-                 emplyeet.setEnabled(true);
-                 emplyeet.setVisible(true);
-                 emplyeet.loadTable();
-                 this.dispose();
+                emplyeet.setEnabled(true);
+                emplyeet.setVisible(true);
+                emplyeet.loadTable();
+                this.dispose();
             } else {
                 new EmployeeT();
                 this.dispose();
@@ -943,10 +940,10 @@ public class Employee extends javax.swing.JFrame {
     private frameutil.CustomButton customButton1;
     private frameutil.CustomButton customButton3;
     private frameutil.CustomButton customButton4;
+    private frameutil.EmployeeMenuBar employeeMenuBar1;
     private com.toedter.calendar.JDateChooser jDateChooser1;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel10;
-    private javax.swing.JLabel jLabel11;
     private javax.swing.JLabel jLabel2;
     private javax.swing.JLabel jLabel3;
     private javax.swing.JLabel jLabel4;

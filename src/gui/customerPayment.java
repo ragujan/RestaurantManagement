@@ -48,7 +48,7 @@ import net.sf.jasperreports.view.JasperViewer;
  *
  * @author Acer
  */
-public abstract class CustomerPayment extends javax.swing.JDialog {
+ abstract class CustomerPayment extends javax.swing.JDialog {
 
     /**
      * Creates new form NewJDialog
@@ -69,7 +69,7 @@ public abstract class CustomerPayment extends javax.swing.JDialog {
         roundedPanel2.setBackground(MainTheme.secondColor);
         jLabel1.setForeground(Color.WHITE);
         jPanel2.setBackground(MainTheme.secondColor);
-        jPanel4.setBackground(MainTheme.secondColor);
+      
         textF1.setEditable(false);
         loadCombos();
         this.loadQuery();
@@ -77,6 +77,8 @@ public abstract class CustomerPayment extends javax.swing.JDialog {
         System.out.println(loadTableQuery);
         loadTable();
         textF1.setText(getSubTotal());
+                menuBar1.foo(this);
+
 
     }
 
@@ -185,7 +187,7 @@ public abstract class CustomerPayment extends javax.swing.JDialog {
             JREmptyDataSource jreds = new JREmptyDataSource();
             JasperPrint jp = JasperFillManager.fillReport(jr, hm, jrtmds);
             //     JasperViewer.viewReport(jp, false);
-            JasperViewer jv = new JasperViewer(jp, true);
+            JasperViewer jv = new JasperViewer(jp, false);
             jv.setVisible(true);
         } catch (JRException ex) {
             Logger.getLogger(FRN.class.getName()).log(Level.SEVERE, null, ex);
@@ -259,7 +261,7 @@ public abstract class CustomerPayment extends javax.swing.JDialog {
                 it = new InsertTable("customer_payment", info);
                 info.clear();
 
-                Vector<String> v = new Vector();
+                Vector<String> v = new Vector<String>();
                 v.add(uid.toString());
 
                 v.add(tableName);
@@ -337,7 +339,7 @@ public abstract class CustomerPayment extends javax.swing.JDialog {
         jPanel3 = new javax.swing.JPanel();
         jScrollPane1 = new javax.swing.JScrollPane();
         customTable1 = new frameutil.CustomTable();
-        jPanel4 = new javax.swing.JPanel();
+        menuBar1 = new frameutil.MenuBar();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
         setUndecorated(true);
@@ -482,17 +484,6 @@ public abstract class CustomerPayment extends javax.swing.JDialog {
                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
 
-        javax.swing.GroupLayout jPanel4Layout = new javax.swing.GroupLayout(jPanel4);
-        jPanel4.setLayout(jPanel4Layout);
-        jPanel4Layout.setHorizontalGroup(
-            jPanel4Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 0, Short.MAX_VALUE)
-        );
-        jPanel4Layout.setVerticalGroup(
-            jPanel4Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 62, Short.MAX_VALUE)
-        );
-
         javax.swing.GroupLayout roundedPanel1Layout = new javax.swing.GroupLayout(roundedPanel1);
         roundedPanel1.setLayout(roundedPanel1Layout);
         roundedPanel1Layout.setHorizontalGroup(
@@ -502,8 +493,8 @@ public abstract class CustomerPayment extends javax.swing.JDialog {
                 .addContainerGap()
                 .addGroup(roundedPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addComponent(jPanel3, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                    .addComponent(jPanel4, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                    .addComponent(jPanel2, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                    .addComponent(jPanel2, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addComponent(menuBar1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
                 .addContainerGap())
         );
         roundedPanel1Layout.setVerticalGroup(
@@ -511,12 +502,12 @@ public abstract class CustomerPayment extends javax.swing.JDialog {
             .addGroup(roundedPanel1Layout.createSequentialGroup()
                 .addComponent(roundedPanel2, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(menuBar1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(jPanel2, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(jPanel3, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                .addComponent(jPanel4, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap())
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
@@ -632,8 +623,8 @@ public abstract class CustomerPayment extends javax.swing.JDialog {
     private javax.swing.JPanel jPanel1;
     private javax.swing.JPanel jPanel2;
     private javax.swing.JPanel jPanel3;
-    private javax.swing.JPanel jPanel4;
     private javax.swing.JScrollPane jScrollPane1;
+    private frameutil.MenuBar menuBar1;
     private javax.swing.JLabel miniLabel;
     private RoundedPanel roundedPanel1;
     private RoundedPanel roundedPanel2;

@@ -11,6 +11,7 @@ import frameutil.MainTheme;
 import java.awt.Color;
 import java.awt.event.ActionListener;
 import java.awt.geom.RoundRectangle2D;
+import java.io.InputStream;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.text.SimpleDateFormat;
@@ -25,7 +26,16 @@ import javax.swing.JFrame;
 import javax.swing.JTable;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
+import javax.swing.table.TableModel;
 import model.MySql;
+import net.sf.jasperreports.engine.JREmptyDataSource;
+import net.sf.jasperreports.engine.JRException;
+import net.sf.jasperreports.engine.JasperCompileManager;
+import net.sf.jasperreports.engine.JasperFillManager;
+import net.sf.jasperreports.engine.JasperPrint;
+import net.sf.jasperreports.engine.JasperReport;
+import net.sf.jasperreports.engine.data.JRTableModelDataSource;
+import net.sf.jasperreports.view.JasperViewer;
 
 /*
  * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
@@ -37,250 +47,273 @@ import model.MySql;
  */
 public class StorageManage extends javax.swing.JFrame {
 
-	/**
-	 * Creates new form NewJFrame
-	 */
-	public StorageManage() {
-		initComponents();
-		this.setLocationRelativeTo(null);
-		this.setResizable(true);
-		this.setVisible(true);
-		setShape(new RoundRectangle2D.Double(0, 0, getWidth(), getHeight(), 7, 7));
-		
-		jframeCustmize();
-		this.setBackground(MainTheme.mainColor);
-		roundedPanel1.setBackground(MainTheme.mainColor);
-		roundedPanel2.setBackground(MainTheme.secondColor);
-		
-		JComponent[] jc = {comboBox1};
-		JComponent[] jp = {jPanel2, jPanel3, jPanel4};
-		ColorSetter.setC(jc, MainTheme.fourthColor, 1);
-		ColorSetter.setC(jc, MainTheme.secondColor, 2);
-		
-		ColorSetter.setC(jp, MainTheme.thirdColor, 1);
-		this.setForeground(MainTheme.secondColor);
-		tableListernRag(customTable1);
-		setDocFilters();
-		loadCombos();
-		loadTable();
-		
-	}
-        boolean otherFramesInvolve = false;
-	public String supplierID;
-	public String FRNId;
-	public String storageId;
-	FRNView frnview;
-	String loadTableQuery;
-	String[] colnames = {"food_storage_manage_id", "food_item_id", "food_item_name", "food_item_category_name", "mfd", "exp", "qty"};
-	
-	private void loadQuery() {
-		ArrayList<String> al = new ArrayList<String>();
-		
-		al.add("food_storage_manage");
-		al.add("food_item,food_storage_manage");
-		al.add("food_item_category,food_item");
+    /**
+     * Creates new form NewJFrame
+     */
+    public StorageManage() {
+        initComponents();
+        this.setLocationRelativeTo(null);
+        this.setResizable(true);
+        this.setVisible(true);
+        setShape(new RoundRectangle2D.Double(0, 0, getWidth(), getHeight(), 7, 7));
 
-		//	al.add("employee_type,employee");
-		SearchTable st = new SearchTable(al);
-		this.loadTableQuery = st.getTableQuery();
-		
-	}
-	
-	private void loadTable() {
-		loadQuery();
-		String sort = "ORDER BY `food_storage_manage`.`food_storage_manage_id` ASC";
-		
-		StringBuilder stringquerybuild = new StringBuilder();
-		stringquerybuild.append(this.loadTableQuery).toString();
-		stringquerybuild.append(sort).toString();
-		String query = stringquerybuild.toString();
-		
-		LoadTables lt = new LoadTables(customTable1, query, this.colnames);
-	}
-	
-	public void advancedSearch() {
-		String name = textF1.getText();
-		boolean isNameInvolved = false;
-		String categoryType = "Select food_item_category";
-		if (comboBox1.getSelectedItem() != null) {
-			categoryType = comboBox1.getSelectedItem().toString();
-		}
-		
-		boolean isContactIvolved = false;
-		
-		boolean isEmailInvolved = false;
-		String sort = comboBox2.getSelectedItem().toString();
-		String emptype = comboBox1.getSelectedItem().toString();
-		
-		StringBuilder stringquerybuild = new StringBuilder();
-		StringBuilder whereQueryBuilder = new StringBuilder();
-		Vector<String> v = new Vector<String>();
-		boolean queriesInvolved = false;
-		
-		String sortQuery = "";
-		String whereQuery = "";
-		if (sort.equals("Newest")) {
-			sortQuery = "ORDER BY `food_storage_manage`.`mfd` ASC";
-		} else if (sort.equals("Oldest")) {
-			sortQuery = "ORDER BY `food_storage_manage`.`mfd` DESC";
-		} else if (sort.equals("High Qty")) {
-			sortQuery = "ORDER BY `food_storage_manage`.`qty` DESC";
-		} else if (sort.equals("Low Qty")) {
-			sortQuery = "ORDER BY `food_storage_manage`.`qty` ASC";
-		}
-		if (!name.isEmpty()) {
-			v.add("`food_item`.`food_item_name` LIKE '%" + name + "%' ");
-			queriesInvolved = true;
-		}
-		
-		if (!categoryType.equals("Select food_item_category")) {
-			v.add("`food_item_category`.`food_item_category_name` = '" + categoryType + "' ");
-			queriesInvolved = true;
-			System.out.println("MESSage");
-		}
-		if (queriesInvolved) {
-			whereQueryBuilder.append("where ");
-		}
-		for (int i = 0; i < v.size(); i++) {
-			//System.out.println("vectors are " + v.get(i));
+        jframeCustmize();
+        this.setBackground(MainTheme.mainColor);
+        roundedPanel1.setBackground(MainTheme.mainColor);
+        roundedPanel2.setBackground(MainTheme.secondColor);
 
-			whereQueryBuilder.append("");
-			whereQueryBuilder.append(v.get(i));
-			
-			if (i != v.size() - 1) {
-				whereQueryBuilder.append("AND ");
-			}
-		}
-		//System.out.println("where query is " + whereQueryBuilder);
-		stringquerybuild.append(this.loadTableQuery);
-		stringquerybuild.append(whereQueryBuilder);
-		stringquerybuild.append(sortQuery);
-		String query = stringquerybuild.toString();
-		//System.out.println("where query is " + whereQueryBuilder);
-		LoadTables lt = new LoadTables(customTable1, query, this.colnames);
-	}
-	
-	public void tableListernRag(JTable jt) {
-		jt.getSelectionModel().addListSelectionListener(new ListSelectionListener() {
-			@Override
-			public void valueChanged(ListSelectionEvent e) {
-				
-				if (jt.getRowCount() > 0 && jt.getRowCount() != -1) {
-					int row = jt.getSelectedRow();
-					if (row != -1) {
-						String id = jt.getValueAt(row, 0).toString();
-						String qty = jt.getValueAt(row, 6).toString();
-						String name = jt.getValueAt(row, 2).toString();
-						storageId = id;
-						textF2.setText(qty);
-						textF3.setEditable(false);
-						textF3.setText(name);
-					}
-					
-				}
-				
-			}
-			
-		});
-		
-	}
-	
-	public void updateQty() {
-		String id = storageId;
-		String qty = textF2.getText();
-		if (id == null || id.equals("")) {
-			Message m = new Message(this, "Please Select an item ", "Warning");
-		} else {
-			MySql.iud("UPDATE `food_storage_manage` SET `food_storage_manage`.`qty`='" + qty + "' WHERE `food_storage_manage_id`='" + id + "'");
-		}
-		
-		storageId = null;
-		textF2.setText("");
-		textF3.setText("");
-		loadTable();
-	}
-	
-	public StorageManage(DealerT et, HashMap<String, String> hm) {
-		this();
-		this.updateId = hm.get("id");
-		
-	}
-	
-	public StorageManage(Chef c) {
-		this();
-		
-	}
-	
-	SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
-	String updateId;
-	
-	private void jframeCustmize() {
-		closeLabel.setIcon(labelSetIcon("/Icons/close.png", closeLabel.getWidth() - 25, closeLabel.getHeight() - 17));
-		boxLabel.setIcon(labelSetIcon("/Icons/square.png", boxLabel.getWidth() - 23, boxLabel.getHeight() - 17));
-		miniLabel.setIcon(labelSetIcon("/Icons/minus.png", miniLabel.getWidth() - 20, miniLabel.getHeight() - 13));
-		
-		miniLabel.addMouseListener(new java.awt.event.MouseAdapter() {
-			@Override
-			public void mouseClicked(java.awt.event.MouseEvent evt) {
-				setState(JFrame.ICONIFIED);
-			}
-		});
-	}
-	
-	public ImageIcon labelSetIcon(String src, int w, int h) {
-		ImageSizer imgSizer = new ImageSizer();
-		ImageIcon i = imgSizer.overaallResizer(src, w, h);
-		return i;
-	}
-	
-	private void loadCombos() {
-		LoadSubTypes.loadType(comboBox1, "food_item_category");
-	}
-	
-	private void setDocFilters() {
-		
-	}
-	
-	private void contactCheck(String contact) {
-		
-		ResultSet rs;
-		try {
-			rs = MySql.sq("SELECT * FROM `dealer` WHERE `dealer_contact`='" + contact + "' ");
-			if (rs.next()) {
-				Message m = new Message(this, "this contact is already exits ", "warning");
-				
-			}
-		} catch (ClassNotFoundException ex) {
-			Logger.getLogger(StorageManage.class.getName()).log(Level.SEVERE, null, ex);
-		} catch (SQLException ex) {
-			Logger.getLogger(StorageManage.class.getName()).log(Level.SEVERE, null, ex);
-		}
-		
-	}
-	
-	private void emailCheck(String email) {
-		
-		ResultSet rs;
-		try {
-			rs = MySql.sq("SELECT * FROM `dealer` WHERE `dealer_email`='" + email + "' ");
-			if (rs.next()) {
-				Message m = new Message(this, "this email is already exits ", "warning");
-				
-			}
-		} catch (ClassNotFoundException ex) {
-			Logger.getLogger(StorageManage.class.getName()).log(Level.SEVERE, null, ex);
-		} catch (SQLException ex) {
-			Logger.getLogger(StorageManage.class.getName()).log(Level.SEVERE, null, ex);
-		}
-		
-	}
+        JComponent[] jc = {comboBox1};
+        JComponent[] jp = {jPanel2, jPanel3, jPanel4};
+        ColorSetter.setC(jc, MainTheme.fourthColor, 1);
+        ColorSetter.setC(jc, MainTheme.secondColor, 2);
 
-	/**
-	 * This method is called from within the constructor to initialize the
-	 * form. WARNING: Do NOT modify this code. The content of this method is
-	 * always regenerated by the Form Editor.
-	 */
-	@SuppressWarnings("unchecked")
+        ColorSetter.setC(jp, MainTheme.thirdColor, 1);
+        this.setForeground(MainTheme.secondColor);
+        tableListernRag(customTable1);
+        setDocFilters();
+        loadCombos();
+        loadTable();
+        foodMenuBar1.foo(this);
+    }
+    boolean otherFramesInvolve = false;
+    public String supplierID;
+    public String FRNId;
+    public String storageId;
+    FRNView frnview;
+    String loadTableQuery;
+    String[] colnames = {"food_storage_manage_id", "food_item_id", "food_item_name", "food_item_category_name", "mfd", "exp", "qty"};
+
+    private void loadQuery() {
+        ArrayList<String> al = new ArrayList<String>();
+
+        al.add("food_storage_manage");
+        al.add("food_item,food_storage_manage");
+        al.add("food_item_category,food_item");
+
+        //	al.add("employee_type,employee");
+        SearchTable st = new SearchTable(al);
+        this.loadTableQuery = st.getTableQuery();
+
+    }
+
+    private void loadTable() {
+        loadQuery();
+        String sort = "ORDER BY `food_storage_manage`.`food_storage_manage_id` ASC";
+
+        StringBuilder stringquerybuild = new StringBuilder();
+        stringquerybuild.append(this.loadTableQuery).toString();
+        stringquerybuild.append(sort).toString();
+        String query = stringquerybuild.toString();
+
+        LoadTables lt = new LoadTables(customTable1, query, this.colnames);
+    }
+
+    public void advancedSearch() {
+        String name = textF1.getText();
+        boolean isNameInvolved = false;
+        String categoryType = "Select food_item_category";
+        if (comboBox1.getSelectedItem() != null) {
+            categoryType = comboBox1.getSelectedItem().toString();
+        }
+
+        boolean isContactIvolved = false;
+
+        boolean isEmailInvolved = false;
+        String sort = comboBox2.getSelectedItem().toString();
+        String emptype = comboBox1.getSelectedItem().toString();
+
+        StringBuilder stringquerybuild = new StringBuilder();
+        StringBuilder whereQueryBuilder = new StringBuilder();
+        Vector<String> v = new Vector<String>();
+        boolean queriesInvolved = false;
+
+        String sortQuery = "";
+        String whereQuery = "";
+        if (sort.equals("Newest")) {
+            sortQuery = "ORDER BY `food_storage_manage`.`mfd` ASC";
+        } else if (sort.equals("Oldest")) {
+            sortQuery = "ORDER BY `food_storage_manage`.`mfd` DESC";
+        } else if (sort.equals("High Qty")) {
+            sortQuery = "ORDER BY `food_storage_manage`.`qty` DESC";
+        } else if (sort.equals("Low Qty")) {
+            sortQuery = "ORDER BY `food_storage_manage`.`qty` ASC";
+        }
+        if (!name.isEmpty()) {
+            v.add("`food_item`.`food_item_name` LIKE '%" + name + "%' ");
+            queriesInvolved = true;
+        }
+
+        if (!categoryType.equals("Select food_item_category")) {
+            v.add("`food_item_category`.`food_item_category_name` = '" + categoryType + "' ");
+            queriesInvolved = true;
+            System.out.println("MESSage");
+        }
+        if (queriesInvolved) {
+            whereQueryBuilder.append("where ");
+        }
+        for (int i = 0; i < v.size(); i++) {
+            //System.out.println("vectors are " + v.get(i));
+
+            whereQueryBuilder.append("");
+            whereQueryBuilder.append(v.get(i));
+
+            if (i != v.size() - 1) {
+                whereQueryBuilder.append("AND ");
+            }
+        }
+        //System.out.println("where query is " + whereQueryBuilder);
+        stringquerybuild.append(this.loadTableQuery);
+        stringquerybuild.append(whereQueryBuilder);
+        stringquerybuild.append(sortQuery);
+        String query = stringquerybuild.toString();
+        //System.out.println("where query is " + whereQueryBuilder);
+        LoadTables lt = new LoadTables(customTable1, query, this.colnames);
+    }
+
+    private void printGRN(JTable jt) {
+
+        try {
+            TableModel tm1 = jt.getModel();
+            //String jasperPath = "src//reportXML//customerOrder.jrxml";
+            InputStream jasperPathStream = getClass().getResourceAsStream("/reportXML/StorageReport.jrxml");
+            JasperReport jr = JasperCompileManager.compileReport(jasperPathStream);
+            HashMap<String, Object> hm = new HashMap<String, Object>();
+
+            TableModel tm = jt.getModel();
+            JRTableModelDataSource jrtmds = new JRTableModelDataSource(tm);
+            //   JasperPrint jp = JasperFillManager.fillReport(jr, hm,jrtmds);
+            JREmptyDataSource jreds = new JREmptyDataSource();
+            JasperPrint jp = JasperFillManager.fillReport(jr, hm, jrtmds);
+            //     JasperViewer.viewReport(jp, false);
+            JasperViewer jv = new JasperViewer(jp, false);
+            jv.setVisible(true);
+        } catch (JRException ex) {
+            Logger.getLogger(FRN.class.getName()).log(Level.SEVERE, null, ex);
+        }
+
+    }
+
+    public void tableListernRag(JTable jt) {
+        jt.getSelectionModel().addListSelectionListener(new ListSelectionListener() {
+            @Override
+            public void valueChanged(ListSelectionEvent e) {
+
+                if (jt.getRowCount() > 0 && jt.getRowCount() != -1) {
+                    int row = jt.getSelectedRow();
+                    if (row != -1) {
+                        String id = jt.getValueAt(row, 0).toString();
+                        String qty = jt.getValueAt(row, 6).toString();
+                        String name = jt.getValueAt(row, 2).toString();
+                        storageId = id;
+                        textF2.setText(qty);
+                        textF3.setEditable(false);
+                        textF3.setText(name);
+                    }
+
+                }
+
+            }
+
+        });
+
+    }
+
+    public void updateQty() {
+        String id = storageId;
+        String qty = textF2.getText();
+        if (id == null || id.equals("")) {
+            Message m = new Message(this, "Please Select an item ", "Warning");
+        } else {
+            MySql.iud("UPDATE `food_storage_manage` SET `food_storage_manage`.`qty`='" + qty + "' WHERE `food_storage_manage_id`='" + id + "'");
+        }
+
+        storageId = null;
+        textF2.setText("");
+        textF3.setText("");
+        loadTable();
+    }
+
+    public StorageManage(DealerT et, HashMap<String, String> hm) {
+        this();
+        this.updateId = hm.get("id");
+
+    }
+
+    public StorageManage(Chef c) {
+        this();
+
+    }
+
+    SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
+    String updateId;
+
+    private void jframeCustmize() {
+        closeLabel.setIcon(labelSetIcon("/Icons/close.png", closeLabel.getWidth() - 20, closeLabel.getHeight() - 12));
+        boxLabel.setIcon(labelSetIcon("/Icons/square.png", boxLabel.getWidth() - 18, boxLabel.getHeight() - 12));
+        miniLabel.setIcon(labelSetIcon("/Icons/minus.png", miniLabel.getWidth() - 15, miniLabel.getHeight() - 8));
+
+        miniLabel.addMouseListener(new java.awt.event.MouseAdapter() {
+            @Override
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                setState(JFrame.ICONIFIED);
+            }
+        });
+    }
+
+    public ImageIcon labelSetIcon(String src, int w, int h) {
+        ImageSizer imgSizer = new ImageSizer();
+        ImageIcon i = imgSizer.overaallResizer(src, w, h);
+        return i;
+    }
+
+    private void loadCombos() {
+        LoadSubTypes.loadType(comboBox1, "food_item_category");
+    }
+
+    private void setDocFilters() {
+
+    }
+
+    private void contactCheck(String contact) {
+
+        ResultSet rs;
+        try {
+            rs = MySql.sq("SELECT * FROM `dealer` WHERE `dealer_contact`='" + contact + "' ");
+            if (rs.next()) {
+                Message m = new Message(this, "this contact is already exits ", "warning");
+
+            }
+        } catch (ClassNotFoundException ex) {
+            Logger.getLogger(StorageManage.class.getName()).log(Level.SEVERE, null, ex);
+        } catch (SQLException ex) {
+            Logger.getLogger(StorageManage.class.getName()).log(Level.SEVERE, null, ex);
+        }
+
+    }
+
+    private void emailCheck(String email) {
+
+        ResultSet rs;
+        try {
+            rs = MySql.sq("SELECT * FROM `dealer` WHERE `dealer_email`='" + email + "' ");
+            if (rs.next()) {
+                Message m = new Message(this, "this email is already exits ", "warning");
+
+            }
+        } catch (ClassNotFoundException ex) {
+            Logger.getLogger(StorageManage.class.getName()).log(Level.SEVERE, null, ex);
+        } catch (SQLException ex) {
+            Logger.getLogger(StorageManage.class.getName()).log(Level.SEVERE, null, ex);
+        }
+
+    }
+
+    /**
+     * This method is called from within the constructor to initialize the form.
+     * WARNING: Do NOT modify this code. The content of this method is always
+     * regenerated by the Form Editor.
+     */
+    @SuppressWarnings("unchecked")
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
     private void initComponents() {
 
@@ -300,6 +333,7 @@ public class StorageManage extends javax.swing.JFrame {
         jLabel4 = new javax.swing.JLabel();
         comboBox2 = new frameutil.ComboBox<>();
         customButton1 = new frameutil.CustomButton();
+        customButton3 = new frameutil.CustomButton();
         jPanel3 = new javax.swing.JPanel();
         jScrollPane2 = new javax.swing.JScrollPane();
         customTable1 = new frameutil.CustomTable();
@@ -309,6 +343,7 @@ public class StorageManage extends javax.swing.JFrame {
         customButton2 = new frameutil.CustomButton();
         textF3 = new frameutil.TextF();
         jLabel6 = new javax.swing.JLabel();
+        foodMenuBar1 = new frameutil.FoodMenuBar();
 
         jToggleButton1.setText("jToggleButton1");
 
@@ -379,7 +414,7 @@ public class StorageManage extends javax.swing.JFrame {
         roundedPanel2.setLayout(roundedPanel2Layout);
         roundedPanel2Layout.setHorizontalGroup(
             roundedPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, roundedPanel2Layout.createSequentialGroup()
+            .addGroup(roundedPanel2Layout.createSequentialGroup()
                 .addContainerGap()
                 .addComponent(jLabel1)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 746, Short.MAX_VALUE)
@@ -387,11 +422,13 @@ public class StorageManage extends javax.swing.JFrame {
         );
         roundedPanel2Layout.setVerticalGroup(
             roundedPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addComponent(jPanel1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
             .addGroup(roundedPanel2Layout.createSequentialGroup()
-                .addContainerGap()
-                .addComponent(jLabel1)
-                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                .addGroup(roundedPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addComponent(jPanel1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addGroup(roundedPanel2Layout.createSequentialGroup()
+                        .addContainerGap()
+                        .addComponent(jLabel1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)))
+                .addContainerGap())
         );
 
         comboBox1.addActionListener(new java.awt.event.ActionListener() {
@@ -433,6 +470,13 @@ public class StorageManage extends javax.swing.JFrame {
             }
         });
 
+        customButton3.setText("Print Report");
+        customButton3.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                customButton3ActionPerformed(evt);
+            }
+        });
+
         javax.swing.GroupLayout jPanel2Layout = new javax.swing.GroupLayout(jPanel2);
         jPanel2.setLayout(jPanel2Layout);
         jPanel2Layout.setHorizontalGroup(
@@ -452,8 +496,10 @@ public class StorageManage extends javax.swing.JFrame {
                     .addGroup(jPanel2Layout.createSequentialGroup()
                         .addComponent(comboBox2, javax.swing.GroupLayout.PREFERRED_SIZE, 156, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addGap(18, 18, 18)
-                        .addComponent(customButton1, javax.swing.GroupLayout.PREFERRED_SIZE, 58, javax.swing.GroupLayout.PREFERRED_SIZE)))
-                .addContainerGap(279, Short.MAX_VALUE))
+                        .addComponent(customButton1, javax.swing.GroupLayout.PREFERRED_SIZE, 58, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addGap(18, 18, 18)
+                        .addComponent(customButton3, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
         jPanel2Layout.setVerticalGroup(
             jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -464,17 +510,18 @@ public class StorageManage extends javax.swing.JFrame {
                         .addComponent(comboBox1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addComponent(textF1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
                     .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                        .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
-                            .addGroup(jPanel2Layout.createSequentialGroup()
-                                .addComponent(jLabel4)
-                                .addGap(4, 4, 4)
-                                .addComponent(comboBox2, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
-                            .addComponent(customButton1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                        .addGroup(jPanel2Layout.createSequentialGroup()
+                            .addComponent(jLabel4)
+                            .addGap(4, 4, 4)
+                            .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                                .addComponent(comboBox2, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                                .addComponent(customButton1, javax.swing.GroupLayout.PREFERRED_SIZE, 0, Short.MAX_VALUE)))
                         .addGroup(jPanel2Layout.createSequentialGroup()
                             .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                                 .addComponent(jLabel2)
                                 .addComponent(jLabel3))
-                            .addGap(29, 29, 29))))
+                            .addGap(29, 29, 29)))
+                    .addComponent(customButton3, javax.swing.GroupLayout.PREFERRED_SIZE, 25, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addContainerGap(18, Short.MAX_VALUE))
         );
 
@@ -486,7 +533,7 @@ public class StorageManage extends javax.swing.JFrame {
                 {null, null, null, null, null, null, null}
             },
             new String [] {
-                "Store_Id", "Food_Id", "Food_Name", "Food_category", "Mfd", "Exp", "Qty"
+                "Store_Id", "Food_Id", "Food_Name", "Food_Category", "Mfd", "Exp", "Qty"
             }
         ));
         customTable1.getTableHeader().setReorderingAllowed(false);
@@ -568,7 +615,7 @@ public class StorageManage extends javax.swing.JFrame {
                         .addGroup(jPanel4Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
                             .addComponent(customButton2, javax.swing.GroupLayout.PREFERRED_SIZE, 0, Short.MAX_VALUE)
                             .addComponent(textF2, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))))
-                .addContainerGap(59, Short.MAX_VALUE))
+                .addContainerGap(19, Short.MAX_VALUE))
         );
 
         javax.swing.GroupLayout roundedPanel1Layout = new javax.swing.GroupLayout(roundedPanel1);
@@ -581,13 +628,16 @@ public class StorageManage extends javax.swing.JFrame {
                 .addGroup(roundedPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addComponent(jPanel2, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                     .addComponent(jPanel3, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                    .addComponent(jPanel4, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                    .addComponent(jPanel4, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addComponent(foodMenuBar1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
                 .addContainerGap())
         );
         roundedPanel1Layout.setVerticalGroup(
             roundedPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(roundedPanel1Layout.createSequentialGroup()
                 .addComponent(roundedPanel2, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(foodMenuBar1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(jPanel2, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
@@ -611,269 +661,274 @@ public class StorageManage extends javax.swing.JFrame {
         pack();
     }// </editor-fold>//GEN-END:initComponents
     int x = 0;
-	int y = 0;
+    int y = 0;
     private void roundedPanel2MousePressed(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_roundedPanel2MousePressed
-	    // TODO add your handling code here:
-	    x = evt.getX();
-	    y = evt.getY();
+        // TODO add your handling code here:
+        x = evt.getX();
+        y = evt.getY();
     }//GEN-LAST:event_roundedPanel2MousePressed
 
     private void roundedPanel2MouseDragged(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_roundedPanel2MouseDragged
-	    // TODO add your handling code here:
-	    int xx = evt.getXOnScreen();
-	    int yy = evt.getYOnScreen();
-	    this.setLocation(xx - x, yy - y);
+        // TODO add your handling code here:
+        int xx = evt.getXOnScreen();
+        int yy = evt.getYOnScreen();
+        this.setLocation(xx - x, yy - y);
     }//GEN-LAST:event_roundedPanel2MouseDragged
 
     private void closeLabelMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_closeLabelMouseClicked
-	    // TODO add your handling code here:
-	  if(otherFramesInvolve){
-              
-          }else{
-              System.exit(0);
-          }
+        // TODO add your handling code here:
+        if (otherFramesInvolve) {
+
+        } else {
+            System.exit(0);
+        }
     }//GEN-LAST:event_closeLabelMouseClicked
 
     private void closeLabelMouseEntered(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_closeLabelMouseEntered
-	    // TODO add your handling code here:
-	    closeLabel.setOpaque(true);
-	    closeLabel.setBackground(MainTheme.mainColor);
+        // TODO add your handling code here:
+        closeLabel.setOpaque(true);
+        closeLabel.setBackground(MainTheme.mainColor);
     }//GEN-LAST:event_closeLabelMouseEntered
 
     private void closeLabelMouseExited(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_closeLabelMouseExited
-	    // TODO add your handling code here:
-	    closeLabel.setBackground(MainTheme.secondColor);
-	    closeLabel.setOpaque(false);
+        // TODO add your handling code here:
+        closeLabel.setBackground(MainTheme.secondColor);
+        closeLabel.setOpaque(false);
 
     }//GEN-LAST:event_closeLabelMouseExited
 
     private void miniLabelMouseEntered(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_miniLabelMouseEntered
-	    // TODO add your handling code here:
-	    miniLabel.setOpaque(true);
-	    miniLabel.setBackground(MainTheme.mainColor);
+        // TODO add your handling code here:
+        miniLabel.setOpaque(true);
+        miniLabel.setBackground(MainTheme.mainColor);
     }//GEN-LAST:event_miniLabelMouseEntered
 
     private void miniLabelMouseExited(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_miniLabelMouseExited
-	    // TODO add your handling code here:
+        // TODO add your handling code here:
 
-	    miniLabel.setBackground(MainTheme.secondColor);
-	    miniLabel.setOpaque(false);
+        miniLabel.setBackground(MainTheme.secondColor);
+        miniLabel.setOpaque(false);
     }//GEN-LAST:event_miniLabelMouseExited
 
         private void comboBox2ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_comboBox2ActionPerformed
-		// TODO add your handling code here:
-		advancedSearch();
+            // TODO add your handling code here:
+            advancedSearch();
         }//GEN-LAST:event_comboBox2ActionPerformed
 
         private void textF1KeyTyped(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_textF1KeyTyped
-		// TODO add your handling code here:
+            // TODO add your handling code here:
 
-		advancedSearch();
+            advancedSearch();
         }//GEN-LAST:event_textF1KeyTyped
 
         private void comboBox1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_comboBox1ActionPerformed
-		// TODO add your handling code here:
+            // TODO add your handling code here:
 
-		if (comboBox1.getSelectedItem() != null && !(comboBox1.getSelectedItem().toString().equals("Select food_item_category"))) {
-			advancedSearch();
-		}
+            if (comboBox1.getSelectedItem() != null && !(comboBox1.getSelectedItem().toString().equals("Select food_item_category"))) {
+                advancedSearch();
+            }
         }//GEN-LAST:event_comboBox1ActionPerformed
 
         private void customButton1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_customButton1ActionPerformed
-		// TODO add your handling code here:
-		loadTable();
-		textF1.setText("");
-		ActionListener[] actionListeners = comboBox1.getActionListeners();
-		comboBox1.removeActionListener(comboBox1);
-		loadCombos();
-		comboBox1.addActionListener(actionListeners[0]);
+            // TODO add your handling code here:
+            loadTable();
+            textF1.setText("");
+            ActionListener[] actionListeners = comboBox1.getActionListeners();
+            comboBox1.removeActionListener(comboBox1);
+            loadCombos();
+            comboBox1.addActionListener(actionListeners[0]);
         }//GEN-LAST:event_customButton1ActionPerformed
 
         private void textF2KeyTyped(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_textF2KeyTyped
-		// TODO add your handling code here:
+            // TODO add your handling code here:
         }//GEN-LAST:event_textF2KeyTyped
 
         private void textF3KeyTyped(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_textF3KeyTyped
-		// TODO add your handling code here:
+            // TODO add your handling code here:
         }//GEN-LAST:event_textF3KeyTyped
 
         private void customButton2ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_customButton2ActionPerformed
-		updateQty();
+            updateQty();
         }//GEN-LAST:event_customButton2ActionPerformed
-	boolean emailFieldEntred = false;
 
-	/**
-	 * @param args the command line arguments
-	 */
-	public static void main(String args[]) {
-		/* Set the Nimbus look and feel */
-		//<editor-fold defaultstate="collapsed" desc=" Look and feel setting code (optional) ">
-		/* If Nimbus (introduced in Java SE 6) is not available, stay with the default look and feel.
+    private void customButton3ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_customButton3ActionPerformed
+        // TODO add your handling code here:
+        printGRN(customTable1);
+    }//GEN-LAST:event_customButton3ActionPerformed
+    boolean emailFieldEntred = false;
+
+    /**
+     * @param args the command line arguments
+     */
+    public static void main(String args[]) {
+        /* Set the Nimbus look and feel */
+        //<editor-fold defaultstate="collapsed" desc=" Look and feel setting code (optional) ">
+        /* If Nimbus (introduced in Java SE 6) is not available, stay with the default look and feel.
          * For details see http://download.oracle.com/javase/tutorial/uiswing/lookandfeel/plaf.html 
-		 */
-		try {
-			for (javax.swing.UIManager.LookAndFeelInfo info : javax.swing.UIManager.getInstalledLookAndFeels()) {
-				if ("Nimbus".equals(info.getName())) {
-					javax.swing.UIManager.setLookAndFeel(info.getClassName());
-					break;
-					
-				}
-			}
-		} catch (ClassNotFoundException ex) {
-			java.util.logging.Logger.getLogger(StorageManage.class
-				.getName()).log(java.util.logging.Level.SEVERE, null, ex);
-			
-		} catch (InstantiationException ex) {
-			java.util.logging.Logger.getLogger(StorageManage.class
-				.getName()).log(java.util.logging.Level.SEVERE, null, ex);
-			
-		} catch (IllegalAccessException ex) {
-			java.util.logging.Logger.getLogger(StorageManage.class
-				.getName()).log(java.util.logging.Level.SEVERE, null, ex);
-			
-		} catch (javax.swing.UnsupportedLookAndFeelException ex) {
-			java.util.logging.Logger.getLogger(StorageManage.class
-				.getName()).log(java.util.logging.Level.SEVERE, null, ex);
-		}
-		//</editor-fold>
-		//</editor-fold>
-		//</editor-fold>
-		//</editor-fold>
-		//</editor-fold>
-		//</editor-fold>
-		//</editor-fold>
-		//</editor-fold>
-		//</editor-fold>
-		//</editor-fold>
-		//</editor-fold>
-		//</editor-fold>
-		//</editor-fold>
-		//</editor-fold>
-		//</editor-fold>
-		//</editor-fold>
-		//</editor-fold>
-		//</editor-fold>
-		//</editor-fold>
-		//</editor-fold>
-		//</editor-fold>
-		//</editor-fold>
-		//</editor-fold>
-		//</editor-fold>
-		//</editor-fold>
-		//</editor-fold>
-		//</editor-fold>
-		//</editor-fold>
-		//</editor-fold>
-		//</editor-fold>
-		//</editor-fold>
-		//</editor-fold>
-		//</editor-fold>
-		//</editor-fold>
-		//</editor-fold>
-		//</editor-fold>
-		//</editor-fold>
-		//</editor-fold>
-		//</editor-fold>
-		//</editor-fold>
-		//</editor-fold>
-		//</editor-fold>
-		//</editor-fold>
-		//</editor-fold>
-		//</editor-fold>
-		//</editor-fold>
-		//</editor-fold>
-		//</editor-fold>
-		//</editor-fold>
-		//</editor-fold>
-		//</editor-fold>
-		//</editor-fold>
-		//</editor-fold>
-		//</editor-fold>
-		//</editor-fold>
-		//</editor-fold>
-		//</editor-fold>
-		//</editor-fold>
-		//</editor-fold>
-		//</editor-fold>
-		//</editor-fold>
-		//</editor-fold>
-		//</editor-fold>
-		//</editor-fold>
-		//</editor-fold>
-		//</editor-fold>
-		//</editor-fold>
-		//</editor-fold>
-		//</editor-fold>
-		//</editor-fold>
-		//</editor-fold>
-		//</editor-fold>
-		//</editor-fold>
-		//</editor-fold>
-		//</editor-fold>
-		//</editor-fold>
-		//</editor-fold>
-		//</editor-fold>
-		//</editor-fold>
-		//</editor-fold>
-		//</editor-fold>
-		//</editor-fold>
-		//</editor-fold>
-		//</editor-fold>
-		//</editor-fold>
-		//</editor-fold>
-		//</editor-fold>
-		//</editor-fold>
-		//</editor-fold>
-		//</editor-fold>
-		//</editor-fold>
-		//</editor-fold>
-		//</editor-fold>
-		//</editor-fold>
-		//</editor-fold>
-		//</editor-fold>
-		//</editor-fold>
-		//</editor-fold>
-		//</editor-fold>
-		//</editor-fold>
-		//</editor-fold>
-		//</editor-fold>
-		//</editor-fold>
-		//</editor-fold>
-		//</editor-fold>
-		//</editor-fold>
-		//</editor-fold>
-		//</editor-fold>
-		//</editor-fold>
-		//</editor-fold>
-		//</editor-fold>
-		//</editor-fold>
-		//</editor-fold>
-		//</editor-fold>
-		//</editor-fold>
-		//</editor-fold>
-		//</editor-fold>
-		//</editor-fold>
-		//</editor-fold>
-		//</editor-fold>
-		//</editor-fold>
-		//</editor-fold>
-		//</editor-fold>
-		//</editor-fold>
-		//</editor-fold>
-		//</editor-fold>
-		//</editor-fold>
-		//</editor-fold>
+         */
+        try {
+            for (javax.swing.UIManager.LookAndFeelInfo info : javax.swing.UIManager.getInstalledLookAndFeels()) {
+                if ("Nimbus".equals(info.getName())) {
+                    javax.swing.UIManager.setLookAndFeel(info.getClassName());
+                    break;
 
-		/* Create and display the form */
-		java.awt.EventQueue.invokeLater(new Runnable() {
-			public void run() {
-				
-				JFrame jf = new StorageManage();
-				jf.setVisible(true);
-				
-			}
-		});
-	}
+                }
+            }
+        } catch (ClassNotFoundException ex) {
+            java.util.logging.Logger.getLogger(StorageManage.class
+                    .getName()).log(java.util.logging.Level.SEVERE, null, ex);
+
+        } catch (InstantiationException ex) {
+            java.util.logging.Logger.getLogger(StorageManage.class
+                    .getName()).log(java.util.logging.Level.SEVERE, null, ex);
+
+        } catch (IllegalAccessException ex) {
+            java.util.logging.Logger.getLogger(StorageManage.class
+                    .getName()).log(java.util.logging.Level.SEVERE, null, ex);
+
+        } catch (javax.swing.UnsupportedLookAndFeelException ex) {
+            java.util.logging.Logger.getLogger(StorageManage.class
+                    .getName()).log(java.util.logging.Level.SEVERE, null, ex);
+        }
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+
+        /* Create and display the form */
+        java.awt.EventQueue.invokeLater(new Runnable() {
+            public void run() {
+
+                JFrame jf = new StorageManage();
+                jf.setVisible(true);
+
+            }
+        });
+    }
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JLabel boxLabel;
@@ -882,7 +937,9 @@ public class StorageManage extends javax.swing.JFrame {
     private frameutil.ComboBox<String> comboBox2;
     private frameutil.CustomButton customButton1;
     private frameutil.CustomButton customButton2;
+    private frameutil.CustomButton customButton3;
     private frameutil.CustomTable customTable1;
+    private frameutil.FoodMenuBar foodMenuBar1;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel2;
     private javax.swing.JLabel jLabel3;

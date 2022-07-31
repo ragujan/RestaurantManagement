@@ -54,7 +54,7 @@ public class AddMenu extends javax.swing.JFrame {
         this.setResizable(true);
         this.setVisible(true);
         setShape(new RoundRectangle2D.Double(0, 0, getWidth(), getHeight(), 7, 7));
-        
+
         jframeCustmize();
         this.setBackground(MainTheme.mainColor);
         roundedPanel1.setBackground(MainTheme.mainColor);
@@ -66,25 +66,33 @@ public class AddMenu extends javax.swing.JFrame {
         ColorSetter.setC(jc, MainTheme.thirdColor, 1);
         ColorSetter.setC(jc, Color.WHITE, 2);
         this.setForeground(MainTheme.secondColor);
-        
+        menuBar1.foo( this);
         setDocFilters();
         loadCombos();
         loadTable();
         tableListenerRag();
         
+
     }
-    
+
     public AddMenu(DealerT et, HashMap<String, String> hm) {
         this();
         this.updateId = hm.get("id");
-        
+
     }
-    
+
     public AddMenu(Chef c) {
         this();
+
+    }
+    public AddMenu(SellingRecord sr){
+        this();
+        isOtherFramesInvolved = true;
+        isSellingRecordInvolved = true;
+        this.sr = sr;
+        this.thisaddmenu = this;
         
     }
-    
     public AddMenu(CustomerOrder co) {
         this();
         isCustomerOrderInvolved = true;
@@ -96,89 +104,97 @@ public class AddMenu extends javax.swing.JFrame {
     String updateId;
     public String description;
     String menuId = null;
-    
+
     String des = null;
     boolean isUpdateMode;
     boolean isCustomerOrderInvolved;
     boolean isOtherFramesInvolved;
+    boolean isSellingRecordInvolved;
     CustomerOrder co;
+    SellingRecord sr ;
     AddMenu thisaddmenu;
     String loadTableQuery;
     String[] colnames = {"menuItemId", "menuItemName", "menuItemPrice", "menu_item_category_name", "serving_type_name"};
-    
+
     private void loadQuery() {
         ArrayList<String> al = new ArrayList<String>();
         al.add("mainmenu");
         al.add("menu_item_category,mainmenu");
         al.add("serving_type,mainmenu");
-        
+
         SearchTable st = new SearchTable(al);
         this.loadTableQuery = st.getTableQuery();
-        
+
     }
-    
+
     private void loadTable() {
         loadQuery();
         String sort = "ORDER BY `menuItemName` ASC";
-        
+
         StringBuilder stringquerybuild = new StringBuilder();
         stringquerybuild.append(this.loadTableQuery).toString();
         stringquerybuild.append(sort).toString();
         String query = stringquerybuild.toString();
-        
+
         LoadTables lt = new LoadTables(customTable1, query, this.colnames);
     }
-    
+
     private void loadTable(String loadTableQuery) {
         loadQuery();
         String sort = "ORDER BY `menuItemName` ASC";
-        
+
         StringBuilder stringquerybuild = new StringBuilder();
         stringquerybuild.append(loadTableQuery).toString();
         stringquerybuild.append(sort).toString();
         String query = stringquerybuild.toString();
-        
+
         LoadTables lt = new LoadTables(customTable1, query, this.colnames);
         System.out.println(loadTableQuery);
     }
-    
+
     public void addDes() {
         DescriptionBox db = new DescriptionBox(this, "You have to add description") {
             @Override
             public void actionConfirmed() {
-                
+
                 description = jTextArea1.getText();
                 System.out.println(description);
             }
-            
+
             @Override
             public void actionCancelled() {
             }
         };
         db.setVisible(true);
     }
-    
+
     public void showDes() {
         DescriptionBox db = new DescriptionBox(this, "You have to add description", des) {
             @Override
             public void actionConfirmed() {
-                
+
                 description = jTextArea1.getText();
                 System.out.println(description);
             }
-            
+
             @Override
             public void actionCancelled() {
             }
         };
         db.setVisible(true);
     }
-    
+
     public void clearFields() {
         JComponent[] jc = {textF5, textF4, comboBox3, comboBox4, textF7, textF6, comboBox6, comboBox7, comboBox5};
         SetEmptyItems.emptyItems(jc);
     }
-    
+
+ 
+
+    public void clearInsertFields() {
+
+    }
+
     public void add() {
         String name = textF5.getText();
         String servingType = null;
@@ -199,7 +215,7 @@ public class AddMenu extends javax.swing.JFrame {
         } else if (description.length() > 200) {
             Message m = new Message(this, "Menu item description is too long", "Warning");
         } else {
-            
+
             String servingId = GetIdSingle.getId("serving_type", servingType);
             String categoryId = GetIdSingle.getId("menu_item_category", category);
             if (IdCheck.isLikeExits("mainmenu", "menuItemName", name)) {
@@ -212,15 +228,15 @@ public class AddMenu extends javax.swing.JFrame {
                     info.add(servingId);
                     InsertTable it = new InsertTable("mainmenu", info);
                     loadTable();
-                    
+
                 } else if (IdCheck.rowCount == 1) {
                     Message M = new Message(this, "This menu item name already exits", "Warning");
                 } else if (IdCheck.rowCount > 1) {
                     ShortMessageBox m = new ShortMessageBox(this, "This menu item name likely exists do you want to add ") {
-                        
+
                         @Override
                         public void actionConfirmed() {
-                            
+
                             ArrayList<String> info = new ArrayList<>();
                             info.add(categoryId);
                             info.add(description);
@@ -230,23 +246,23 @@ public class AddMenu extends javax.swing.JFrame {
                             InsertTable it = new InsertTable("mainmenu", info);
                             loadTable();
                         }
-                        
+
                         @Override
                         public void actionCancelled() {
-                            
+
                         }
-                        
+
                         @Override
                         public void loadMessage() {
                             loadTableQuery += "WHERE `menuItemName` LIKE '%" + name
                                     + "%'";
-                            
+
                             loadTable(loadTableQuery);
                         }
                     };
                     m.setVisible(true);
                 }
-                
+
             } else {
                 ArrayList<String> info = new ArrayList<>();
                 info.add(categoryId);
@@ -259,10 +275,12 @@ public class AddMenu extends javax.swing.JFrame {
             }
             clearFields();
             loadCombos();
+            loadTable();
+               PanelRemover.removeP(jPanel3, jPanel5);
         }
-        
+
     }
-    
+
     public void update() {
         String name = textF5.getText();
         String servingType = null;
@@ -292,22 +310,19 @@ public class AddMenu extends javax.swing.JFrame {
             loadCombos();
             loadTable();
         }
-        
+
     }
-    
+
     public void clearSearchFields() {
         ActionListener alCombo5 = comboBox5.getActionListeners()[0];
         ActionListener alCombo6 = comboBox6.getActionListeners()[0];
-        //   comboBox5.removeActionListener(comboBox5.getActionListeners()[0]);
-        //    comboBox6.removeActionListener(comboBox6.getActionListeners()[0]);
+
         clearFields();
         loadTable();
         loadCombos();
-        //   comboBox5.addActionListener(alCombo5);
-        //    comboBox6.addActionListener(alCombo6);
 
     }
-    
+
     public void advancedSearch() {
         String name = textF7.getText();
         boolean isNameInvolved = false;
@@ -319,14 +334,14 @@ public class AddMenu extends javax.swing.JFrame {
         if (comboBox5.getSelectedItem() != null) {
             servingType = comboBox5.getSelectedItem().toString();
         }
-        
+
         String sort = comboBox7.getSelectedItem().toString();
-        
+
         StringBuilder stringquerybuild = new StringBuilder();
         StringBuilder whereQueryBuilder = new StringBuilder();
         Vector<String> v = new Vector<String>();
         boolean queriesInvolved = false;
-        
+
         String sortQuery = "";
         String whereQuery = "";
         if (sort.equals("NAME A-Z")) {
@@ -350,52 +365,52 @@ public class AddMenu extends javax.swing.JFrame {
             v.add("`mainmenu`.`menuItemName` LIKE '%" + name + "%' ");
             queriesInvolved = true;
         }
-        
+
         if (!categoryType.equals("Select menu_item_category")) {
             System.out.println(categoryType);
             v.add("`menu_item_category`.`menu_item_category_name` = '" + categoryType + "' ");
             queriesInvolved = true;
-            
+
         }
         if (!servingType.equals("Select serving_type")) {
             v.add(" `serving_type`.`serving_type_name` = '" + servingType + "' ");
             queriesInvolved = true;
-            
+
         }
         if (queriesInvolved) {
             whereQueryBuilder.append("where ");
         }
         for (int i = 0; i < v.size(); i++) {
-            
+
             whereQueryBuilder.append("");
             whereQueryBuilder.append(v.get(i));
-            
+
             if (i != v.size() - 1) {
                 whereQueryBuilder.append("AND ");
             }
         }
-        
+
         stringquerybuild.append(this.loadTableQuery);
         stringquerybuild.append(whereQueryBuilder);
         stringquerybuild.append(sortQuery);
         String query = stringquerybuild.toString();
-        
+
         LoadTables lt = new LoadTables(customTable1, query, this.colnames);
     }
-    
+
     public void tableListenerRag() {
         TableListenerAbs tlas = new TableListenerAbs(customTable1) {
             @Override
             protected void foo(ListSelectionEvent e) {
                 try {
-                    
+
                     int row = customTable1.getSelectedRow();
                     String name = (String) customTable1.getValueAt(row, 1);
                     String price = (String) customTable1.getValueAt(row, 2);
                     String category = (String) customTable1.getValueAt(row, 3);
                     String servingType = (String) customTable1.getValueAt(row, 4);
                     menuId = (String) customTable1.getValueAt(row, 0);
-                    
+
                     ResultSet rs = MySql.sq("SELECT `menuItemDescription` FROM `mainmenu` WHERE `mainmenu`.`menuItemId` = '" + menuId + "'");
                     rs.next();
                     des = rs.getString("menuItemDescription");
@@ -406,14 +421,17 @@ public class AddMenu extends javax.swing.JFrame {
                         co.textF6.setText(price);
                         co.menuItemCategory = category;
                         thisaddmenu.dispose();
-                    } else {
+                    }else if(isSellingRecordInvolved){
+                        sr.textF1.setText(name);
+                         thisaddmenu.dispose();
+                    }else {
                         comboBox3.setSelectedItem(servingType);
                         comboBox4.setSelectedItem(category);
                         textF5.setText(name);
                         textF4.setText(price);
                         isUpdateMode = true;
                     }
-                    
+
                 } catch (ClassNotFoundException ex) {
                     Logger.getLogger(AddMenu.class.getName()).log(Level.SEVERE, null, ex);
                 } catch (SQLException ex) {
@@ -423,12 +441,12 @@ public class AddMenu extends javax.swing.JFrame {
         };
         tlas.tableListenerRag(customTable1);
     }
-    
+
     private void jframeCustmize() {
         closeLabel.setIcon(labelSetIcon("/Icons/close.png", closeLabel.getWidth() - 25, closeLabel.getHeight() - 17));
         boxLabel.setIcon(labelSetIcon("/Icons/square.png", boxLabel.getWidth() - 23, boxLabel.getHeight() - 17));
         miniLabel.setIcon(labelSetIcon("/Icons/minus.png", miniLabel.getWidth() - 20, miniLabel.getHeight() - 13));
-        
+
         miniLabel.addMouseListener(new java.awt.event.MouseAdapter() {
             @Override
             public void mouseClicked(java.awt.event.MouseEvent evt) {
@@ -436,27 +454,25 @@ public class AddMenu extends javax.swing.JFrame {
             }
         });
     }
-    
+
     public ImageIcon labelSetIcon(String src, int w, int h) {
         ImageSizer imgSizer = new ImageSizer();
         ImageIcon i = imgSizer.overaallResizer(src, w, h);
         return i;
     }
-    
+
     private void loadCombos() {
         LoadSubTypes.loadType(comboBox4, "menu_item_category");
         LoadSubTypes.loadType(comboBox3, "serving_type");
         LoadSubTypes.loadType(comboBox6, "menu_item_category");
         LoadSubTypes.loadType(comboBox5, "serving_type");
     }
-    
+
     private void setDocFilters() {
         String priceRegex = "^\\d*([,]\\d*)*([.]\\d*)?";
         new FilterDocRagRegex(textF6, priceRegex, 10);
         new FilterDocRagRegex(textF4, priceRegex, 10);
     }
-    
-
 
     /**
      * This method is called from within the constructor to initialize the form.
@@ -508,6 +524,7 @@ public class AddMenu extends javax.swing.JFrame {
         customButton6 = new frameutil.CustomButton();
         customButton7 = new frameutil.CustomButton();
         customButton8 = new frameutil.CustomButton();
+        menuBar1 = new frameutil.MenuBar();
 
         jToggleButton1.setText("jToggleButton1");
 
@@ -588,8 +605,8 @@ public class AddMenu extends javax.swing.JFrame {
             roundedPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addComponent(jPanel1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
             .addGroup(roundedPanel2Layout.createSequentialGroup()
-                .addContainerGap(10, Short.MAX_VALUE)
-                .addComponent(jLabel1))
+                .addComponent(jLabel1)
+                .addGap(0, 0, Short.MAX_VALUE))
         );
 
         customTable1.setModel(new javax.swing.table.DefaultTableModel(
@@ -911,10 +928,10 @@ public class AddMenu extends javax.swing.JFrame {
         jPanel2Layout.setVerticalGroup(
             jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(jPanel2Layout.createSequentialGroup()
-                .addContainerGap()
+                .addContainerGap(12, Short.MAX_VALUE)
                 .addComponent(jPanel3, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 217, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 206, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addContainerGap())
         );
 
@@ -925,7 +942,9 @@ public class AddMenu extends javax.swing.JFrame {
             .addComponent(roundedPanel2, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
             .addGroup(roundedPanel1Layout.createSequentialGroup()
                 .addContainerGap()
-                .addComponent(jPanel2, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .addGroup(roundedPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addComponent(jPanel2, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addComponent(menuBar1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
                 .addContainerGap())
         );
         roundedPanel1Layout.setVerticalGroup(
@@ -933,6 +952,8 @@ public class AddMenu extends javax.swing.JFrame {
             .addGroup(roundedPanel1Layout.createSequentialGroup()
                 .addComponent(roundedPanel2, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(menuBar1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGap(5, 5, 5)
                 .addComponent(jPanel2, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                 .addContainerGap())
         );
@@ -1087,21 +1108,21 @@ public class AddMenu extends javax.swing.JFrame {
                 if ("Nimbus".equals(info.getName())) {
                     javax.swing.UIManager.setLookAndFeel(info.getClassName());
                     break;
-                    
+
                 }
             }
         } catch (ClassNotFoundException ex) {
             java.util.logging.Logger.getLogger(AddMenu.class
                     .getName()).log(java.util.logging.Level.SEVERE, null, ex);
-            
+
         } catch (InstantiationException ex) {
             java.util.logging.Logger.getLogger(AddMenu.class
                     .getName()).log(java.util.logging.Level.SEVERE, null, ex);
-            
+
         } catch (IllegalAccessException ex) {
             java.util.logging.Logger.getLogger(AddMenu.class
                     .getName()).log(java.util.logging.Level.SEVERE, null, ex);
-            
+
         } catch (javax.swing.UnsupportedLookAndFeelException ex) {
             java.util.logging.Logger.getLogger(AddMenu.class
                     .getName()).log(java.util.logging.Level.SEVERE, null, ex);
@@ -1174,10 +1195,10 @@ public class AddMenu extends javax.swing.JFrame {
         /* Create and display the form */
         java.awt.EventQueue.invokeLater(new Runnable() {
             public void run() {
-                
+
                 JFrame jf = new AddMenu();
                 jf.setVisible(true);
-                
+
             }
         });
     }
@@ -1217,6 +1238,7 @@ public class AddMenu extends javax.swing.JFrame {
     private javax.swing.JPanel jPanel5;
     private javax.swing.JScrollPane jScrollPane1;
     private javax.swing.JToggleButton jToggleButton1;
+    private frameutil.MenuBar menuBar1;
     private javax.swing.JLabel miniLabel;
     private RoundedPanel roundedPanel1;
     private RoundedPanel roundedPanel2;

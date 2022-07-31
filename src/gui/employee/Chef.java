@@ -43,243 +43,244 @@ import model.MySql;
  */
 public class Chef extends javax.swing.JFrame {
 
-	/**
-	 * Creates new form NewJFrame
-	 */
-	public Chef() {
-		initComponents();
-		this.setLocationRelativeTo(null);
-		this.setResizable(true);
-		this.setVisible(true);
-		setShape(new RoundRectangle2D.Double(0, 0, getWidth(), getHeight(), 7, 7));
+    /**
+     * Creates new form NewJFrame
+     */
+    public Chef() {
+        initComponents();
+        this.setLocationRelativeTo(null);
+        this.setResizable(true);
+        this.setVisible(true);
+        setShape(new RoundRectangle2D.Double(0, 0, getWidth(), getHeight(), 7, 7));
+        employeeMenuBar1.foo(this);
 
-		jframeCustmize();
-		this.setBackground(MainTheme.mainColor);
-		roundedPanel1.setBackground(MainTheme.mainColor);
-		roundedPanel2.setBackground(MainTheme.secondColor);
-		jPanel2.setBackground(MainTheme.secondColor);
-		jPanel3.setBackground(MainTheme.secondColor);
-		jPanel4.setBackground(MainTheme.fourthColor);
-		this.setForeground(MainTheme.secondColor);
-		textF1.setEditable(false);
+        jframeCustmize();
+        this.setBackground(MainTheme.mainColor);
+        roundedPanel1.setBackground(MainTheme.mainColor);
+        roundedPanel2.setBackground(MainTheme.secondColor);
+        jPanel2.setBackground(MainTheme.secondColor);
+        jPanel3.setBackground(MainTheme.secondColor);
+        jPanel4.setBackground(MainTheme.fourthColor);
+        this.setForeground(MainTheme.secondColor);
+        textF1.setEditable(false);
 
-		textF3.setEditable(false);
-		loadTable();
-		loadCombos();
-		tableListernRag();
+        textF3.setEditable(false);
+        loadTable();
+        loadCombos();
+        tableListernRag();
 
-	}
-	public String empId;
+    }
+    public String empId;
 
-	String loadTableQuery;
-	String[] colnames = {"employee_id", "chef_id", "employee_name", "chef_type_name", "job_status_name",};
+    String loadTableQuery;
+    String[] colnames = {"employee_id", "chef_id", "employee_name", "chef_type_name", "job_status_name",};
 
-	EmployeeT thiset;
-	Chef chef;
-	boolean isEditmode;
+    EmployeeT thiset;
+    Chef chef;
+    boolean isEditmode;
 
-	private void loadQuery() {
-		ArrayList<String> al = new ArrayList<String>();
-		al.add("chef");
-		al.add("employee,chef");
-		al.add("chef_type,chef");
-		al.add("job_status,chef");
+    private void loadQuery() {
+        ArrayList<String> al = new ArrayList<String>();
+        al.add("chef");
+        al.add("employee,chef");
+        al.add("chef_type,chef");
+        al.add("job_status,chef");
 
-		SearchTable st = new SearchTable(al);
-		this.loadTableQuery = st.getTableQuery();
-		//System.out.println(this.loadTableQuery);
+        SearchTable st = new SearchTable(al);
+        this.loadTableQuery = st.getTableQuery();
+        //System.out.println(this.loadTableQuery);
 
-	}
+    }
 
-	private void loadTable() {
-		loadQuery();
-		String sort = "ORDER BY `employee_name` ASC";
+    private void loadTable() {
+        loadQuery();
+        String sort = "ORDER BY `employee_name` ASC";
 
-		StringBuilder stringquerybuild = new StringBuilder();
-		stringquerybuild.append(this.loadTableQuery).toString();
-		stringquerybuild.append(sort).toString();
-		String query = stringquerybuild.toString();
+        StringBuilder stringquerybuild = new StringBuilder();
+        stringquerybuild.append(this.loadTableQuery).toString();
+        stringquerybuild.append(sort).toString();
+        String query = stringquerybuild.toString();
 
-		LoadTables lt = new LoadTables(customTable1, query, this.colnames);
-	}
+        LoadTables lt = new LoadTables(customTable1, query, this.colnames);
+    }
 
-	private void loadCombos() {
-		LoadSubTypes.loadType(comboBox1, "chef_type");
-		LoadSubTypes.loadType(comboBox2, "job_status");
+    private void loadCombos() {
+        LoadSubTypes.loadType(comboBox1, "chef_type");
+        LoadSubTypes.loadType(comboBox2, "job_status");
 
-	}
+    }
 
-	private boolean empCheck() {
-		boolean state = false;
-		ResultSet rs;
-		try {
-			rs = MySql.sq("SELECT * FROM `chef` WHERE `employee_id`='" + empId + "'");
-			if (rs.next()) {
-				state = true;
-			}
+    private boolean empCheck() {
+        boolean state = false;
+        ResultSet rs;
+        try {
+            rs = MySql.sq("SELECT * FROM `chef` WHERE `employee_id`='" + empId + "'");
+            if (rs.next()) {
+                state = true;
+            }
 
-		} catch (ClassNotFoundException ex) {
-			Logger.getLogger(Chef.class.getName()).log(Level.SEVERE, null, ex);
-		} catch (SQLException ex) {
-			Logger.getLogger(Chef.class.getName()).log(Level.SEVERE, null, ex);
-		}
-		return state;
-	}
+        } catch (ClassNotFoundException ex) {
+            Logger.getLogger(Chef.class.getName()).log(Level.SEVERE, null, ex);
+        } catch (SQLException ex) {
+            Logger.getLogger(Chef.class.getName()).log(Level.SEVERE, null, ex);
+        }
+        return state;
+    }
 
-	public void tableListernRag() {
-		customTable1.getSelectionModel().addListSelectionListener(new ListSelectionListener() {
-			@Override
-			public void valueChanged(ListSelectionEvent e) {
-				int row = customTable1.getSelectedRow();
-				if (row != -1 && isEditmode) {
+    public void tableListernRag() {
+        customTable1.getSelectionModel().addListSelectionListener(new ListSelectionListener() {
+            @Override
+            public void valueChanged(ListSelectionEvent e) {
+                int row = customTable1.getSelectedRow();
+                if (row != -1 && isEditmode) {
 
-					try {
-						String id = customTable1.getValueAt(row, 0).toString();
-						empId = id;
-						String name = customTable1.getValueAt(row, 2).toString();
-						String cheftype = customTable1.getValueAt(row, 3).toString();
-						String jobstatus = customTable1.getValueAt(row, 4).toString();
-						StringBuilder whereQuery = new StringBuilder(loadTableQuery);
-						whereQuery.append("WHERE `employee`.`employee_id`='" + id + "'");
-						System.out.println(whereQuery);
-						ResultSet rs = MySql.sq(whereQuery.toString());
-						rs.next();
+                    try {
+                        String id = customTable1.getValueAt(row, 0).toString();
+                        empId = id;
+                        String name = customTable1.getValueAt(row, 2).toString();
+                        String cheftype = customTable1.getValueAt(row, 3).toString();
+                        String jobstatus = customTable1.getValueAt(row, 4).toString();
+                        StringBuilder whereQuery = new StringBuilder(loadTableQuery);
+                        whereQuery.append("WHERE `employee`.`employee_id`='" + id + "'");
+                        System.out.println(whereQuery);
+                        ResultSet rs = MySql.sq(whereQuery.toString());
+                        rs.next();
 
-						String email = rs.getString("employee_email");
-						textF1.setText(name);
+                        String email = rs.getString("employee_email");
+                        textF1.setText(name);
 
-						textF3.setText(email);
-						comboBox1.setSelectedItem(cheftype);
-						comboBox2.setSelectedItem(jobstatus);
-						//isEditmode = false;
-					} catch (ClassNotFoundException ex) {
-						Logger.getLogger(Chef.class.getName()).log(Level.SEVERE, null, ex);
-					} catch (SQLException ex) {
-						Logger.getLogger(Chef.class.getName()).log(Level.SEVERE, null, ex);
-					}
+                        textF3.setText(email);
+                        comboBox1.setSelectedItem(cheftype);
+                        comboBox2.setSelectedItem(jobstatus);
+                        //isEditmode = false;
+                    } catch (ClassNotFoundException ex) {
+                        Logger.getLogger(Chef.class.getName()).log(Level.SEVERE, null, ex);
+                    } catch (SQLException ex) {
+                        Logger.getLogger(Chef.class.getName()).log(Level.SEVERE, null, ex);
+                    }
 
-				}
-			}
+                }
+            }
 
-		});
+        });
 
-	}
+    }
 
-	private void addChef() {
-		if (comboBox1.getSelectedItem().toString().equals("Select chef_type")) {
-			Message m = new Message(this, "Select a valid chef type", "warning");
+    private void addChef() {
+        if (comboBox1.getSelectedItem().toString().equals("Select chef_type")) {
+            Message m = new Message(this, "Select a valid chef type", "warning");
 
-		} else if (comboBox2.getSelectedItem().toString().equals("Select job_status")) {
-			Message m = new Message(this, "Select a valid job_status", "warning");
+        } else if (comboBox2.getSelectedItem().toString().equals("Select job_status")) {
+            Message m = new Message(this, "Select a valid job_status", "warning");
 
-		} else if (textF1.getText().isEmpty()) {
-			Message m = new Message(this, "Fields are empty", "warning");
-		} else {
+        } else if (textF1.getText().isEmpty()) {
+            Message m = new Message(this, "Fields are empty", "warning");
+        } else {
 
-			String chefType = comboBox1.getSelectedItem().toString();
-			String jobStatus = comboBox2.getSelectedItem().toString();
-			if (!empCheck()) {
+            String chefType = comboBox1.getSelectedItem().toString();
+            String jobStatus = comboBox2.getSelectedItem().toString();
+            if (!empCheck()) {
 
-				ResultSet rs;
-				try {
-					rs = MySql.sq("SELECT * FROM `chef_type` WHERE `chef_type_name`='" + chefType + "'");
-					rs.next();
-					String chefTypeId = rs.getString("chef_type_id");
+                ResultSet rs;
+                try {
+                    rs = MySql.sq("SELECT * FROM `chef_type` WHERE `chef_type_name`='" + chefType + "'");
+                    rs.next();
+                    String chefTypeId = rs.getString("chef_type_id");
 
-					rs = MySql.sq("SELECT * FROM `job_status` WHERE `job_status_name`='" + jobStatus + "'");
-					rs.next();
-					String jobStatusId = rs.getString("job_status_id");
-					ArrayList<String> info = new ArrayList<>();
-					info.add(chefTypeId);
-					info.add(empId);
+                    rs = MySql.sq("SELECT * FROM `job_status` WHERE `job_status_name`='" + jobStatus + "'");
+                    rs.next();
+                    String jobStatusId = rs.getString("job_status_id");
+                    ArrayList<String> info = new ArrayList<>();
+                    info.add(chefTypeId);
+                    info.add(empId);
 
-					info.add(jobStatusId);
-					InsertTable it = new InsertTable("chef", info);
-					Message m = new Message(this, "Successfully entered ", "warning");
-					textF1.setText("");
+                    info.add(jobStatusId);
+                    InsertTable it = new InsertTable("chef", info);
+                    Message m = new Message(this, "Successfully entered ", "warning");
+                    textF1.setText("");
 
-					textF3.setText("");
-					loadCombos();
-					loadTable();
-				} catch (ClassNotFoundException ex) {
-					Logger.getLogger(Chef.class.getName()).log(Level.SEVERE, null, ex);
-				} catch (SQLException ex) {
-					Logger.getLogger(Chef.class.getName()).log(Level.SEVERE, null, ex);
-				}
-			} else {
-				Message m = new Message(this, "This chef Already exits ", "warning");
-			}
-		}
+                    textF3.setText("");
+                    loadCombos();
+                    loadTable();
+                } catch (ClassNotFoundException ex) {
+                    Logger.getLogger(Chef.class.getName()).log(Level.SEVERE, null, ex);
+                } catch (SQLException ex) {
+                    Logger.getLogger(Chef.class.getName()).log(Level.SEVERE, null, ex);
+                }
+            } else {
+                Message m = new Message(this, "This chef Already exits ", "warning");
+            }
+        }
 
-	}
+    }
 
-	private void updatechef() {
-		if (comboBox1.getSelectedItem().toString().equals("Select chef_type")) {
-			Message m = new Message(this, "Select a valid chef type", "warning");
+    private void updatechef() {
+        if (comboBox1.getSelectedItem().toString().equals("Select chef_type")) {
+            Message m = new Message(this, "Select a valid chef type", "warning");
 
-		} else if (comboBox2.getSelectedItem().toString().equals("Select job_status")) {
-			Message m = new Message(this, "Select a valid job_status", "warning");
+        } else if (comboBox2.getSelectedItem().toString().equals("Select job_status")) {
+            Message m = new Message(this, "Select a valid job_status", "warning");
 
-		} else if (textF1.getText().isEmpty()) {
-			Message m = new Message(this, "Fields are empty", "warning");
-		} else {
+        } else if (textF1.getText().isEmpty()) {
+            Message m = new Message(this, "Fields are empty", "warning");
+        } else {
 
-			String chefType = comboBox1.getSelectedItem().toString();
-			String jobStatus = comboBox2.getSelectedItem().toString();
-			if (empCheck()) {
+            String chefType = comboBox1.getSelectedItem().toString();
+            String jobStatus = comboBox2.getSelectedItem().toString();
+            if (empCheck()) {
 
-				ResultSet rs;
-				try {
-					System.out.println(empId);
-					rs = MySql.sq("SELECT * FROM `chef_type` WHERE `chef_type_name`='" + chefType + "'");
-					rs.next();
-					String chefTypeId = rs.getString("chef_type_id");
+                ResultSet rs;
+                try {
+                    System.out.println(empId);
+                    rs = MySql.sq("SELECT * FROM `chef_type` WHERE `chef_type_name`='" + chefType + "'");
+                    rs.next();
+                    String chefTypeId = rs.getString("chef_type_id");
 
-					rs = MySql.sq("SELECT * FROM `job_status` WHERE `job_status_name`='" + jobStatus + "'");
-					rs.next();
-					String jobStatusId = rs.getString("job_status_id");
-					MySql.iud("UPDATE `chef` SET `chef_type_id`='" + chefTypeId + "',`job_status_id`='" + jobStatusId + "' WHERE `employee_id`='" + empId + "'");
-					Message m = new Message(this, "Successfully updated ", "warning");
-					textF1.setText("");
+                    rs = MySql.sq("SELECT * FROM `job_status` WHERE `job_status_name`='" + jobStatus + "'");
+                    rs.next();
+                    String jobStatusId = rs.getString("job_status_id");
+                    MySql.iud("UPDATE `chef` SET `chef_type_id`='" + chefTypeId + "',`job_status_id`='" + jobStatusId + "' WHERE `employee_id`='" + empId + "'");
+                    Message m = new Message(this, "Successfully updated ", "warning");
+                    textF1.setText("");
 
-					textF3.setText("");
-					loadCombos();
-					loadTable();
-				} catch (ClassNotFoundException ex) {
-					Logger.getLogger(Chef.class.getName()).log(Level.SEVERE, null, ex);
-				} catch (SQLException ex) {
-					Logger.getLogger(Chef.class.getName()).log(Level.SEVERE, null, ex);
-				}
-			} 
-		}
+                    textF3.setText("");
+                    loadCombos();
+                    loadTable();
+                } catch (ClassNotFoundException ex) {
+                    Logger.getLogger(Chef.class.getName()).log(Level.SEVERE, null, ex);
+                } catch (SQLException ex) {
+                    Logger.getLogger(Chef.class.getName()).log(Level.SEVERE, null, ex);
+                }
+            }
+        }
 
-	}
+    }
 
-	private void jframeCustmize() {
-		closeLabel.setIcon(labelSetIcon("/Icons/close.png", closeLabel.getWidth() - 25, closeLabel.getHeight() - 17));
-		boxLabel.setIcon(labelSetIcon("/Icons/square.png", boxLabel.getWidth() - 23, boxLabel.getHeight() - 17));
-		miniLabel.setIcon(labelSetIcon("/Icons/minus.png", miniLabel.getWidth() - 20, miniLabel.getHeight() - 13));
+    private void jframeCustmize() {
+        closeLabel.setIcon(labelSetIcon("/Icons/close.png", closeLabel.getWidth() - 25, closeLabel.getHeight() - 17));
+        boxLabel.setIcon(labelSetIcon("/Icons/square.png", boxLabel.getWidth() - 23, boxLabel.getHeight() - 17));
+        miniLabel.setIcon(labelSetIcon("/Icons/minus.png", miniLabel.getWidth() - 20, miniLabel.getHeight() - 13));
 
-		miniLabel.addMouseListener(new java.awt.event.MouseAdapter() {
-			@Override
-			public void mouseClicked(java.awt.event.MouseEvent evt) {
-				setState(JFrame.ICONIFIED);
-			}
-		});
-	}
+        miniLabel.addMouseListener(new java.awt.event.MouseAdapter() {
+            @Override
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                setState(JFrame.ICONIFIED);
+            }
+        });
+    }
 
-	public ImageIcon labelSetIcon(String src, int w, int h) {
-		ImageSizer imgSizer = new ImageSizer();
-		ImageIcon i = imgSizer.overaallResizer(src, w, h);
-		return i;
-	}
+    public ImageIcon labelSetIcon(String src, int w, int h) {
+        ImageSizer imgSizer = new ImageSizer();
+        ImageIcon i = imgSizer.overaallResizer(src, w, h);
+        return i;
+    }
 
-	/**
-	 * This method is called from within the constructor to initialize the
-	 * form. WARNING: Do NOT modify this code. The content of this method is
-	 * always regenerated by the Form Editor.
-	 */
-	@SuppressWarnings("unchecked")
+    /**
+     * This method is called from within the constructor to initialize the form.
+     * WARNING: Do NOT modify this code. The content of this method is always
+     * regenerated by the Form Editor.
+     */
+    @SuppressWarnings("unchecked")
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
     private void initComponents() {
 
@@ -312,6 +313,7 @@ public class Chef extends javax.swing.JFrame {
         jPanel5 = new javax.swing.JPanel();
         jScrollPane1 = new javax.swing.JScrollPane();
         customTable1 = new frameutil.CustomTable();
+        employeeMenuBar1 = new frameutil.EmployeeMenuBar();
 
         jToggleButton1.setText("jToggleButton1");
 
@@ -599,23 +601,26 @@ public class Chef extends javax.swing.JFrame {
                 .addContainerGap()
                 .addGroup(roundedPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addComponent(jPanel3, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addComponent(jPanel5, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                     .addGroup(roundedPanel1Layout.createSequentialGroup()
                         .addComponent(jPanel2, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addGap(0, 0, Short.MAX_VALUE))
-                    .addComponent(jPanel5, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                    .addComponent(employeeMenuBar1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
                 .addContainerGap())
         );
         roundedPanel1Layout.setVerticalGroup(
             roundedPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(roundedPanel1Layout.createSequentialGroup()
                 .addComponent(roundedPanel2, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(18, 18, 18)
+                .addGap(5, 5, 5)
+                .addComponent(employeeMenuBar1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(jPanel2, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(jPanel3, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(jPanel5, javax.swing.GroupLayout.PREFERRED_SIZE, 341, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap(9, Short.MAX_VALUE))
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
@@ -634,183 +639,183 @@ public class Chef extends javax.swing.JFrame {
         pack();
     }// </editor-fold>//GEN-END:initComponents
     int x = 0;
-	int y = 0;
+    int y = 0;
     private void roundedPanel2MousePressed(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_roundedPanel2MousePressed
-	    // TODO add your handling code here:
-	    x = evt.getX();
-	    y = evt.getY();
+        // TODO add your handling code here:
+        x = evt.getX();
+        y = evt.getY();
     }//GEN-LAST:event_roundedPanel2MousePressed
 
     private void roundedPanel2MouseDragged(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_roundedPanel2MouseDragged
-	    // TODO add your handling code here:
-	    int xx = evt.getXOnScreen();
-	    int yy = evt.getYOnScreen();
-	    this.setLocation(xx - x, yy - y);
+        // TODO add your handling code here:
+        int xx = evt.getXOnScreen();
+        int yy = evt.getYOnScreen();
+        this.setLocation(xx - x, yy - y);
     }//GEN-LAST:event_roundedPanel2MouseDragged
 
     private void closeLabelMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_closeLabelMouseClicked
-	    // TODO add your handling code here:
-	    System.exit(0);
+        // TODO add your handling code here:
+        System.exit(0);
     }//GEN-LAST:event_closeLabelMouseClicked
 
     private void closeLabelMouseEntered(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_closeLabelMouseEntered
-	    // TODO add your handling code here:
-	    closeLabel.setOpaque(true);
-	    closeLabel.setBackground(MainTheme.mainColor);
+        // TODO add your handling code here:
+        closeLabel.setOpaque(true);
+        closeLabel.setBackground(MainTheme.mainColor);
     }//GEN-LAST:event_closeLabelMouseEntered
 
     private void closeLabelMouseExited(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_closeLabelMouseExited
-	    // TODO add your handling code here:
-	    closeLabel.setBackground(MainTheme.secondColor);
-	    closeLabel.setOpaque(false);
+        // TODO add your handling code here:
+        closeLabel.setBackground(MainTheme.secondColor);
+        closeLabel.setOpaque(false);
 
     }//GEN-LAST:event_closeLabelMouseExited
 
     private void miniLabelMouseEntered(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_miniLabelMouseEntered
-	    // TODO add your handling code here:
-	    miniLabel.setOpaque(true);
-	    miniLabel.setBackground(MainTheme.mainColor);
+        // TODO add your handling code here:
+        miniLabel.setOpaque(true);
+        miniLabel.setBackground(MainTheme.mainColor);
     }//GEN-LAST:event_miniLabelMouseEntered
 
     private void miniLabelMouseExited(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_miniLabelMouseExited
-	    // TODO add your handling code here:
+        // TODO add your handling code here:
 
-	    miniLabel.setBackground(MainTheme.secondColor);
-	    miniLabel.setOpaque(false);
+        miniLabel.setBackground(MainTheme.secondColor);
+        miniLabel.setOpaque(false);
     }//GEN-LAST:event_miniLabelMouseExited
 
         private void customButton1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_customButton1ActionPerformed
-		// TODO add your handling code here:
-		this.setEnabled(false);
-		CreateObject.make(new EmployeeT(this));
+            // TODO add your handling code here:
+            this.setEnabled(false);
+            CreateObject.make(new EmployeeT(this));
 
         }//GEN-LAST:event_customButton1ActionPerformed
 
         private void textF3FocusLost(java.awt.event.FocusEvent evt) {//GEN-FIRST:event_textF3FocusLost
-		// TODO add your handling code here:
+            // TODO add your handling code here:
 
         }//GEN-LAST:event_textF3FocusLost
 
         private void textF3KeyTyped(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_textF3KeyTyped
-		// TODO add your handling code here:
+            // TODO add your handling code here:
 
         }//GEN-LAST:event_textF3KeyTyped
 
         private void customButton3ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_customButton3ActionPerformed
-		// TODO add your handling code here:
+            // TODO add your handling code here:
 
         }//GEN-LAST:event_customButton3ActionPerformed
 
         private void customButton2ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_customButton2ActionPerformed
-		// TODO add your handling code here:
-		addChef();
+            // TODO add your handling code here:
+            addChef();
         }//GEN-LAST:event_customButton2ActionPerformed
 
         private void customButton4ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_customButton4ActionPerformed
-		// TODO add your handling code here:
-		isEditmode = true;
-		jPanel6.removeAll();
-		jPanel6.add(customButton5);
-		jPanel6.repaint();
-		jPanel6.revalidate();
+            // TODO add your handling code here:
+            isEditmode = true;
+            jPanel6.removeAll();
+            jPanel6.add(customButton5);
+            jPanel6.repaint();
+            jPanel6.revalidate();
 
-		jPanel4.removeAll();
-		jPanel4.add(customButton6);
-		jPanel4.repaint();
-		jPanel4.revalidate();
+            jPanel4.removeAll();
+            jPanel4.add(customButton6);
+            jPanel4.repaint();
+            jPanel4.revalidate();
         }//GEN-LAST:event_customButton4ActionPerformed
 
         private void customButton5ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_customButton5ActionPerformed
-		// TODO add your handling code here:
-		isEditmode = false;
-		jPanel6.removeAll();
-		jPanel6.add(customButton4);
-		jPanel6.repaint();
-		jPanel6.revalidate();
+            // TODO add your handling code here:
+            isEditmode = false;
+            jPanel6.removeAll();
+            jPanel6.add(customButton4);
+            jPanel6.repaint();
+            jPanel6.revalidate();
 
-		jPanel4.removeAll();
-		jPanel4.add(customButton2);
-		jPanel4.repaint();
-		jPanel4.revalidate();
+            jPanel4.removeAll();
+            jPanel4.add(customButton2);
+            jPanel4.repaint();
+            jPanel4.revalidate();
 
 
         }//GEN-LAST:event_customButton5ActionPerformed
 
         private void customButton6ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_customButton6ActionPerformed
-		// TODO add your handling code here:
-		updatechef();
+            // TODO add your handling code here:
+            updatechef();
 
         }//GEN-LAST:event_customButton6ActionPerformed
-	boolean emailFieldEntred = false;
+    boolean emailFieldEntred = false;
 
-	/**
-	 * @param args the command line arguments
-	 */
-	public static void main(String args[]) {
-		/* Set the Nimbus look and feel */
-		//<editor-fold defaultstate="collapsed" desc=" Look and feel setting code (optional) ">
-		/* If Nimbus (introduced in Java SE 6) is not available, stay with the default look and feel.
+    /**
+     * @param args the command line arguments
+     */
+    public static void main(String args[]) {
+        /* Set the Nimbus look and feel */
+        //<editor-fold defaultstate="collapsed" desc=" Look and feel setting code (optional) ">
+        /* If Nimbus (introduced in Java SE 6) is not available, stay with the default look and feel.
          * For details see http://download.oracle.com/javase/tutorial/uiswing/lookandfeel/plaf.html 
-		 */
-		try {
-			for (javax.swing.UIManager.LookAndFeelInfo info : javax.swing.UIManager.getInstalledLookAndFeels()) {
-				if ("Nimbus".equals(info.getName())) {
-					javax.swing.UIManager.setLookAndFeel(info.getClassName());
-					break;
-				}
-			}
-		} catch (ClassNotFoundException ex) {
-			java.util.logging.Logger.getLogger(Chef.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
-		} catch (InstantiationException ex) {
-			java.util.logging.Logger.getLogger(Chef.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
-		} catch (IllegalAccessException ex) {
-			java.util.logging.Logger.getLogger(Chef.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
-		} catch (javax.swing.UnsupportedLookAndFeelException ex) {
-			java.util.logging.Logger.getLogger(Chef.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
-		}
-		//</editor-fold>
-		//</editor-fold>
-		//</editor-fold>
-		//</editor-fold>
-		//</editor-fold>
-		//</editor-fold>
-		//</editor-fold>
-		//</editor-fold>
-		//</editor-fold>
-		//</editor-fold>
-		//</editor-fold>
-		//</editor-fold>
-		//</editor-fold>
-		//</editor-fold>
-		//</editor-fold>
-		//</editor-fold>
-		//</editor-fold>
-		//</editor-fold>
-		//</editor-fold>
-		//</editor-fold>
-		//</editor-fold>
-		//</editor-fold>
-		//</editor-fold>
-		//</editor-fold>
-		//</editor-fold>
-		//</editor-fold>
-		//</editor-fold>
-		//</editor-fold>
-		//</editor-fold>
-		//</editor-fold>
-		//</editor-fold>
-		//</editor-fold>
+         */
+        try {
+            for (javax.swing.UIManager.LookAndFeelInfo info : javax.swing.UIManager.getInstalledLookAndFeels()) {
+                if ("Nimbus".equals(info.getName())) {
+                    javax.swing.UIManager.setLookAndFeel(info.getClassName());
+                    break;
+                }
+            }
+        } catch (ClassNotFoundException ex) {
+            java.util.logging.Logger.getLogger(Chef.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
+        } catch (InstantiationException ex) {
+            java.util.logging.Logger.getLogger(Chef.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
+        } catch (IllegalAccessException ex) {
+            java.util.logging.Logger.getLogger(Chef.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
+        } catch (javax.swing.UnsupportedLookAndFeelException ex) {
+            java.util.logging.Logger.getLogger(Chef.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
+        }
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
 
-		/* Create and display the form */
-		java.awt.EventQueue.invokeLater(new Runnable() {
-			public void run() {
+        /* Create and display the form */
+        java.awt.EventQueue.invokeLater(new Runnable() {
+            public void run() {
 
-				JFrame jf = new Chef();
-				jf.setVisible(true);
+                JFrame jf = new Chef();
+                jf.setVisible(true);
 
-			}
-		});
-	}
+            }
+        });
+    }
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JLabel boxLabel;
@@ -824,6 +829,7 @@ public class Chef extends javax.swing.JFrame {
     private frameutil.CustomButton customButton5;
     private frameutil.CustomButton customButton6;
     private frameutil.CustomTable customTable1;
+    private frameutil.EmployeeMenuBar employeeMenuBar1;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel2;
     private javax.swing.JLabel jLabel4;

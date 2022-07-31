@@ -4,6 +4,8 @@
  */
 package Util;
 
+import gui.FoodNavi;
+import java.awt.event.WindowEvent;
 import javax.swing.JDialog;
 import javax.swing.JFrame;
 
@@ -13,20 +15,42 @@ import javax.swing.JFrame;
  */
 public class CreateObject {
 
-	public static void make(JFrame jf) {
-		jf.setVisible(true);
-	}
+    public static void make(JFrame jf) {
+        jf.setVisible(true);
+    }
 
-	public static void make(JDialog jd) {
-		jd.setVisible(true);
-	}
+    public static void make(JFrame jf, JFrame thisjf) {
+        jf.setVisible(true);
+        thisjf.dispose();
+    }
 
-	public static void make(JFrame closing, JFrame jf, boolean isDispose) {
-		make(jf);
+    public static void make(JFrame jf, JDialog thisjf) {
+        
 
-		if (isDispose) {
-			closing.dispose();
-		}
+        thisjf.dispose();
+        jf.setVisible(true);
 
-	}
+    }
+
+    public static void make(JDialog jd) {
+        jd.setVisible(true);
+    }
+
+    public static void make(JDialog jd, JFrame thisjf) {
+        jd.setVisible(true);
+        thisjf.dispose();
+    }
+
+    public static void make(JFrame closing, JFrame jf, boolean isDispose) {
+        make(jf);
+
+        if (isDispose) {
+            closing.dispose();
+        }
+
+    }
+
+    public static void make(FoodNavi foodNavi, JDialog thisJF) {
+        throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
+    }
 }

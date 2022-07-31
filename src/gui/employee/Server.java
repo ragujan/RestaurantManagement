@@ -53,7 +53,7 @@ public class Server extends javax.swing.JFrame {
         this.setResizable(true);
         this.setVisible(true);
         setShape(new RoundRectangle2D.Double(0, 0, getWidth(), getHeight(), 7, 7));
-
+        
         jframeCustmize();
         this.setBackground(MainTheme.mainColor);
         roundedPanel1.setBackground(MainTheme.mainColor);
@@ -63,27 +63,28 @@ public class Server extends javax.swing.JFrame {
         jPanel4.setBackground(MainTheme.fourthColor);
         this.setForeground(MainTheme.secondColor);
         textF1.setEditable(false);
-
+        
         textF3.setEditable(false);
         loadTable();
         loadCombos();
         tableListernRag();
-
+        employeeMenuBar1.foo(this);
+        
     }
-
+    
     public Server(CustomerOrder co) {
         this();
         isOtherFramesInvolved = true;
         isCustomerOrderInvolved = true;
         this.co = co;
         thisserver = this;
-
+        
     }
     public String empId;
-
+    
     String loadTableQuery;
     String[] colnames = {"employee_id", "server_id", "employee_name", "server_type_name"};
-
+    
     EmployeeT thiset;
     Server manager;
     Server thisserver;
@@ -91,36 +92,36 @@ public class Server extends javax.swing.JFrame {
     boolean isOtherFramesInvolved;
     boolean isCustomerOrderInvolved;
     CustomerOrder co;
-
+    
     private void loadQuery() {
         ArrayList<String> al = new ArrayList<String>();
         al.add("server");
         al.add("employee,server");
         al.add("server_type,server");
-
+        
         SearchTable st = new SearchTable(al);
         this.loadTableQuery = st.getTableQuery();
         //System.out.println(this.loadTableQuery);
 
     }
-
+    
     private void loadTable() {
         loadQuery();
         String sort = "ORDER BY `employee_name` ASC";
-
+        
         StringBuilder stringquerybuild = new StringBuilder();
         stringquerybuild.append(this.loadTableQuery).toString();
         stringquerybuild.append(sort).toString();
         String query = stringquerybuild.toString();
-
+        
         LoadTables lt = new LoadTables(customTable1, query, this.colnames);
     }
-
+    
     private void loadCombos() {
         LoadSubTypes.loadType(comboBox1, "server_type");
-
+        
     }
-
+    
     private boolean empCheck() {
         boolean state = false;
         ResultSet rs;
@@ -129,7 +130,7 @@ public class Server extends javax.swing.JFrame {
             if (rs.next()) {
                 state = true;
             }
-
+            
         } catch (ClassNotFoundException ex) {
             Logger.getLogger(Server.class.getName()).log(Level.SEVERE, null, ex);
         } catch (SQLException ex) {
@@ -137,31 +138,31 @@ public class Server extends javax.swing.JFrame {
         }
         return state;
     }
-
+    
     public void tableListernRag() {
         customTable1.getSelectionModel().addListSelectionListener(new ListSelectionListener() {
             @Override
             public void valueChanged(ListSelectionEvent e) {
                 int row = customTable1.getSelectedRow();
                 if (row != -1 && isEditmode) {
-
+                    
                     try {
-
+                        
                         String id = customTable1.getValueAt(row, 0).toString();
                         empId = id;
                         String name = customTable1.getValueAt(row, 2).toString();
                         String managertype = customTable1.getValueAt(row, 3).toString();
-
+                        
                         StringBuilder whereQuery = new StringBuilder(loadTableQuery);
                         whereQuery.append("WHERE `employee`.`employee_id`='" + id + "'");
                         System.out.println(whereQuery);
                         ResultSet rs = MySql.sq(whereQuery.toString());
                         rs.next();
-
+                        
                         String email = rs.getString("employee_email");
-
+                        
                         textF1.setText(name);
-
+                        
                         textF3.setText(email);
                         comboBox1.setSelectedItem(managertype);
 
@@ -171,71 +172,71 @@ public class Server extends javax.swing.JFrame {
                     } catch (SQLException ex) {
                         Logger.getLogger(Server.class.getName()).log(Level.SEVERE, null, ex);
                     }
-
+                    
                 }
                 if (row != -1 && isCustomerOrderInvolved) {
-
+                    
                     try {
-
+                        
                         String id = customTable1.getValueAt(row, 0).toString();
                         empId = id;
                         String name = customTable1.getValueAt(row, 2).toString();
                         String managertype = customTable1.getValueAt(row, 3).toString();
-
+                        
                         StringBuilder whereQuery = new StringBuilder(loadTableQuery);
                         whereQuery.append("WHERE `employee`.`employee_id`='" + id + "'");
-
+                        
                         ResultSet rs = MySql.sq(whereQuery.toString());
                         rs.next();
-
+                        
                         String email = rs.getString("employee_email");
-
+                        
                         co.textF1.setText(name);
-
+                        
                         co.textF2.setText(id);
                         co.serverId = id;
                         co.serverName = name;
-                         thisserver.dispose();
+                        thisserver.dispose();
                         //isEditmode = false;
                     } catch (ClassNotFoundException ex) {
                         Logger.getLogger(Server.class.getName()).log(Level.SEVERE, null, ex);
                     } catch (SQLException ex) {
                         Logger.getLogger(Server.class.getName()).log(Level.SEVERE, null, ex);
                     }
-
+                    
                 }
             }
-
+            
         });
-
+        
     }
-
+    
     private void addmanger() {
         if (comboBox1.getSelectedItem().toString().equals("Select server_type")) {
             Message m = new Message(this, "Select a valid server type", "warning");
-
+            
         } else if (textF1.getText().isEmpty()) {
             Message m = new Message(this, "Fields are empty", "warning");
         } else {
-
+            
             String serverType = comboBox1.getSelectedItem().toString();
-
+            
             if (!empCheck()) {
-
+                
                 ResultSet rs;
                 try {
                     rs = MySql.sq("SELECT * FROM `server_type` WHERE `server_type_name`='" + serverType + "'");
                     rs.next();
                     String serverTypeId = rs.getString("server_type_id");
-
+                    
                     ArrayList<String> info = new ArrayList<>();
                     info.add(empId);
                     info.add(serverTypeId);
-
+                    
                     InsertTable it = new InsertTable("server", info);
                     Message m = new Message(this, "Successfully entered ", "warning");
                     textF1.setText("");
-
+                    
                     textF3.setText("");
                     loadCombos();
                     loadTable();
@@ -248,32 +249,32 @@ public class Server extends javax.swing.JFrame {
                 Message m = new Message(this, "This server Already exits ", "warning");
             }
         }
-
+        
     }
-
+    
     private void updateServer() {
         if (comboBox1.getSelectedItem().toString().equals("Select server_type")) {
             Message m = new Message(this, "Select a valid server type", "warning");
-
+            
         } else if (textF1.getText().isEmpty()) {
             Message m = new Message(this, "Fields are empty", "warning");
         } else {
-
+            
             String serverType = comboBox1.getSelectedItem().toString();
-
+            
             if (empCheck()) {
-
+                
                 ResultSet rs;
                 try {
                     System.out.println(empId);
                     rs = MySql.sq("SELECT * FROM `server_type` WHERE `server_type_name`='" + serverType + "'");
                     rs.next();
                     String serverTypeId = rs.getString("server_type_id");
-
+                    
                     MySql.iud("UPDATE `server` SET `server_type_id`='" + serverTypeId + "' WHERE `employee_id`='" + empId + "'");
                     Message m = new Message(this, "Successfully updated ", "warning");
                     textF1.setText("");
-
+                    
                     textF3.setText("");
                     loadCombos();
                     loadTable();
@@ -284,14 +285,14 @@ public class Server extends javax.swing.JFrame {
                 }
             }
         }
-
+        
     }
-
+    
     private void jframeCustmize() {
         closeLabel.setIcon(labelSetIcon("/Icons/close.png", closeLabel.getWidth() - 25, closeLabel.getHeight() - 17));
         boxLabel.setIcon(labelSetIcon("/Icons/square.png", boxLabel.getWidth() - 23, boxLabel.getHeight() - 17));
         miniLabel.setIcon(labelSetIcon("/Icons/minus.png", miniLabel.getWidth() - 20, miniLabel.getHeight() - 13));
-
+        
         miniLabel.addMouseListener(new java.awt.event.MouseAdapter() {
             @Override
             public void mouseClicked(java.awt.event.MouseEvent evt) {
@@ -299,7 +300,7 @@ public class Server extends javax.swing.JFrame {
             }
         });
     }
-
+    
     public ImageIcon labelSetIcon(String src, int w, int h) {
         ImageSizer imgSizer = new ImageSizer();
         ImageIcon i = imgSizer.overaallResizer(src, w, h);
@@ -342,6 +343,7 @@ public class Server extends javax.swing.JFrame {
         jPanel5 = new javax.swing.JPanel();
         jScrollPane1 = new javax.swing.JScrollPane();
         customTable1 = new frameutil.CustomTable();
+        employeeMenuBar1 = new frameutil.EmployeeMenuBar();
 
         jToggleButton1.setText("jToggleButton1");
 
@@ -616,23 +618,26 @@ public class Server extends javax.swing.JFrame {
                 .addContainerGap()
                 .addGroup(roundedPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addComponent(jPanel3, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addComponent(jPanel5, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                     .addGroup(roundedPanel1Layout.createSequentialGroup()
                         .addComponent(jPanel2, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addGap(0, 0, Short.MAX_VALUE))
-                    .addComponent(jPanel5, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                    .addComponent(employeeMenuBar1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
                 .addContainerGap())
         );
         roundedPanel1Layout.setVerticalGroup(
             roundedPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(roundedPanel1Layout.createSequentialGroup()
                 .addComponent(roundedPanel2, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(18, 18, 18)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(employeeMenuBar1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(jPanel2, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(jPanel3, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(jPanel5, javax.swing.GroupLayout.PREFERRED_SIZE, 341, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap(9, Short.MAX_VALUE))
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
@@ -735,7 +740,7 @@ public class Server extends javax.swing.JFrame {
             jPanel6.add(customButton5);
             jPanel6.repaint();
             jPanel6.revalidate();
-
+            
             jPanel4.removeAll();
             jPanel4.add(customButton6);
             jPanel4.repaint();
@@ -749,12 +754,12 @@ public class Server extends javax.swing.JFrame {
             jPanel6.add(customButton4);
             jPanel6.repaint();
             jPanel6.revalidate();
-
+            
             jPanel4.removeAll();
             jPanel4.add(customButton2);
             jPanel4.repaint();
             jPanel4.revalidate();
-
+            
 
         }//GEN-LAST:event_customButton5ActionPerformed
 
@@ -922,10 +927,10 @@ public class Server extends javax.swing.JFrame {
         /* Create and display the form */
         java.awt.EventQueue.invokeLater(new Runnable() {
             public void run() {
-
+                
                 JFrame jf = new Server();
                 jf.setVisible(true);
-
+                
             }
         });
     }
@@ -941,6 +946,7 @@ public class Server extends javax.swing.JFrame {
     private frameutil.CustomButton customButton5;
     private frameutil.CustomButton customButton6;
     private frameutil.CustomTable customTable1;
+    private frameutil.EmployeeMenuBar employeeMenuBar1;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel2;
     private javax.swing.JLabel jLabel4;

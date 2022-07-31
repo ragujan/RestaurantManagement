@@ -67,7 +67,7 @@ public class EmployeeWorkingHours extends javax.swing.JFrame {
 		setValidadions();
 		this.tableListernRag();
 		this.thiset = this;
-		jPanel5.setBackground(MainTheme.thirdColor);
+		
 		textF4.setBackground(MainTheme.secondColor);
 		textF5.setBackground(MainTheme.secondColor);
 		textF4.setForeground(MainTheme.fourthColor);
@@ -81,6 +81,7 @@ public class EmployeeWorkingHours extends javax.swing.JFrame {
 		jDateChooser4.setBackground(MainTheme.secondColor);
 		jDateChooser3.setVisible(false);
 		jDateChooser4.setVisible(false);
+                employeeMenuBar1.foo(this); 
 	}
 
 	public EmployeeWorkingHours(Chef c) {
@@ -619,7 +620,6 @@ public class EmployeeWorkingHours extends javax.swing.JFrame {
         customTable2 = new frameutil.CustomTable();
         jPanel3 = new javax.swing.JPanel();
         customButton1 = new frameutil.CustomButton();
-        jPanel5 = new javax.swing.JPanel();
         jPanel7 = new javax.swing.JPanel();
         jPanel8 = new javax.swing.JPanel();
         jLabel12 = new javax.swing.JLabel();
@@ -662,6 +662,7 @@ public class EmployeeWorkingHours extends javax.swing.JFrame {
         jPanel11 = new javax.swing.JPanel();
         customButton3 = new frameutil.CustomButton();
         customButton5 = new frameutil.CustomButton();
+        employeeMenuBar1 = new frameutil.EmployeeMenuBar();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
         setUndecorated(true);
@@ -775,7 +776,7 @@ public class EmployeeWorkingHours extends javax.swing.JFrame {
             jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(jPanel2Layout.createSequentialGroup()
                 .addContainerGap()
-                .addComponent(jScrollPane2, javax.swing.GroupLayout.PREFERRED_SIZE, 173, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addComponent(jScrollPane2, javax.swing.GroupLayout.PREFERRED_SIZE, 282, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
 
@@ -789,17 +790,6 @@ public class EmployeeWorkingHours extends javax.swing.JFrame {
             }
         });
         jPanel3.add(customButton1, "card2");
-
-        javax.swing.GroupLayout jPanel5Layout = new javax.swing.GroupLayout(jPanel5);
-        jPanel5.setLayout(jPanel5Layout);
-        jPanel5Layout.setHorizontalGroup(
-            jPanel5Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 0, Short.MAX_VALUE)
-        );
-        jPanel5Layout.setVerticalGroup(
-            jPanel5Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 98, Short.MAX_VALUE)
-        );
 
         jPanel7.setLayout(new java.awt.CardLayout());
 
@@ -863,6 +853,11 @@ public class EmployeeWorkingHours extends javax.swing.JFrame {
         jDateChooser4.setBackground(new java.awt.Color(0, 102, 255));
         jDateChooser4.setForeground(new java.awt.Color(255, 255, 255));
         jDateChooser4.setIcon(null);
+        jDateChooser4.addFocusListener(new java.awt.event.FocusAdapter() {
+            public void focusGained(java.awt.event.FocusEvent evt) {
+                jDateChooser4FocusGained(evt);
+            }
+        });
         jDateChooser4.addPropertyChangeListener(new java.beans.PropertyChangeListener() {
             public void propertyChange(java.beans.PropertyChangeEvent evt) {
                 jDateChooser4PropertyChange(evt);
@@ -955,7 +950,7 @@ public class EmployeeWorkingHours extends javax.swing.JFrame {
                         .addComponent(jDateChooser3, javax.swing.GroupLayout.PREFERRED_SIZE, 24, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addGap(28, 28, 28)
                         .addComponent(jDateChooser4, javax.swing.GroupLayout.PREFERRED_SIZE, 24, javax.swing.GroupLayout.PREFERRED_SIZE)))
-                .addContainerGap(8, Short.MAX_VALUE))
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
 
         jPanel7.add(jPanel8, "card2");
@@ -1152,7 +1147,7 @@ public class EmployeeWorkingHours extends javax.swing.JFrame {
                         .addGroup(jPanel9Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
                             .addComponent(jDateChooser2, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                             .addComponent(textF11, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))))
-                .addContainerGap(8, Short.MAX_VALUE))
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
 
         jPanel7.add(jPanel9, "card3");
@@ -1185,14 +1180,14 @@ public class EmployeeWorkingHours extends javax.swing.JFrame {
                 .addContainerGap()
                 .addGroup(roundedPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addComponent(jPanel2, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                    .addComponent(jPanel5, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addComponent(jPanel7, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                     .addGroup(roundedPanel1Layout.createSequentialGroup()
                         .addGap(6, 6, 6)
                         .addComponent(jPanel3, javax.swing.GroupLayout.PREFERRED_SIZE, 117, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addComponent(jPanel11, javax.swing.GroupLayout.PREFERRED_SIZE, 117, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
-                    .addComponent(jPanel7, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                        .addGap(0, 0, Short.MAX_VALUE))
+                    .addComponent(employeeMenuBar1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
                 .addContainerGap())
         );
         roundedPanel1Layout.setVerticalGroup(
@@ -1200,6 +1195,8 @@ public class EmployeeWorkingHours extends javax.swing.JFrame {
             .addGroup(roundedPanel1Layout.createSequentialGroup()
                 .addComponent(roundedPanel2, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(employeeMenuBar1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGap(8, 8, 8)
                 .addGroup(roundedPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
                     .addComponent(jPanel3, javax.swing.GroupLayout.PREFERRED_SIZE, 32, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(jPanel11, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
@@ -1207,8 +1204,6 @@ public class EmployeeWorkingHours extends javax.swing.JFrame {
                 .addComponent(jPanel7, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(jPanel2, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(jPanel5, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addContainerGap())
         );
 
@@ -1434,11 +1429,17 @@ public class EmployeeWorkingHours extends javax.swing.JFrame {
 
         private void textF5FocusGained(java.awt.event.FocusEvent evt) {//GEN-FIRST:event_textF5FocusGained
                 // TODO add your handling code here:
+                jDateChooser4.setVisible(true);
         }//GEN-LAST:event_textF5FocusGained
 
         private void textF5FocusLost(java.awt.event.FocusEvent evt) {//GEN-FIRST:event_textF5FocusLost
                 // TODO add your handling code here:
+                     jDateChooser4.setVisible(false);
         }//GEN-LAST:event_textF5FocusLost
+
+    private void jDateChooser4FocusGained(java.awt.event.FocusEvent evt) {//GEN-FIRST:event_jDateChooser4FocusGained
+        // TODO add your handling code here:
+    }//GEN-LAST:event_jDateChooser4FocusGained
 	boolean emailFieldEntred = false;
 
 	/**
@@ -1617,6 +1618,7 @@ public class EmployeeWorkingHours extends javax.swing.JFrame {
     private frameutil.CustomButton customButton4;
     private frameutil.CustomButton customButton5;
     private frameutil.CustomTable customTable2;
+    private frameutil.EmployeeMenuBar employeeMenuBar1;
     private com.toedter.calendar.JDateChooser jDateChooser1;
     private com.toedter.calendar.JDateChooser jDateChooser2;
     private com.toedter.calendar.JDateChooser jDateChooser3;
@@ -1639,7 +1641,6 @@ public class EmployeeWorkingHours extends javax.swing.JFrame {
     private javax.swing.JPanel jPanel2;
     private javax.swing.JPanel jPanel3;
     private javax.swing.JPanel jPanel4;
-    private javax.swing.JPanel jPanel5;
     private javax.swing.JPanel jPanel7;
     private javax.swing.JPanel jPanel8;
     private javax.swing.JPanel jPanel9;

@@ -49,6 +49,7 @@ public class ViewOrderItems extends javax.swing.JFrame {
         loadQuery();
         loadTableQuery += " " + additionalQuery + "";
         loadTable(loadTableQuery);
+        menuBar1.foo(this);
 
     }
 
@@ -60,7 +61,7 @@ public class ViewOrderItems extends javax.swing.JFrame {
         this.orderId = id;
         this.ogorder = ogorder;
         loadQuery();
-       
+
         loadTableQuery += " " + additionalQuery + " WHERE `customer_order`.`customer_order_id` = '" + id + "'";
         loadTable(loadTableQuery);
     }
@@ -118,7 +119,7 @@ public class ViewOrderItems extends javax.swing.JFrame {
         String query = stringquerybuild.toString();
 
         LoadTables lt = new LoadTables(customTable1, query, this.colnames);
-       
+
     }
 
     private void jframeCustmize() {
@@ -149,12 +150,12 @@ public class ViewOrderItems extends javax.swing.JFrame {
     }
 
     private void closeFunctionalities() {
-        if(isOngoingOrderInvolved){
+        if (isOngoingOrderInvolved) {
             this.ogorder.setEnabled(true);
         }
         if (isOtherFramesInvolved) {
             this.dispose();
-            
+
         } else {
             System.exit(0);
         }
@@ -180,6 +181,7 @@ public class ViewOrderItems extends javax.swing.JFrame {
         jPanel3 = new javax.swing.JPanel();
         jScrollPane1 = new javax.swing.JScrollPane();
         customTable1 = new frameutil.CustomTable();
+        menuBar1 = new frameutil.MenuBar();
 
         jToggleButton1.setText("jToggleButton1");
 
@@ -300,7 +302,9 @@ public class ViewOrderItems extends javax.swing.JFrame {
             .addComponent(roundedPanel2, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
             .addGroup(roundedPanel1Layout.createSequentialGroup()
                 .addContainerGap()
-                .addComponent(jPanel3, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .addGroup(roundedPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addComponent(jPanel3, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addComponent(menuBar1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
                 .addContainerGap())
         );
         roundedPanel1Layout.setVerticalGroup(
@@ -308,7 +312,9 @@ public class ViewOrderItems extends javax.swing.JFrame {
             .addGroup(roundedPanel1Layout.createSequentialGroup()
                 .addComponent(roundedPanel2, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(jPanel3, javax.swing.GroupLayout.PREFERRED_SIZE, 320, Short.MAX_VALUE)
+                .addComponent(menuBar1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(jPanel3, javax.swing.GroupLayout.PREFERRED_SIZE, 326, Short.MAX_VALUE)
                 .addContainerGap())
         );
 
@@ -554,6 +560,7 @@ public class ViewOrderItems extends javax.swing.JFrame {
     private javax.swing.JPanel jPanel3;
     private javax.swing.JScrollPane jScrollPane1;
     private javax.swing.JToggleButton jToggleButton1;
+    private frameutil.MenuBar menuBar1;
     private javax.swing.JLabel miniLabel;
     private RoundedPanel roundedPanel1;
     private RoundedPanel roundedPanel2;

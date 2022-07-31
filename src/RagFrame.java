@@ -1,7 +1,4 @@
-package testtrash;
 
-
-import testtrash.ImageSizer;
 import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.Graphics;
